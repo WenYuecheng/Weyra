@@ -1,0 +1,3 @@
+include weyra.example.toml
+recursive-include docs *.md *.json
+recursive-include examples *.py *.json

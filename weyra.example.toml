@@ -1,0 +1,26 @@
+# Reference names of existing credential variables; never put keys in this file.
+[providers.deepseek]
+protocol = "openai"
+api_key_env = "DEEPSEEK_API_KEY"
+
+[providers.anthropic]
+protocol = "anthropic"
+api_key_env = "ANTHROPIC_API_KEY"
+
+[routes.main]
+provider = "deepseek"
+model = "deepseek-chat"
+# Example limits: set these to the capacities of your actual endpoint/model.
+context_window = 65536
+max_output_tokens = 2048
+
+# Optional routes have exactly the same four identity/capacity fields.
+# [routes.compression]
+# provider = "deepseek"
+# model = "deepseek-chat"
+# context_window = 65536
+# max_output_tokens = 2048
+
+# Optional, disabled unless specified:
+# [fallbacks]
+# main = [{provider="anthropic", model="your-model", context_window=65536, max_output_tokens=2048}]

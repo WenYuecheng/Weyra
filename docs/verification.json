@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-16",
+  "project": "Weyra",
+  "verification": "offline deterministic engineering checks; no live model requests",
+  "tests": {
+    "passed": 115,
+    "subtests_passed": 5,
+    "command": "python -m pytest -q"
+  },
+  "lint": {
+    "passed": true,
+    "command": "python -m ruff check src tests examples"
+  },
+  "build": {
+    "passed": true,
+    "artifacts": [
+      "weyra-0.1.0.tar.gz",
+      "weyra-0.1.0-py3-none-any.whl"
+    ]
+  },
+  "demos": {
+    "project_analysis": "passed; actual file tools and managed fork",
+    "personalized_writing": "passed; delayed feedback, patch, experience and rollback"
+  },
+  "model_api_requests": 0,
+  "effectiveness_benchmarks": "not run; scenario manifest is a protocol, not a result",
+  "dependencies": {
+    "openai": "3.31.0",
+    "anthropic": "1.14.0",
+    "jsonschema": "4.26.0",
+    "pytest": "9.1.1",
+    "ruff": "0.17.0",
+    "setuptools": "84.0.0"
+  }
+}
