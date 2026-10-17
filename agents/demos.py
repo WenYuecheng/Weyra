@@ -146,7 +146,7 @@ async def run_demo(
                 "actual_tool_results": results,
             }
         else:
-            await agent.run_once("以后所有写作都先给结论，请把这项长期要求维护为可复用技能。")
+            await agent.run_once("以后所有写作都先给结论，这是我的长期写作偏好。")
             await agent.run_once("以后所有写作继续遵守结论先行的长期要求。")
             if agent._background:
                 await asyncio.gather(*list(agent._background))
@@ -155,13 +155,16 @@ async def run_demo(
             created = [
                 agent.skills.load(name)
                 for name in agent.skills.capture_catalog()
-                if agent.skills.load(name).path.is_relative_to(fixture / ".weyra" / "skills")
+                if any(
+                    agent.skills.load(name).path.is_relative_to(directory)
+                    for directory in (fixture / ".weyra" / "skills", fixture / "skills")
+                )
             ]
             original = created[0] if created else None
             skill_name = original.name if original else "report-writing"
             await agent.run_once(
-                f"更正长期要求：{skill_name} 今后仅适用于正式汇报；故事创作按叙事需要展开，"
-                "不套用结论先行。请持续维护这一适用边界，并作为长期经验保存。"
+                "更正我的长期写作偏好：结论先行今后仅适用于正式汇报；故事创作按叙事需要展开，"
+                "不套用结论先行。以后持续遵守这一适用边界。"
             )
             if agent._background:
                 await asyncio.gather(*list(agent._background))

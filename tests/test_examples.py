@@ -108,4 +108,5 @@ def test_writing_demo_evidence_contains_a_durable_scope_correction(tmp_path):
     connection.close()
     users = [r['content'] for r in records if r.get('role') == 'user' and r.get('source') == 'user']
     assert '所有写作' in users[0]
+    assert '维护为可复用技能' not in users[0]
     assert '长期' in users[-1] and '故事' in users[-1]
