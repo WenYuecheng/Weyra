@@ -613,6 +613,25 @@ class EvolutionStore:
         proposal = await model_call(frozen_window)
         if not proposal:
             proposal = {"action": "discard"}
+        proposal_text = json.dumps(
+            {"event_id": event_id, "proposal": proposal, "target": source_record["target"]},
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        proposal_path = (
+            self.root / "proposals" / (sha(str(event_id)) + "-" + sha(proposal_text) + ".json")
+        )
+        atomic(proposal_path, proposal_text)
+        if self.session is not None:
+            self.session.append(
+                "skill_proposal",
+                {
+                    "event_id": event_id,
+                    "proposal_ref": str(proposal_path),
+                    "proposal_hash": sha(proposal_text),
+                },
+                checkpoint=True,
+            )
         if not isinstance(proposal, dict):
             return self._reject("_maintenance", event_id, "Invalid model proposal")
         proposal = dict(proposal)

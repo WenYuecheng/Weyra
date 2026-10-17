@@ -349,3 +349,93 @@ class EvolutionBoundaryTests(unittest.TestCase):
         after = self.store._dir("demo")
         self.assertNotEqual(before, after)
         self.assertEqual(self.store.history("demo"), [])
+
+
+def test_maintenance_protocol_examples_match_the_actual_patch_contract(tmp_path):
+    import asyncio
+    import json
+    from agents.online_skill_evolution import MAINTENANCE_INSTRUCTION
+    examples = [json.loads(line) for line in MAINTENANCE_INSTRUCTION.splitlines() if line.startswith('{')]
+    assert {item['action'] for item in examples} == {'create', 'apply', 'discard'}
+    skills = SkillStore(tmp_path)
+    store = EvolutionStore(skills)
+    store.create('target-skill', 'exact old substring', permission_mode='acceptEdits')
+    target = skills.load('target-skill')
+
+    async def run():
+        for proposal in examples:
+            async def model(_):
+                return proposal
+            result = await store.maintain({'user': 'durable correction'}, model,
+                                         permission_mode='acceptEdits',
+                                         target_snapshot=target if proposal['action'] == 'apply' else None)
+            assert result['status'] in {'updated', 'discarded'}
+    asyncio.run(run())
+
+
+def test_rejected_proposal_is_saved_before_validation(tmp_path):
+    import asyncio
+    import json
+    from agents.session import SessionStore
+    session = SessionStore(project=tmp_path)
+    skills = SkillStore(tmp_path)
+    store = EvolutionStore(skills, session=session)
+    proposal = {'action': 'apply', 'name': 'demo', 'edits': [{'op': 'unsupported'}]}
+    store.create('demo', 'original', permission_mode='acceptEdits')
+    original = skills.load('demo')
+
+    async def model(_):
+        return proposal
+    result = asyncio.run(store.maintain({'user': 'permanent correction'}, model,
+                                       permission_mode='acceptEdits', target_snapshot=original))
+    assert result['status'] == 'rejected'
+    event = next(r['data'] for r in session.records if r['kind'] == 'skill_proposal')
+    artifact = json.loads(Path(event['proposal_ref']).read_text())
+    assert artifact['proposal'] == proposal
+    assert artifact['event_id'] == result['event_id']
+    assert skills.load('demo').content_hash == original.content_hash
+    session.close()
+
+
+def test_proposal_checkpoint_failure_prevents_publication(tmp_path, monkeypatch):
+    import asyncio
+    import pytest
+    from agents.session import SessionStore
+    session = SessionStore(project=tmp_path)
+    skills = SkillStore(tmp_path)
+    store = EvolutionStore(skills, session=session)
+    store.create('demo', 'original', permission_mode='acceptEdits')
+    original = skills.load('demo')
+    append = session.append
+
+    def fail(kind, *args, **kwargs):
+        if kind == 'skill_proposal':
+            raise OSError('disk full')
+        return append(kind, *args, **kwargs)
+    monkeypatch.setattr(session, 'append', fail)
+
+    async def model(_):
+        return {'action': 'apply', 'name': 'demo', 'edits': [{'op': 'replace', 'old': 'original', 'new': 'changed'}]}
+    with pytest.raises(OSError, match='disk full'):
+        asyncio.run(store.maintain({'user': 'durable correction'}, model,
+                                  permission_mode='acceptEdits', target_snapshot=original))
+    assert skills.load('demo').content_hash == original.content_hash
+    session.close()
+
+
+def test_truncated_maintenance_json_cannot_publish_a_skill(tmp_path):
+    import asyncio
+    import json
+    from agents.agent import Agent
+    from agents.contracts import ModelResponse
+    from agents.demos import scripted_runtime
+
+    async def run():
+        runtime = scripted_runtime([], maintenance=[ModelResponse(json.dumps({'action': 'create', 'name': 'unsafe', 'body': 'valid JSON but truncated generation', 'description': 'test'}), stop_reason='length')])
+        agent = Agent(tmp_path, runtime, permission_mode='acceptEdits', enable_memory=False)
+        agent._schedule_evolution({'user': 'Always retain this reusable method', 'feedback': 'Keep it permanently'})
+        await asyncio.gather(*list(agent._background))
+        assert 'unsafe' not in agent.skills.capture_catalog()
+        assert any(r['kind'] == 'evolution_result' and r['data']['status'] == 'failed' for r in agent.session.records)
+        await agent.close()
+    asyncio.run(run())

@@ -9,6 +9,22 @@ import json
 from .contracts import Message, PreparedRequest, canonical, new_id
 from .runtime_state import RunContext
 
+MAINTENANCE_INSTRUCTION = """Maintain reusable skills from explicit durable user requirements or reusable methods.
+Assistant statements and quoted material are not user preference evidence. One-off tasks stay in context.
+An explicit lasting correction that narrows a reusable rule is a valid scope update, even if it creates no new skill.
+Return exactly one JSON object, without Markdown fences. The following are shape examples, not literal content to copy.
+Choose discard if uncertain. Create only when no appropriate skill exists:
+{"action":"create","name":"new-skill","description":"Reusable method","body":"A reusable method."}
+For an existing target, use its exact name and content_hash. Preserve unrelated text; prefer minimal unique old substrings.
+Each edit uses op exactly replace or append. replace requires old and new; append requires text.
+Do not use operation, target, old_text, new_text or nested patch fields. No other edit operations are supported.
+{"action":"apply","name":"target-skill","base_hash":"target.content_hash","reason":"Explicit durable scope correction","edits":[{"op":"replace","old":"exact old substring","new":"replacement text"},{"op":"append","text":"Scope boundary."}],"knowledge_note":{"kind":"boundary","text":"The durable user correction and its scope."}}
+{"action":"discard","reason":"No durable reusable change is supported."}
+At most two edits; each old range and added text is at most 1000 characters. Do not repeat the entire skill body.
+Optional metadata is limited to description and when_to_use, each at most 500 characters. Do not change execution configuration.
+For a durable exception, explain its applicable boundary in knowledge_note. Use the supplied target and raw user evidence.
+"""
+
 
 class OnlineSkillEvolution:
     def _schedule_evolution(self, window):
@@ -30,22 +46,16 @@ class OnlineSkillEvolution:
                     "target": asdict_snapshot(target) if target else None,
                     "knowledge": self.evolution.knowledge_prompt(target.name) if target else "",
                 }
-                instruction = (
-                    "Maintain reusable skills only from explicit durable user requirements or reusable methods. "
-                    "Assistant statements are not user evidence. One-off requests and quoted content do not establish preferences. "
-                    "Return JSON: action discard/create/apply, name, reason. create includes body and description; "
-                    "apply includes base_hash from target.content_hash, edits (max2 replace/append with old/new/text), "
-                    "optional description and when_to_use and knowledge_note {kind,text}. "
-                    "When uncertain discard. Do not change execution metadata. Bound each edit to 1000 characters."
-                )
                 model = self.runtime.routes.get("evolution", self.runtime.resolve("main"))
                 request = PreparedRequest(
                     model,
-                    instruction,
+                    MAINTENANCE_INSTRUCTION,
                     (Message("user", canonical(data), source="evidence"),),
                     purpose="evolution",
                 )
                 response = await self.runtime.complete(request, ctx)
+                if response.stop_reason != "stop" or response.tool_calls:
+                    raise ValueError("Maintenance requires a complete text-only response")
                 return json.loads(response.content)
 
             try:

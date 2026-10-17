@@ -17,6 +17,7 @@ import sysconfig
 import time
 
 from .agent import Agent
+from .online_skill_evolution import MAINTENANCE_INSTRUCTION
 from .contracts import (
     Message,
     ModelInfo,
@@ -306,7 +307,7 @@ async def _prepare_mechanism(agent, case, group, variant, runtime):
             instruction = (
                 "Return only the complete revised skill body."
                 if variant == "full_merge"
-                else "Return JSON action apply, name report-writing, edits with op replace/old/new, knowledge_note kind boundary and text. Preserve unrelated text."
+                else MAINTENANCE_INSTRUCTION
             )
             response = await runtime.complete(
                 PreparedRequest(
@@ -318,6 +319,11 @@ async def _prepare_mechanism(agent, case, group, variant, runtime):
                             canonical(
                                 {
                                     "body": original.body,
+                                    "target": {
+                                        "name": original.name,
+                                        "content_hash": original.content_hash,
+                                        "body": original.body,
+                                    },
                                     "evidence": evidence,
                                     "knowledge": knowledge,
                                 }
@@ -330,6 +336,8 @@ async def _prepare_mechanism(agent, case, group, variant, runtime):
                 ),
                 ctx,
             )
+            if response.stop_reason != "stop" or response.tool_calls:
+                raise ValueError("Maintenance requires a complete text-only response")
             return response.content if variant == "full_merge" else json.loads(response.content)
 
         if variant == "full_merge":
