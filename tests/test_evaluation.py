@@ -176,3 +176,41 @@ def test_checker_normalizes_successful_read_paths_inside_project(tmp_path):
     assert check_case(case, tmp_path, '', records)['source_evidence_read']
     records[0]['data']['arguments']['path'] = str(tmp_path.parent / 'source.json')
     assert not check_case(case, tmp_path, '', records)['source_evidence_read']
+
+
+def test_cache_rebuild_changes_prefix_without_duplicating_history(tmp_path, monkeypatch):
+    from agents.evaluation import _run_case, load_cases
+    from agents.context import ContextManager
+    observed = []
+    original = ContextManager.refresh
+
+    def refresh(self, system, *args, **kwargs):
+        observed.append((self.system, system))
+        return original(self, system, *args, **kwargs)
+
+    monkeypatch.setattr(ContextManager, 'refresh', refresh)
+    case = load_cases()[0]
+    result = asyncio.run(_run_case(case, group='cache', variant='rebuild', root=tmp_path,
+                                  runtime=None, budget=Budget(), offline=True))
+    assert result['status'] == 'pass'
+    before, after = observed[-1]
+    assert before != after
+    assert len(after) <= len(before) + 200
+    assert case['objective'] not in after
+
+
+def test_narrative_scope_check_accepts_chinese_synonyms(tmp_path, monkeypatch):
+    from agents import evaluation
+    original = evaluation._offline_runtime
+
+    def alternate_wording(case, group, variant):
+        runtime = original(case, group, variant)
+        response = runtime.registry.get('evolution').responses[0]
+        object.__setattr__(response, 'content', '正式报告先给结论。小说和其他叙事类作品按叙事顺序展开，不必先给结论。')
+        return runtime
+
+    monkeypatch.setattr(evaluation, '_offline_runtime', alternate_wording)
+    case = next(c for c in evaluation.load_cases() if c['id'] == 'W03')
+    result = asyncio.run(evaluation._run_case(case, group='evolution', variant='full_merge',
+                                            root=tmp_path, runtime=None, budget=Budget(), offline=True))
+    assert result['checks']['narrative_exception']

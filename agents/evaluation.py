@@ -407,8 +407,8 @@ async def _run_case(case, *, group, variant, root, runtime, budget, offline, tim
                 if variant == "rebuild":
                     agent.context_manager.refresh(
                         agent.context_manager.system
-                        + "\nCurrent session snapshot (sourced task history):\n"
-                        + canonical([message.to_dict() for message in agent.session.project()])
+                        + "\nDynamic runtime history fingerprint: "
+                        + digest([message.to_dict() for message in agent.session.project()])
                     )
                 await agent.run_once(
                     "Recheck the same evidence and result.json, then rewrite result.json with the same factual fields."
@@ -447,7 +447,10 @@ async def _run_case(case, *, group, variant, root, runtime, budget, offline, tim
             )
             checks["proposal_applied"] = metrics["proposal_applied"]
             checks["narrative_exception"] = (
-                "故事" in metrics["revised_body"] or "stor" in metrics["revised_body"].lower()
+                any(
+                    term in metrics["revised_body"].lower()
+                    for term in ("故事", "小说", "叙事", "stor", "narrative", "fiction")
+                )
             )
             if variant == "experience_bounded":
                 checks["experience_saved"] = metrics["boundary_saved"]

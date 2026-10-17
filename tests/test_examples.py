@@ -74,3 +74,24 @@ def test_demo_keeps_inspectable_session_and_report(tmp_path):
         json.loads((folder / ".weyra/demo-report.json").read_text())["session_id"]
         == report["session_id"]
     )
+
+
+def test_writing_demo_uses_the_created_skill_identity(tmp_path, monkeypatch):
+    import asyncio
+    from agents import demos
+    original = demos._offline_runtime
+
+    def renamed(scenario):
+        runtime = original(scenario)
+        provider = runtime.registry.get('maintenance')
+        for response in provider.responses:
+            data = json.loads(response.content)
+            data['name'] = 'formal-reporting'
+            object.__setattr__(response, 'content', json.dumps(data, ensure_ascii=False))
+        return runtime
+
+    monkeypatch.setattr(demos, '_offline_runtime', renamed)
+    report = asyncio.run(demos.run_demo('writing', project=tmp_path))
+    assert report['updated_version'] == '1.0.1'
+    assert report['rollback_version'] == '1.0.2'
+    assert report['skill_name'] == 'formal-reporting'

@@ -150,14 +150,28 @@ async def run_demo(
             await agent.run_once("以后所有正式汇报继续遵守这一要求。")
             if agent._background:
                 await asyncio.gather(*list(agent._background))
-            await agent.run_once("report-writing 需要收窄：故事创作不适用汇报结构。")
+            # A maintenance model chooses the skill identity; the demo follows
+            # that published identity rather than assuming its fixture name.
+            created = [
+                agent.skills.load(name)
+                for name in agent.skills.capture_catalog()
+                if agent.skills.load(name).path.is_relative_to(fixture / ".weyra" / "skills")
+            ]
+            original = created[0] if created else None
+            skill_name = original.name if original else "report-writing"
+            await agent.run_once(f"{skill_name} 需要收窄：故事创作不适用汇报结构。")
             if agent._background:
                 await asyncio.gather(*list(agent._background))
             catalog = agent.skills.capture_catalog()
-            updated = agent.skills.load("report-writing") if "report-writing" in catalog else None
-            experiences = agent.evolution.knowledge("report-writing") if updated else []
-            restored = await agent.rollback_skill("report-writing", "1.0.0") if updated else {}
+            updated = agent.skills.load(skill_name) if skill_name in catalog else None
+            experiences = agent.evolution.knowledge(skill_name) if updated else []
+            restored = (
+                await agent.rollback_skill(skill_name, original.version)
+                if updated and original
+                else {}
+            )
             report = {
+                "skill_name": skill_name if updated else None,
                 "updated_version": updated.version if updated else None,
                 "updated_body": updated.body if updated else None,
                 "boundary_experience": experiences,
