@@ -1,5 +1,5 @@
 {
-  "run_id": "0cab656d5c6b5373fb44",
+  "run_id": "3c2955d0331bae07f74a",
   "mode": "offline",
   "quality_claim": false,
   "scope": "deterministic fixture checks; offline validates behavior only",
@@ -36,7 +36,7 @@
                 "protected_file_unchanged": true,
                 "cache_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/cache/stable/P01-14af66d4b2",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/cache/stable/P01-647b2e95ae",
               "metrics": {
                 "branch": "cache/stable",
                 "prefix_stable": true,
@@ -60,11 +60,11 @@
                 "parent_context_chars": 4839
               },
               "answer": "Evidence: source.json, README.md",
-              "session_id": "adaa0945946b487d87c4dc072f4ed4ef",
+              "session_id": "c5da404171b84a7b988f9172eb7da4e8",
               "model_calls": 6,
               "accounted_tokens": 168,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0782
+              "elapsed_seconds": 0.0848
             },
             {
               "id": "P02",
@@ -77,7 +77,7 @@
                 "protected_file_unchanged": true,
                 "cache_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/cache/stable/P02-b679fbdd0c",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/cache/stable/P02-662356befb",
               "metrics": {
                 "branch": "cache/stable",
                 "prefix_stable": true,
@@ -101,11 +101,11 @@
                 "parent_context_chars": 7066
               },
               "answer": "Evidence: source.json, README.md, app.py, engine.py, storage.py",
-              "session_id": "eaa7e421f9d24fa79dda31af1cdb2a64",
+              "session_id": "9f620f3a8b90494589f8f574b1468a9b",
               "model_calls": 6,
               "accounted_tokens": 168,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0869
+              "elapsed_seconds": 0.0934
             }
           ],
           "cost_cny": "0"
@@ -134,7 +134,7 @@
                 "protected_file_unchanged": true,
                 "cache_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/cache/rebuild/P01-1c25936306",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/cache/rebuild/P01-58f159e7f8",
               "metrics": {
                 "branch": "cache/rebuild",
                 "prefix_stable": false,
@@ -158,11 +158,11 @@
                 "parent_context_chars": 4841
               },
               "answer": "Evidence: source.json, README.md",
-              "session_id": "f4f54590fa184969a6a284f123e00c6c",
+              "session_id": "695dbba1a2c744eb8d64ad258e104267",
               "model_calls": 6,
               "accounted_tokens": 168,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0777
+              "elapsed_seconds": 0.0807
             },
             {
               "id": "P02",
@@ -175,7 +175,7 @@
                 "protected_file_unchanged": true,
                 "cache_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/cache/rebuild/P02-92dfe3c57d",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/cache/rebuild/P02-7dfe7ce21b",
               "metrics": {
                 "branch": "cache/rebuild",
                 "prefix_stable": false,
@@ -199,11 +199,11 @@
                 "parent_context_chars": 7068
               },
               "answer": "Evidence: source.json, README.md, app.py, engine.py, storage.py",
-              "session_id": "379ae3174d1247b1a30500c8e2bb3a82",
+              "session_id": "ca090b0851ee4183b335c72792dc6ce2",
               "model_calls": 6,
               "accounted_tokens": 168,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0853
+              "elapsed_seconds": 0.1018
             }
           ],
           "cost_cny": "0"
@@ -243,7 +243,7 @@
                 "edit_engine.py": true,
                 "compression_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/compression/plain/P05-634ea6a30a",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/compression/plain/P05-908f03b64a",
               "metrics": {
                 "branch": "compression/plain",
                 "compacted": true,
@@ -292,11 +292,11 @@
                 "parent_context_chars": 3456
               },
               "answer": "Evidence: source.json, engine.py",
-              "session_id": "06552dc48667419095d9e071ad4f4360",
+              "session_id": "ea3786957e6a4df39a56112b5f1d27e7",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0833
+              "elapsed_seconds": 0.0866
             },
             {
               "id": "W09",
@@ -309,7 +309,7 @@
                 "protected_file_unchanged": true,
                 "compression_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/compression/plain/W09-3e33d73374",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/compression/plain/W09-02704bf8a8",
               "metrics": {
                 "branch": "compression/plain",
                 "compacted": true,
@@ -358,11 +358,11 @@
                 "parent_context_chars": 2513
               },
               "answer": "Evidence: source.json",
-              "session_id": "a7301fd64e104b5d9941f48f9a77fa78",
+              "session_id": "150a239c110d4594803c04e3b5b1b666",
               "model_calls": 4,
               "accounted_tokens": 112,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0681
+              "elapsed_seconds": 0.0703
             }
           ],
           "cost_cny": "0"
@@ -392,7 +392,7 @@
                 "edit_engine.py": true,
                 "compression_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/compression/dsh/P05-1e09b7b32a",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/compression/dsh/P05-87024ac3df",
               "metrics": {
                 "branch": "compression/dsh",
                 "compacted": true,
@@ -441,11 +441,11 @@
                 "parent_context_chars": 3699
               },
               "answer": "Evidence: source.json, engine.py",
-              "session_id": "2c59c3c1981b4daa863e2af222774ba1",
+              "session_id": "3ac1583882274acfad66ddf8426402cd",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.082
+              "elapsed_seconds": 0.0837
             },
             {
               "id": "W09",
@@ -458,7 +458,7 @@
                 "protected_file_unchanged": true,
                 "compression_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/compression/dsh/W09-460884b88d",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/compression/dsh/W09-28b41c5081",
               "metrics": {
                 "branch": "compression/dsh",
                 "compacted": true,
@@ -507,11 +507,11 @@
                 "parent_context_chars": 2756
               },
               "answer": "Evidence: source.json",
-              "session_id": "c0316fc484004ae09ef4f56f5d6a6029",
+              "session_id": "66298ec876a74217a2cedc42304a232e",
               "model_calls": 4,
               "accounted_tokens": 112,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0723
+              "elapsed_seconds": 0.0717
             }
           ],
           "cost_cny": "0"
@@ -541,7 +541,7 @@
                 "edit_engine.py": true,
                 "compression_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/compression/three_layer/P05-9958d5cb50",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/compression/three_layer/P05-bbc0e83617",
               "metrics": {
                 "branch": "compression/three_layer",
                 "compacted": true,
@@ -590,11 +590,11 @@
                 "parent_context_chars": 3617
               },
               "answer": "Evidence: source.json, engine.py",
-              "session_id": "a13bf2f928ad4318a6335e737f2be7cd",
+              "session_id": "ee3e107c34194f1f8fdf3d156f4b911c",
               "model_calls": 7,
               "accounted_tokens": 196,
               "cost_cny": "0",
-              "elapsed_seconds": 0.1098
+              "elapsed_seconds": 0.0955
             },
             {
               "id": "W09",
@@ -607,7 +607,7 @@
                 "protected_file_unchanged": true,
                 "compression_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/compression/three_layer/W09-ffcff76696",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/compression/three_layer/W09-df1239e966",
               "metrics": {
                 "branch": "compression/three_layer",
                 "compacted": true,
@@ -656,11 +656,11 @@
                 "parent_context_chars": 2674
               },
               "answer": "Evidence: source.json",
-              "session_id": "e02fb73ba62d49c0bfeacbd22ead1917",
+              "session_id": "76ad025c78ec452aba61d96af69a8b6e",
               "model_calls": 6,
               "accounted_tokens": 168,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0822
+              "elapsed_seconds": 0.0825
             }
           ],
           "cost_cny": "0"
@@ -698,7 +698,7 @@
                 "source_evidence_read": true,
                 "protected_file_unchanged": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/subtasks/single/P07-8b464fb013",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/subtasks/single/P07-081bdde941",
               "metrics": {
                 "branch": "subtasks/single",
                 "input_tokens": 60,
@@ -721,11 +721,11 @@
                 "parent_context_chars": 2648
               },
               "answer": "Evidence: source.json, app.py, storage.py",
-              "session_id": "9fb9d6c8f5014aa9ab868bfde5087d36",
+              "session_id": "3bef7a68fdff4432b89bdece6a8aa9a8",
               "model_calls": 3,
               "accounted_tokens": 84,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0434
+              "elapsed_seconds": 0.0431
             },
             {
               "id": "P08",
@@ -737,7 +737,7 @@
                 "source_evidence_read": true,
                 "protected_file_unchanged": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/subtasks/single/P08-916685ba91",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/subtasks/single/P08-c845141e84",
               "metrics": {
                 "branch": "subtasks/single",
                 "input_tokens": 60,
@@ -760,11 +760,11 @@
                 "parent_context_chars": 2636
               },
               "answer": "Evidence: source.json, app.py, storage.py",
-              "session_id": "80a0e4c7830742deb4d3e5f8389e3e48",
+              "session_id": "0c5eb23de0b5469e8ff9f27c542f085f",
               "model_calls": 3,
               "accounted_tokens": 84,
               "cost_cny": "0",
-              "elapsed_seconds": 0.042
+              "elapsed_seconds": 0.0434
             }
           ],
           "cost_cny": "0"
@@ -794,7 +794,7 @@
                 "child_completed": true,
                 "fork_seed_boundary": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/subtasks/spawn/P07-9baa3545f8",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/subtasks/spawn/P07-79420c03f7",
               "metrics": {
                 "branch": "subtasks/spawn",
                 "child_state": "completed",
@@ -820,11 +820,11 @@
                 "parent_context_chars": 3603
               },
               "answer": "Evidence: source.json, app.py, storage.py",
-              "session_id": "8793b417c46d4dbd839754841ddfef0a",
+              "session_id": "6547a2ec36d74118ae4babf4a79cc3cc",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.077
+              "elapsed_seconds": 0.0788
             },
             {
               "id": "P08",
@@ -838,7 +838,7 @@
                 "child_completed": true,
                 "fork_seed_boundary": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/subtasks/spawn/P08-3dc7f127a1",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/subtasks/spawn/P08-f5972ef3e3",
               "metrics": {
                 "branch": "subtasks/spawn",
                 "child_state": "completed",
@@ -864,11 +864,11 @@
                 "parent_context_chars": 3585
               },
               "answer": "Evidence: source.json, app.py, storage.py",
-              "session_id": "e31c8392340447b09a4da7085fe1b841",
+              "session_id": "500b92fd74294d74b0386b890ead28f0",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0757
+              "elapsed_seconds": 0.0774
             }
           ],
           "cost_cny": "0"
@@ -898,7 +898,7 @@
                 "child_completed": true,
                 "fork_seed_boundary": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/subtasks/fork/P07-c76e7ea4be",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/subtasks/fork/P07-1f3bebe5a5",
               "metrics": {
                 "branch": "subtasks/fork",
                 "child_state": "completed",
@@ -924,11 +924,11 @@
                 "parent_context_chars": 3601
               },
               "answer": "Evidence: source.json, app.py, storage.py",
-              "session_id": "f0e7fcbcb71f488a8d89416346126b10",
+              "session_id": "7f558f15537f4a58b8db39bc354dbe8c",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0781
+              "elapsed_seconds": 0.0764
             },
             {
               "id": "P08",
@@ -942,7 +942,7 @@
                 "child_completed": true,
                 "fork_seed_boundary": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/subtasks/fork/P08-3770fda92f",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/subtasks/fork/P08-f89441bbab",
               "metrics": {
                 "branch": "subtasks/fork",
                 "child_state": "completed",
@@ -968,11 +968,11 @@
                 "parent_context_chars": 3583
               },
               "answer": "Evidence: source.json, app.py, storage.py",
-              "session_id": "8a4d6f92311e49df953e05ee07f5bc47",
+              "session_id": "df2cc83d22754b2f97e095b85d0d53fe",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0767
+              "elapsed_seconds": 0.1385
             }
           ],
           "cost_cny": "0"
@@ -1011,7 +1011,7 @@
                 "protected_file_unchanged": true,
                 "memory_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/memory/absent/W07-f9c40b80bd",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/memory/absent/W07-383ba4116f",
               "metrics": {
                 "branch": "memory/absent",
                 "recall_mode": "absent",
@@ -1036,11 +1036,11 @@
                 "parent_context_chars": 1948
               },
               "answer": "Evidence: source.json",
-              "session_id": "4afacfbb50fb43a68fe64a9e7fa4ff04",
+              "session_id": "a7809f5c3f4947ec8e9341b4e25faa70",
               "model_calls": 3,
               "accounted_tokens": 84,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0417
+              "elapsed_seconds": 0.0439
             },
             {
               "id": "W09",
@@ -1053,7 +1053,7 @@
                 "protected_file_unchanged": true,
                 "memory_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/memory/absent/W09-1ce076dff9",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/memory/absent/W09-8a4a41f3f9",
               "metrics": {
                 "branch": "memory/absent",
                 "recall_mode": "absent",
@@ -1078,11 +1078,11 @@
                 "parent_context_chars": 1989
               },
               "answer": "Evidence: source.json",
-              "session_id": "995cf36cd5474d799a8c44186e335896",
+              "session_id": "48cfa848a3164ce49098c11af03f1736",
               "model_calls": 3,
               "accounted_tokens": 84,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0415
+              "elapsed_seconds": 0.0422
             }
           ],
           "cost_cny": "0"
@@ -1111,7 +1111,7 @@
                 "protected_file_unchanged": true,
                 "memory_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/memory/baseline/W07-6e2805bd84",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/memory/baseline/W07-68c1d54c53",
               "metrics": {
                 "branch": "memory/baseline",
                 "legacy_recall_injections": 0,
@@ -1137,11 +1137,11 @@
                 "parent_context_chars": 1950
               },
               "answer": "Evidence: source.json",
-              "session_id": "0b1e0bd7b68f4090b67fb5c5890b53ac",
+              "session_id": "b1a70d9130ec42b194c77ba7482eec5c",
               "model_calls": 3,
               "accounted_tokens": 84,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0411
+              "elapsed_seconds": 0.0433
             },
             {
               "id": "W09",
@@ -1154,7 +1154,7 @@
                 "protected_file_unchanged": true,
                 "memory_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/memory/baseline/W09-45e695e9ca",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/memory/baseline/W09-406b1caa69",
               "metrics": {
                 "branch": "memory/baseline",
                 "legacy_recall_injections": 0,
@@ -1180,11 +1180,11 @@
                 "parent_context_chars": 1991
               },
               "answer": "Evidence: source.json",
-              "session_id": "c990ed6f031e44f9a934e0bcdbd511ec",
+              "session_id": "a0187d8b720343e581add57153811993",
               "model_calls": 3,
               "accounted_tokens": 84,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0424
+              "elapsed_seconds": 0.0513
             }
           ],
           "cost_cny": "0"
@@ -1213,7 +1213,7 @@
                 "protected_file_unchanged": true,
                 "memory_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/memory/fixed/W07-8c21677a8c",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/memory/fixed/W07-884f7b9608",
               "metrics": {
                 "branch": "memory/fixed",
                 "recall_mode": "fixed",
@@ -1245,11 +1245,11 @@
                 "parent_context_chars": 2519
               },
               "answer": "Evidence: source.json",
-              "session_id": "4c8431aff1f245d68c081f5e0f50ccee",
+              "session_id": "2b22be44bb2843e2bfba480d7479c9a7",
               "model_calls": 4,
               "accounted_tokens": 112,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0454
+              "elapsed_seconds": 0.0456
             },
             {
               "id": "W09",
@@ -1262,7 +1262,7 @@
                 "protected_file_unchanged": true,
                 "memory_branch": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/memory/fixed/W09-b42c624305",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/memory/fixed/W09-5a4228ee0e",
               "metrics": {
                 "branch": "memory/fixed",
                 "recall_mode": "fixed",
@@ -1294,11 +1294,11 @@
                 "parent_context_chars": 2560
               },
               "answer": "Evidence: source.json",
-              "session_id": "2b9cd0cba4a9437d8d26a74103b78030",
+              "session_id": "fb02aee1913e4f12890d285703d9a95c",
               "model_calls": 4,
               "accounted_tokens": 112,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0463
+              "elapsed_seconds": 0.0458
             }
           ],
           "cost_cny": "0"
@@ -1341,7 +1341,7 @@
                 "proposal_applied": true,
                 "narrative_exception": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/evolution/full_merge/W03-e180cae9c0",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/evolution/full_merge/W03-5c04808c01",
               "metrics": {
                 "branch": "evolution/full_merge",
                 "experience_given_to_maintenance": false,
@@ -1377,7 +1377,7 @@
                 "parent_context_chars": 2927
               },
               "answer": "Evidence: source.json",
-              "session_id": "6f4ff5118756456ab2fcc5b75fb3374c",
+              "session_id": "44c8284eb4f6494ea11319ea9f7d292b",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
@@ -1396,7 +1396,7 @@
                 "proposal_applied": true,
                 "narrative_exception": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/evolution/full_merge/W04-54d78c35b5",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/evolution/full_merge/W04-8b7f8b7203",
               "metrics": {
                 "branch": "evolution/full_merge",
                 "experience_given_to_maintenance": false,
@@ -1432,7 +1432,7 @@
                 "parent_context_chars": 2931
               },
               "answer": "Evidence: source.json",
-              "session_id": "5a2d027e2208435c825198bece2e76be",
+              "session_id": "9d3061c24b00432d8110d6ec483e02b8",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
@@ -1451,7 +1451,7 @@
                 "proposal_applied": true,
                 "narrative_exception": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/evolution/full_merge/W05-bacbe5a469",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/evolution/full_merge/W05-7d85257bb4",
               "metrics": {
                 "branch": "evolution/full_merge",
                 "experience_given_to_maintenance": false,
@@ -1487,11 +1487,11 @@
                 "parent_context_chars": 2980
               },
               "answer": "Evidence: source.json",
-              "session_id": "9e5d6e584d4946588d72dca75a640259",
+              "session_id": "917c7bb1cdc3405bbf635864cbdf70fa",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0526
+              "elapsed_seconds": 0.053
             },
             {
               "id": "W08",
@@ -1506,7 +1506,7 @@
                 "proposal_applied": true,
                 "narrative_exception": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/evolution/full_merge/W08-c89cb6167e",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/evolution/full_merge/W08-bb2738ce2e",
               "metrics": {
                 "branch": "evolution/full_merge",
                 "experience_given_to_maintenance": false,
@@ -1542,11 +1542,11 @@
                 "parent_context_chars": 2926
               },
               "answer": "Evidence: source.json",
-              "session_id": "635cba868c1f4e338e2e03f996a1afbd",
+              "session_id": "c19e271dcba7460daa90c8b0b862206d",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0522
+              "elapsed_seconds": 0.0544
             }
           ],
           "cost_cny": "0"
@@ -1578,7 +1578,7 @@
                 "narrative_exception": true,
                 "experience_saved": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/evolution/experience_bounded/W03-14f9d8bba6",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/evolution/experience_bounded/W03-45c003c4c2",
               "metrics": {
                 "branch": "evolution/experience_bounded",
                 "experience_given_to_maintenance": true,
@@ -1614,11 +1614,11 @@
                 "parent_context_chars": 2935
               },
               "answer": "Evidence: source.json",
-              "session_id": "8cca7cd437fa4956b946d483eb042057",
+              "session_id": "23cb8bb54f8b46d2bf3505f6d236f0f4",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0575
+              "elapsed_seconds": 0.0581
             },
             {
               "id": "W04",
@@ -1634,7 +1634,7 @@
                 "narrative_exception": true,
                 "experience_saved": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/evolution/experience_bounded/W04-6de2a62bcc",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/evolution/experience_bounded/W04-b02d9b3179",
               "metrics": {
                 "branch": "evolution/experience_bounded",
                 "experience_given_to_maintenance": true,
@@ -1670,11 +1670,11 @@
                 "parent_context_chars": 2939
               },
               "answer": "Evidence: source.json",
-              "session_id": "d122f0446df74b0fac0008a246b33570",
+              "session_id": "67550331f08d45188e0be3dd179a0d8a",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0578
+              "elapsed_seconds": 0.058
             },
             {
               "id": "W05",
@@ -1690,7 +1690,7 @@
                 "narrative_exception": true,
                 "experience_saved": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/evolution/experience_bounded/W05-40a56daf08",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/evolution/experience_bounded/W05-928211d971",
               "metrics": {
                 "branch": "evolution/experience_bounded",
                 "experience_given_to_maintenance": true,
@@ -1726,11 +1726,11 @@
                 "parent_context_chars": 2988
               },
               "answer": "Evidence: source.json",
-              "session_id": "4b8020455a854f4ca9a8f96f303140e2",
+              "session_id": "c18c2f26b6e4497ba96e163ed7a4799f",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0706
+              "elapsed_seconds": 0.0578
             },
             {
               "id": "W08",
@@ -1746,7 +1746,7 @@
                 "narrative_exception": true,
                 "experience_saved": true
               },
-              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/evolution/experience_bounded/W08-8608b55dd3",
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/evolution/experience_bounded/W08-d4c8e62cdf",
               "metrics": {
                 "branch": "evolution/experience_bounded",
                 "experience_given_to_maintenance": true,
@@ -1782,11 +1782,11 @@
                 "parent_context_chars": 2934
               },
               "answer": "Evidence: source.json",
-              "session_id": "d2828952dee24c408b14e988d391d0bd",
+              "session_id": "38a7e15d473e4c239d3df349b28515e0",
               "model_calls": 5,
               "accounted_tokens": 140,
               "cost_cny": "0",
-              "elapsed_seconds": 0.0577
+              "elapsed_seconds": 0.0591
             }
           ],
           "cost_cny": "0"
@@ -1795,7 +1795,7 @@
     }
   },
   "resumed_cases": 0,
-  "session_id": "evaluation-0cab656d5c6b5373fb44",
+  "session_id": "evaluation-3c2955d0331bae07f74a",
   "baseline": {
     "denominator": 20,
     "eligible_denominator": 20,
@@ -1819,7 +1819,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P01-99f6ee2d5a",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P01-de33a05e01",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -1842,11 +1842,11 @@
           "parent_context_chars": 2324
         },
         "answer": "Evidence: source.json, README.md",
-        "session_id": "775513410f6e4228bb96b0b6a12440d5",
+        "session_id": "e6aca4b201b34b15af3e7d203d0dd851",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.043
+        "elapsed_seconds": 0.0487
       },
       {
         "id": "P02",
@@ -1858,7 +1858,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P02-afc19e1d1f",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P02-b9d6b45159",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -1881,11 +1881,11 @@
           "parent_context_chars": 3404
         },
         "answer": "Evidence: source.json, README.md, app.py, engine.py, storage.py",
-        "session_id": "ee115356d4a64feba143decbeba6e92c",
+        "session_id": "2fa0128a89bd446297f8bf0eea1d5736",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0445
+        "elapsed_seconds": 0.051
       },
       {
         "id": "P03",
@@ -1898,7 +1898,7 @@
           "protected_file_unchanged": true,
           "edit_engine.py": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P03-a78e6e4af6",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P03-c6d5e2f364",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 80,
@@ -1921,11 +1921,11 @@
           "parent_context_chars": 2930
         },
         "answer": "Evidence: source.json, engine.py",
-        "session_id": "a1f64a277fed419fbd1042e06dc4cbe9",
+        "session_id": "023c5677f53540e8a5374b9627dbdd55",
         "model_calls": 4,
         "accounted_tokens": 112,
         "cost_cny": "0",
-        "elapsed_seconds": 0.047
+        "elapsed_seconds": 0.0507
       },
       {
         "id": "P04",
@@ -1937,7 +1937,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P04-8731f71afa",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P04-3cd21a8292",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -1960,11 +1960,11 @@
           "parent_context_chars": 42263
         },
         "answer": "Evidence: source.json, long.txt",
-        "session_id": "d18a3a0c904b4c6bacc3bfd3c7ebf43d",
+        "session_id": "420791c25869411a8482dbe884366890",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0509
+        "elapsed_seconds": 0.0552
       },
       {
         "id": "P05",
@@ -1977,7 +1977,7 @@
           "protected_file_unchanged": true,
           "edit_engine.py": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P05-e225de45d4",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P05-7536b77d2c",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 80,
@@ -2000,11 +2000,11 @@
           "parent_context_chars": 2936
         },
         "answer": "Evidence: source.json, engine.py",
-        "session_id": "072587b986a0468698736b954a887791",
+        "session_id": "6b1a162f6f2741ea86d9ff73f01ac205",
         "model_calls": 4,
         "accounted_tokens": 112,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0494
+        "elapsed_seconds": 0.0511
       },
       {
         "id": "P06",
@@ -2016,7 +2016,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P06-41753704bb",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P06-8f03933674",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2039,11 +2039,11 @@
           "parent_context_chars": 2994
         },
         "answer": "Evidence: source.json, app.py, engine.py, storage.py",
-        "session_id": "d6a0de6bb0014ce9a64c1f4fb641cf83",
+        "session_id": "2fef3203c65c4b6eb1b52f6d037b80ca",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0429
+        "elapsed_seconds": 0.0435
       },
       {
         "id": "P07",
@@ -2055,7 +2055,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P07-ec88fb5b20",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P07-bfe83b3bbd",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2078,11 +2078,11 @@
           "parent_context_chars": 2650
         },
         "answer": "Evidence: source.json, app.py, storage.py",
-        "session_id": "2af76f0f9bee44abaac0fecbe9b9ad57",
+        "session_id": "0402e08a78314dcc8caa05a323bf0683",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0411
+        "elapsed_seconds": 0.0561
       },
       {
         "id": "P08",
@@ -2094,7 +2094,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P08-6b25a3d425",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P08-a249c7005e",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2117,11 +2117,11 @@
           "parent_context_chars": 2638
         },
         "answer": "Evidence: source.json, app.py, storage.py",
-        "session_id": "b7ec803357d74fddbe8b0d870b7217b5",
+        "session_id": "9c1a9a24fcaf49e8a55c9623830c5b3c",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0416
+        "elapsed_seconds": 0.0466
       },
       {
         "id": "P09",
@@ -2133,7 +2133,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P09-fe89a34b85",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P09-e9184238b2",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2156,11 +2156,11 @@
           "parent_context_chars": 1984
         },
         "answer": "Evidence: source.json",
-        "session_id": "4e09e56eb6d54f96ac3c6526d8471322",
+        "session_id": "7be6c89257c04c508877a6237d824bb7",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0399
+        "elapsed_seconds": 0.0446
       },
       {
         "id": "P10",
@@ -2172,7 +2172,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/P10-2963a2fc9a",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/P10-826e09a524",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2195,11 +2195,11 @@
           "parent_context_chars": 1939
         },
         "answer": "Evidence: source.json",
-        "session_id": "ba888077645c4ed893a77e8985148a23",
+        "session_id": "e44cc033305b421a94af4e567f833818",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0403
+        "elapsed_seconds": 0.0423
       },
       {
         "id": "W01",
@@ -2211,7 +2211,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W01-e120ebe93c",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W01-cda3df885a",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2234,11 +2234,11 @@
           "parent_context_chars": 1972
         },
         "answer": "Evidence: source.json",
-        "session_id": "5aa26a6a18754c0c9c0300946e48bb50",
+        "session_id": "f096d2c97995487eb0b4b4fead6ad45c",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0395
+        "elapsed_seconds": 0.0412
       },
       {
         "id": "W02",
@@ -2250,7 +2250,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W02-aad5df0d40",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W02-4949601c9b",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2273,11 +2273,11 @@
           "parent_context_chars": 1957
         },
         "answer": "Evidence: source.json",
-        "session_id": "9a2ba0db999641e48e27679d8b43e974",
+        "session_id": "9bb91945a4194adf9de13b7807808754",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0398
+        "elapsed_seconds": 0.0415
       },
       {
         "id": "W03",
@@ -2289,7 +2289,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W03-6cacd48944",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W03-ef0dce6ec4",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2312,11 +2312,11 @@
           "parent_context_chars": 1957
         },
         "answer": "Evidence: source.json",
-        "session_id": "a4158e9f65d6413283f880203ad9dacb",
+        "session_id": "dd45506b35554be498b8f5c6b4c6d8f0",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0396
+        "elapsed_seconds": 0.0475
       },
       {
         "id": "W04",
@@ -2328,7 +2328,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W04-b0a5a7b1af",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W04-a05bf9228a",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2351,11 +2351,11 @@
           "parent_context_chars": 1961
         },
         "answer": "Evidence: source.json",
-        "session_id": "d4105f1dfe7343e09551564844fb605f",
+        "session_id": "26baf10e2d4948da975d7abe6eba1a65",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0397
+        "elapsed_seconds": 0.0632
       },
       {
         "id": "W05",
@@ -2367,7 +2367,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W05-a98b76d9c0",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W05-fad7694f57",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2390,11 +2390,11 @@
           "parent_context_chars": 2010
         },
         "answer": "Evidence: source.json",
-        "session_id": "c45af0a5685c499bb2643b305d502b6e",
+        "session_id": "26f347ebccd14750b219370b8c5e35c2",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0398
+        "elapsed_seconds": 0.0809
       },
       {
         "id": "W06",
@@ -2406,7 +2406,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W06-7959b36087",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W06-dc0f8d7b45",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2429,11 +2429,11 @@
           "parent_context_chars": 2008
         },
         "answer": "Evidence: source.json",
-        "session_id": "45e2475cd157442e9490488407a26de8",
+        "session_id": "eec508409bb24b4a89cc77233bea00d2",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0399
+        "elapsed_seconds": 0.0765
       },
       {
         "id": "W07",
@@ -2445,7 +2445,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W07-c529235527",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W07-29757ada56",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2468,11 +2468,11 @@
           "parent_context_chars": 1952
         },
         "answer": "Evidence: source.json",
-        "session_id": "ad4fb8c691054943807127e1a97d29aa",
+        "session_id": "0fe36ecbb6a249f68683c85d11bb4418",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0397
+        "elapsed_seconds": 0.0478
       },
       {
         "id": "W08",
@@ -2484,7 +2484,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W08-061c0b80e9",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W08-093f5f3cd4",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2507,11 +2507,11 @@
           "parent_context_chars": 1956
         },
         "answer": "Evidence: source.json",
-        "session_id": "8f8667e05c674cfcb3273f03376ca77f",
+        "session_id": "48b2aa2af1a7441ca736ee5ad9149af6",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0397
+        "elapsed_seconds": 0.0507
       },
       {
         "id": "W09",
@@ -2523,7 +2523,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W09-75bcf01940",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W09-b809694759",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2546,11 +2546,11 @@
           "parent_context_chars": 1993
         },
         "answer": "Evidence: source.json",
-        "session_id": "81b1b636c05b495f82ec1722c9f4beaf",
+        "session_id": "62e7196b54e4424aa7d0cf4014714f97",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0404
+        "elapsed_seconds": 0.0447
       },
       {
         "id": "W10",
@@ -2562,7 +2562,7 @@
           "source_evidence_read": true,
           "protected_file_unchanged": true
         },
-        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/0cab656d5c6b5373fb44/baseline/standard/W10-a2b89964d0",
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/3c2955d0331bae07f74a/baseline/standard/W10-ac166f8352",
         "metrics": {
           "branch": "baseline/standard",
           "input_tokens": 60,
@@ -2585,17 +2585,17 @@
           "parent_context_chars": 2000
         },
         "answer": "Evidence: source.json",
-        "session_id": "d6ea6bcb4a344b51bcce603907cf29b2",
+        "session_id": "51dffbd491524092b6ee16652196a324",
         "model_calls": 3,
         "accounted_tokens": 84,
         "cost_cny": "0",
-        "elapsed_seconds": 0.0424
+        "elapsed_seconds": 0.0461
       }
     ],
     "cost_cny": "0"
   },
   "complete": true,
-  "identity": "0cab656d5c6b5373fb44502b6e18ea346cf2be0f77b7edd817237a8b8707bc6b",
+  "identity": "3c2955d0331bae07f74a1a79db0fa43652af3a5ca998aa071fb6c39ecb75b658",
   "new_model_calls": 203,
   "total_tokens": 5684,
   "total_cost_cny": "0",

@@ -146,8 +146,8 @@ async def run_demo(
                 "actual_tool_results": results,
             }
         else:
-            await agent.run_once("正式汇报以后都先给结论。")
-            await agent.run_once("以后所有正式汇报继续遵守这一要求。")
+            await agent.run_once("以后所有写作都先给结论，请把这项长期要求维护为可复用技能。")
+            await agent.run_once("以后所有写作继续遵守结论先行的长期要求。")
             if agent._background:
                 await asyncio.gather(*list(agent._background))
             # A maintenance model chooses the skill identity; the demo follows
@@ -159,7 +159,10 @@ async def run_demo(
             ]
             original = created[0] if created else None
             skill_name = original.name if original else "report-writing"
-            await agent.run_once(f"{skill_name} 需要收窄：故事创作不适用汇报结构。")
+            await agent.run_once(
+                f"更正长期要求：{skill_name} 今后仅适用于正式汇报；故事创作按叙事需要展开，"
+                "不套用结论先行。请持续维护这一适用边界，并作为长期经验保存。"
+            )
             if agent._background:
                 await asyncio.gather(*list(agent._background))
             catalog = agent.skills.capture_catalog()

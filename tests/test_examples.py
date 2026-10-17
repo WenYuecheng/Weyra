@@ -95,3 +95,17 @@ def test_writing_demo_uses_the_created_skill_identity(tmp_path, monkeypatch):
     assert report['updated_version'] == '1.0.1'
     assert report['rollback_version'] == '1.0.2'
     assert report['skill_name'] == 'formal-reporting'
+
+
+def test_writing_demo_evidence_contains_a_durable_scope_correction(tmp_path):
+    import asyncio
+    import sqlite3
+    from agents.demos import run_demo
+
+    report = asyncio.run(run_demo('writing', project=tmp_path))
+    connection = sqlite3.connect(Path(report['fixture_project']) / '.weyra/state.db')
+    records = [json.loads(row[0]) for row in connection.execute("select data from events where kind='message' order by seq")]
+    connection.close()
+    users = [r['content'] for r in records if r.get('role') == 'user' and r.get('source') == 'user']
+    assert '所有写作' in users[0]
+    assert '长期' in users[-1] and '故事' in users[-1]
