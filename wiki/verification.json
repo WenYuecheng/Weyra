@@ -227,5 +227,17 @@
     "examples/verify.py": "0cd8db42282039b4dbabbcc302b5b3ea6081b53cb036b722d1fa4c29d61c7282",
     "examples/personalized_writing.py": "88b7f5628b2b316a9275668370eec57a3138e3281d54adc687420c79c5e6d710"
   },
-  "scope": "Offline engineering evidence; not model quality or live provider verification."
+  "scope": "Offline engineering evidence; not model quality or live provider verification.",
+  "distribution_security": {
+    "tracked_files_scanned": 94,
+    "secret_hits": [],
+    "private_files_tracked": [],
+    "package_hits": [],
+    "artifacts_sha256": {
+      "weyra-0.1.0-py3-none-any.whl": "747dd6ca6308f5d55a6f6d0d0a75c0dbec005bb8caa5a5432ee5e968000ac5f3",
+      "weyra-0.1.0.tar.gz": "61370e8bc6a08a15698a8cbb7fb47b905a6809ab7fee0e50fccedf735a1f3751"
+    },
+    "remaining_validation_processes": 0,
+    "root_budget_pending": 0
+  }
 }

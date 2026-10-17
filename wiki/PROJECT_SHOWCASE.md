@@ -11,6 +11,6 @@
 - 实现 spawn/fork、有界并发、双输入队列、后台进程和资源所有权，以 SQLite 事务保证输入确认、子结果交付、预算结算及分支恢复，增加撤权、取消和发布失败测试。
 - 借鉴 WikiSkill 的经验/知识/技能分离与 SkillOpt 的局部编辑思路，实现经验辅助维护、有界补丁、来源追溯、原子发布恢复与版本回滚。
 
-展示时使用 `weyra demo --scenario analysis|writing --offline`，说明两类任务共用一套运行层。工程测试数量和离线结果引用 [当前证据](verification.json)；真实接入和费用引用 [真实验证记录](live-validation.json)。当前 CUN DeepSeek 文件工具链已通过，GLM/GPT 最小请求失败；不能在简历中写“真实多厂商全部验证”“缓存降低多少”或“写作质量提升多少”。
+展示时使用 `weyra demo --scenario analysis|writing --offline`，说明两类任务共用一套运行层。工程测试数量和离线结果引用 [当前证据](verification.json)；真实接入和费用引用 [真实验证记录](live-validation.json)。当前 CUN DeepSeek 文件工具链及二十个基准场景通过；五组专项的原始结果有检查失败与容量错误，详见 [真实效果报告](EFFECTS.md)。GLM/GPT 最小请求失败；不能在简历中写“真实多厂商全部验证”“缓存降低多少”或“写作质量提升多少”。
 
 源码对齐属于机制理解、Python 适配、系统整合与针对性工程改进。完整论文训练和自动效果发布门禁未实现，不将其作为个人贡献或实验结论。
