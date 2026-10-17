@@ -163,7 +163,7 @@ async def run_demo(
             original = created[0] if created else None
             skill_name = original.name if original else "report-writing"
             await agent.run_once(
-                "更正我的长期写作偏好：结论先行今后仅适用于正式汇报；故事创作按叙事需要展开，"
+                f"更正 {skill_name} 中的长期写作偏好：结论先行今后仅适用于正式汇报；故事创作按叙事需要展开，"
                 "不套用结论先行。以后持续遵守这一适用边界。"
             )
             if agent._background:

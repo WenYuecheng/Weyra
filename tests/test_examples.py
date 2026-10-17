@@ -80,13 +80,20 @@ def test_writing_demo_uses_the_created_skill_identity(tmp_path, monkeypatch):
     import asyncio
     from agents import demos
     original = demos._offline_runtime
+    providers = []
 
     def renamed(scenario):
         runtime = original(scenario)
         provider = runtime.registry.get('maintenance')
+        providers.append(provider)
         for response in provider.responses:
             data = json.loads(response.content)
             data['name'] = 'formal-reporting'
+            if data['action'] == 'create':
+                data['description'] = 'English reporting procedure'
+                data['body'] = 'Give the conclusion first for all writing.'
+            elif data['action'] == 'apply':
+                data['edits'][0]['old'] = 'Give the conclusion first for all writing.'
             object.__setattr__(response, 'content', json.dumps(data, ensure_ascii=False))
         return runtime
 
@@ -95,6 +102,8 @@ def test_writing_demo_uses_the_created_skill_identity(tmp_path, monkeypatch):
     assert report['updated_version'] == '1.0.1'
     assert report['rollback_version'] == '1.0.2'
     assert report['skill_name'] == 'formal-reporting'
+    payload = json.loads(providers[0].requests[-1].messages[0].content)
+    assert payload['target']['name'] == 'formal-reporting'
 
 
 def test_writing_demo_evidence_contains_a_durable_scope_correction(tmp_path):
