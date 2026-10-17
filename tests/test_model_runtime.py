@@ -3,8 +3,8 @@ from types import SimpleNamespace as NS
 
 import pytest
 
-from weyra.contracts import Message, ModelInfo, ModelResponse, PreparedRequest, ToolCall, Usage
-from weyra.model_runtime import (
+from agents.contracts import Message, ModelInfo, ModelResponse, PreparedRequest, ToolCall, Usage
+from agents.model_runtime import (
     AnthropicProvider,
     ModelError,
     ModelRuntime,
@@ -65,7 +65,11 @@ def test_openai_pairing_reasoning_and_usage():
         Message(
             "assistant",
             tool_calls=(ToolCall("a", "lookup", {"x": 1}),),
-            provider_data={"provider_id": "deepseek", "reasoning_content": "prior"},
+            provider_data={
+                "provider_id": "deepseek",
+                "model_id": "test",
+                "reasoning_content": "prior",
+            },
         ),
         Message("tool", "result", tool_call_id="a"),
         Message(
@@ -104,7 +108,9 @@ def test_anthropic_preserves_signed_blocks_and_adds_cache_input():
         "anthropic",
         [
             Message(
-                "assistant", "answer", provider_data={"provider_id": "anthropic", "content": blocks}
+                "assistant",
+                "answer",
+                provider_data={"provider_id": "anthropic", "model_id": "test", "content": blocks},
             ),
             Message("user", "next"),
         ],
@@ -146,6 +152,7 @@ def test_error_classification_and_orphan_tool_rejection():
     with pytest.raises(ModelError) as error:
         asyncio.run(collect(OpenAIProvider(client=client), request()))
     assert error.value.kind == "transient"
+    assert error.value.status_code == 429
     assert "secret-key" not in str(error.value)
     with pytest.raises(ModelError):
         asyncio.run(
@@ -348,7 +355,7 @@ def test_runtime_fallback_and_validation():
 
 
 def test_runtime_does_not_turn_persistence_errors_into_model_errors():
-    from weyra.runtime_state import Budget
+    from agents.runtime_state import Budget
 
     class Broken:
         def append(self, *args, **kwargs):
@@ -366,7 +373,7 @@ def test_runtime_does_not_turn_persistence_errors_into_model_errors():
 
 
 def test_runtime_caps_and_tagged_usage():
-    from weyra.runtime_state import Budget
+    from agents.runtime_state import Budget
 
     records = []
     context = NS(
@@ -405,14 +412,14 @@ def test_unsupported_parameters_never_reach_sdk():
 
 
 def test_cancellation_closes_provider_and_charges_unknown_usage():
-    from weyra.runtime_state import Budget
+    from agents.runtime_state import Budget
 
     closed = []
 
     class Paused:
         async def stream(self, request, context):
             try:
-                yield __import__("weyra.contracts", fromlist=["StreamEvent"]).StreamEvent(
+                yield __import__("agents.contracts", fromlist=["StreamEvent"]).StreamEvent(
                     "text", "partial"
                 )
                 await asyncio.Event().wait()
@@ -454,10 +461,88 @@ def test_anthropic_replays_redacted_thinking_and_tool_error_status():
         Message(
             "assistant",
             tool_calls=(ToolCall("a", "lookup"),),
-            provider_data={"provider_id": "anthropic", "content": blocks},
+            provider_data={"provider_id": "anthropic", "model_id": "test", "content": blocks},
         ),
         Message("tool", "denied", tool_call_id="a", provider_data={"tool_status": "denied"}),
     ]
     asyncio.run(collect(AnthropicProvider(client=client), request("anthropic", messages)))
     assert client.calls[0]["messages"][0]["content"] == blocks
     assert client.calls[0]["messages"][1]["content"][0]["is_error"] is True
+
+
+def test_openai_compatible_reports_cache_creation_when_present():
+    client = Client(
+        NS(
+            choices=[NS(message=NS(content="ok", tool_calls=[]), finish_reason="stop")],
+            usage=NS(
+                prompt_tokens=100,
+                completion_tokens=2,
+                prompt_tokens_details=NS(cached_tokens=20, cache_write_tokens=30),
+            ),
+        )
+    )
+    response = asyncio.run(collect(OpenAIProvider(client=client), request()))[-1].data
+    assert response.usage == Usage(100, 2, 20, 30)
+
+
+@pytest.mark.parametrize("values", [(-1, 2), (2, -1), (True, 2), (2, 1, 3), (2, 1, 1, 2)])
+def test_invalid_provider_usage_cannot_refund_budget(values):
+    with pytest.raises(ValueError):
+        Usage(*values)
+
+
+def test_unknown_provider_stop_reasons_are_not_success():
+    openai = Client(
+        NS(
+            choices=[
+                NS(message=NS(content="partial", tool_calls=[]), finish_reason="new_partial_reason")
+            ],
+            usage=NS(prompt_tokens=2, completion_tokens=1),
+        )
+    )
+    anthropic = Client(
+        NS(
+            content=[NS(type="text", text="partial")],
+            stop_reason="pause_turn",
+            usage=NS(input_tokens=2, output_tokens=1),
+        )
+    )
+    assert (
+        asyncio.run(collect(OpenAIProvider(client=openai), request()))[-1].data.stop_reason
+        != "stop"
+    )
+    assert (
+        asyncio.run(collect(AnthropicProvider(client=anthropic), request("anthropic")))[
+            -1
+        ].data.stop_reason
+        != "stop"
+    )
+
+
+def test_runtime_records_client_first_text_latency(tmp_path):
+    from agents.runtime_state import Budget, RunContext
+    from agents.session import SessionStore
+    from agents.contracts import StreamEvent
+
+    class Provider:
+        async def stream(self, request, context):
+            yield StreamEvent("text", "ok")
+            yield StreamEvent("response", ModelResponse("ok", usage=Usage(1, 1)))
+
+        async def close(self):
+            pass
+
+    async def run():
+        registry = ProviderRegistry()
+        registry.register("p", Provider())
+        model = ModelInfo("p", "m", 10000, 100)
+        runtime = ModelRuntime(registry, {"main": model})
+        session = SessionStore(project=tmp_path)
+        await runtime.complete(
+            PreparedRequest(model, "", ()), RunContext(tmp_path, session, Budget())
+        )
+        usage = session.latest("model_usage")
+        assert 0 <= usage["first_text_seconds"] <= usage["request_duration_seconds"]
+        session.close()
+
+    asyncio.run(run())

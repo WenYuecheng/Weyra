@@ -3,10 +3,10 @@
 import asyncio
 from unittest.mock import patch
 import pytest
-from weyra.agent_loop import Agent
-from weyra.contracts import Message, ModelInfo, ToolCall
-from weyra.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
-from weyra.session import SessionStore
+from agents.agent import Agent
+from agents.contracts import Message, ModelInfo, ToolCall
+from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+from agents.session import SessionStore
 
 
 def runtime():
@@ -44,10 +44,14 @@ def test_recovery_keeps_durably_committed_tool_result(tmp_path):
 
 
 def test_steering_recovery_does_not_duplicate_committed_message(tmp_path):
+    from agents.contracts import PreparedRequest
+    from agents.runtime_state import RunContext
+
     async def run():
         path = tmp_path / "session.jsonl"
         agent = Agent(tmp_path, runtime(), session_path=path, enable_evolution=False)
         agent.steer("execute exactly once")
+        agent.context = RunContext(tmp_path, agent.session, agent.budget)
         original = agent.session.append
 
         def interrupted(kind, data, checkpoint=False):
@@ -57,14 +61,19 @@ def test_steering_recovery_does_not_duplicate_committed_message(tmp_path):
 
         try:
             with patch.object(agent.session, "append", side_effect=interrupted):
+                agent._consume("steering")
                 with pytest.raises(OSError):
-                    agent._consume("steering")
+                    agent._ack_inputs(PreparedRequest(agent.runtime.resolve("main"), "", ()))
+            assert len(agent._queues["steering"]) == 1
         finally:
             await agent.close()
         resumed = Agent(tmp_path, runtime(), session_path=path, enable_evolution=False)
         try:
+            resumed.context = RunContext(tmp_path, resumed.session, resumed.budget)
             resumed._consume("steering")
+            resumed._ack_inputs(PreparedRequest(resumed.runtime.resolve("main"), "", ()))
             assert [m.content for m in resumed.session.project()].count("execute exactly once") == 1
+            assert resumed._queues["steering"] == []
         finally:
             await resumed.close()
 
@@ -72,7 +81,7 @@ def test_steering_recovery_does_not_duplicate_committed_message(tmp_path):
 
 
 def test_child_respects_parent_deny_rules(tmp_path):
-    from weyra.runtime_state import RunContext
+    from agents.runtime_state import RunContext
 
     async def run():
         parent = Agent(
@@ -96,7 +105,7 @@ def test_child_respects_parent_deny_rules(tmp_path):
 
 
 def test_duplicate_model_call_ids_rejected_before_effects(tmp_path):
-    from weyra.contracts import ModelResponse
+    from agents.contracts import ModelResponse
 
     async def run():
         registry = ProviderRegistry()

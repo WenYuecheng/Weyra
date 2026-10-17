@@ -1,6 +1,6 @@
 import asyncio
 import pytest
-from weyra.mcp import MCPClient
+from agents.mcp_client import MCPClient
 
 
 def test_untrusted():
@@ -36,9 +36,9 @@ for line in sys.stdin:
 
 def test_bridge_respects_actual_schema_and_permission(tmp_path):
     from types import SimpleNamespace
-    from weyra.tool_runtime import ToolRuntime
-    from weyra.contracts import ToolCall
-    from weyra.mcp import MCPManager
+    from agents.tool_runtime import ToolRuntime
+    from agents.contracts import ToolCall
+    from agents.mcp_client import MCPManager
 
     class Session:
         def append(self, *args, **kwargs):

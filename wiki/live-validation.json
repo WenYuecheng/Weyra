@@ -1,0 +1,914 @@
+{
+  "date": "2026-10-17",
+  "provider": "cun",
+  "base_url": "https://www.cun.ai/v1",
+  "models": {
+    "DeepSeek-V4.1-Flash": {
+      "minimal_probe": {
+        "probe": "deepseek_minimal",
+        "date": "2026-10-17",
+        "status": "protocol_response",
+        "stop_reason": "stop",
+        "answer": "OK",
+        "usage": {
+          "input_tokens": 13,
+          "output_tokens": 1,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "calls": 5,
+        "cost_cny": "3.8155887752315",
+        "unknown_calls": 4
+      },
+      "agent_file_tool_smoke": {
+        "date": "2026-10-17",
+        "provider": "cun",
+        "model": "DeepSeek-V4.1-Flash",
+        "status": "pass",
+        "answer": "Project Aurora's entry file is app.py, with a retention of 30 days.",
+        "actual_reads": 1,
+        "usage": [
+          {
+            "accounted_tokens": 1775,
+            "actual_cost_cny": "0.0066084427643",
+            "attempt_id": "3fbe4c84a15d4610a20a8f7d566ff453",
+            "cache_read_tokens": 0,
+            "cache_write_tokens": 0,
+            "cost_known": false,
+            "cost_method": "usage_upper_bound",
+            "estimated_cost_cny": "0.0612360928256",
+            "input_tokens": 1737,
+            "model_id": "DeepSeek-V4.1-Flash",
+            "output_tokens": 38,
+            "provider_id": "cun",
+            "purpose": "main",
+            "request_id": "0a8c4cc94c7c4a34af8cbc4821e0f493",
+            "reservation": "4be84788d0f04b399145a6d3a3d14f58",
+            "total_tokens": 1775,
+            "turn_id": "708f27770d6949cd9f1e234059c45c60"
+          },
+          {
+            "accounted_tokens": 1835,
+            "actual_cost_cny": "0.0066727060922",
+            "attempt_id": "7b905eda08c346dbacb7c5304bff89eb",
+            "cache_read_tokens": 1664,
+            "cache_write_tokens": 0,
+            "cost_known": false,
+            "cost_method": "usage_upper_bound",
+            "estimated_cost_cny": "0.0612360928256",
+            "input_tokens": 1818,
+            "model_id": "DeepSeek-V4.1-Flash",
+            "output_tokens": 17,
+            "provider_id": "cun",
+            "purpose": "main",
+            "request_id": "bc66eec92ecd4135a95ace7dc1bd6e4c",
+            "reservation": "1fb0620048444664b65eb51a46109682",
+            "total_tokens": 1835,
+            "turn_id": "708f27770d6949cd9f1e234059c45c60"
+          }
+        ],
+        "calls": 7,
+        "accounted_tokens": 15728,
+        "accounted_cost_cny": "3.8288699240880",
+        "unknown_calls": 4,
+        "cost_limit_cny": "20",
+        "settlements": [
+          {
+            "accounted_tokens": 5729,
+            "cost_cny": "0.9555625056",
+            "cost_known": false,
+            "purpose": "main",
+            "reservation": "091240708e954727b69b46afe0a0a25f",
+            "scope": "3ca76eea148941acb9880c84cd69900f",
+            "tokens": null
+          },
+          {
+            "accounted_tokens": 5729,
+            "cost_cny": "0.9555625056",
+            "cost_known": false,
+            "purpose": "main",
+            "reservation": "0d01ac25f451481aa0d66541b4ca6912",
+            "scope": "3ca76eea148941acb9880c84cd69900f",
+            "tokens": null
+          },
+          {
+            "accounted_tokens": 331,
+            "cost_cny": "0.9522033204",
+            "cost_known": false,
+            "purpose": "main",
+            "reservation": "432b5b70b55749ddb906b3cec8b835b8",
+            "scope": "d29cecb91442435b828677812c48c1bc",
+            "tokens": null
+          },
+          {
+            "accounted_tokens": 315,
+            "cost_cny": "0.9522033204",
+            "cost_known": false,
+            "purpose": "main",
+            "reservation": "cad49ec0a4cd4a0c88fd285506cf8c6f",
+            "scope": "45196bd7265b48ebb2dfd4f3c451fb24",
+            "tokens": null
+          },
+          {
+            "accounted_tokens": 14,
+            "cost_cny": "0.0000571232315",
+            "cost_known": false,
+            "purpose": "main",
+            "reservation": "fbb823ba64874f2cb73b7ea2bc6402f4",
+            "scope": "a34481cced0c4502bca69c65c5275ac0",
+            "tokens": 14
+          },
+          {
+            "reservation": "4be84788d0f04b399145a6d3a3d14f58",
+            "purpose": "main",
+            "scope": "708f27770d6949cd9f1e234059c45c60",
+            "tokens": 1775,
+            "accounted_tokens": 1775,
+            "cost_cny": "0.0066084427643",
+            "cost_known": false
+          },
+          {
+            "reservation": "1fb0620048444664b65eb51a46109682",
+            "purpose": "main",
+            "scope": "708f27770d6949cd9f1e234059c45c60",
+            "tokens": 1835,
+            "accounted_tokens": 1835,
+            "cost_cny": "0.0066727060922",
+            "cost_known": false
+          }
+        ]
+      }
+    },
+    "gpt-5.6-luna": {
+      "probe": "gpt_minimal",
+      "model": "gpt-5.6-luna",
+      "date": "2026-10-17",
+      "status": "error",
+      "error": "ModelError",
+      "kind": "transient",
+      "status_code": 504,
+      "calls": 8,
+      "cost_cny": "4.1070367240880",
+      "unknown_calls": 5
+    },
+    "glm-5.3-flash": {
+      "generation": "failed: four attempts; minimal requests HTTP 504",
+      "usage": null,
+      "conservative_cost_cny": "3.8155316520"
+    }
+  },
+  "root_budget_limit_cny": "20",
+  "budget_session_id": "validation-live-cny20",
+  "physical_attempts": 82,
+  "accounted_tokens": 270746,
+  "accounted_upper_bound_cny": "5.2609045066651",
+  "remaining_accounted_cny": "14.7390954933349",
+  "unknown_usage_calls": 9,
+  "actual_invoice_cny": null,
+  "price_provenance": "真实验证配置来源.json",
+  "cost_note": "Conservative accounting, including all failed and interrupted attempts; DeepSeek uses a 2x dynamic ceiling. Not an invoice.",
+  "initial_smoke": {
+    "physical_attempts": 8,
+    "max_physical_attempts": 8,
+    "max_tokens": 20000,
+    "included_in_root_budget": true,
+    "unknown_usage_calls": 5,
+    "accounted_upper_bound_cny": "4.1070367240880"
+  },
+  "effects": {
+    "status": "in_progress"
+  },
+  "earlier_runs": {
+    "evaluation-live-20261017-5a8315550571": {
+      "outcomes": [
+        {
+          "key": "baseline/standard/P01",
+          "outcome": {
+            "accounted_tokens": 58980,
+            "answer": "I wrote `result.json`, but I was **not** able to verify the answers against the project description, and you should treat the result as unverified.\n\n## What happened\n\n- **`source.json` was readable.** It contains: `{\"entry\": \"app.py\", \"evidence\": \"README.md\"}`\n- **No other file was readable.** `README.md` (whether at the fixture path or the repo root), the fixture directory listing, and even a plain `echo` via the shell all returned `Permission denied`. `list_files`, `grep_search`, MCP search, and memory search returned nothing.\n- **So I could not read the project description** (任务中说「读取项目说明」 — read the project description), and **I could not confirm that `README.md` names `app.py` as the entry point.**\n\n## Results file\n\nI wrote `result.json` in the working directory with exactly the two required fields:\n\n```json\n{\"entry\": \"app.py\", \"evidence\": \"README.md\"}\n```\n\nReading it back confirms this content. The values are copied from `source.json`, not independently checked, so I added no invented facts — but they are also not corroborated.\n\n## Evidence file paths\n\n| Path | What it is | Status |\n|---|---|---|\n| `source.json` (fixture copy; unread original intended at `<fixture>/source.json`) | Source of both `entry` and `evidence` values | Read successfully |\n| `README.md` (intended project description) | Claimed evidence for the `app.py` entry point | **Not readable** — unverified |\n| `result.json` (working directory) | Output file I created | Written and read back |\n\nOnly `source.json` supported the values. `README.md` remains unchecked, so if a grader requires the claim to be backed by the README text, this result may not hold up. If you can grant read access to `README.md` (or paste its contents), I'll confirm or correct `entry` and `evidence` right away.",
+            "checks": {
+              "artifact_json": true,
+              "protected_file_unchanged": true,
+              "source_evidence_read": false
+            },
+            "cost_cny": "0.2640449667169",
+            "elapsed_seconds": 125.9847,
+            "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5a8315550571/baseline/standard/P01-8734bcf189",
+            "group": "baseline",
+            "id": "P01",
+            "metrics": {
+              "branch": "baseline/standard",
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "cost_known": false,
+              "first_token_seconds": 6.442698775000463,
+              "input_tokens": null,
+              "output_tokens": null,
+              "parent_context_chars": 17492,
+              "request_latencies": [
+                {
+                  "attempt_id": "2aad12dbd9754938be882a42eba0348c",
+                  "duration_seconds": 62.68565524999576,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "failed"
+                },
+                {
+                  "attempt_id": "7cdba2e0e1d04793892eea649eb9ea2b",
+                  "duration_seconds": 3.5642584169982,
+                  "first_text_seconds": 2.5963578340015374,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "8554cd58b80c495284418305a4c17917",
+                  "duration_seconds": 2.769930791000661,
+                  "first_text_seconds": 2.311616833001608,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "e1b3ed0833cd4268aa70281230516941",
+                  "duration_seconds": 3.458155041000282,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "286af864b93c4fc2b58a7b11d4080210",
+                  "duration_seconds": 22.054129791999003,
+                  "first_text_seconds": 21.510075917001814,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "524c48a3cc7d4ab797716cf18d0154c1",
+                  "duration_seconds": 3.613654000000679,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "1f8019b5c5f842df9f04d7aaf9d6464d",
+                  "duration_seconds": 4.019137375005812,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "82517d51eb2d43c691f2aa841584ae26",
+                  "duration_seconds": 3.5170027499989374,
+                  "first_text_seconds": 2.9750265409966232,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "bb105f26d8bb40cdafc4fa0f95c88f50",
+                  "duration_seconds": 3.782920624995313,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "758fefc3075a44c78bd268247be74445",
+                  "duration_seconds": 4.2623098749973,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "465726d3b86b44b789d2d6fe88c384d1",
+                  "duration_seconds": 2.7834644579997985,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "8c754e7ef7db4a5796e3353c95337cc7",
+                  "duration_seconds": 3.617344749996846,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "86f6a1ba20574dbbb4e11a81e7900337",
+                  "duration_seconds": 4.961998582999513,
+                  "first_text_seconds": 2.8204167500007316,
+                  "purpose": "main",
+                  "state": "completed"
+                }
+              ],
+              "usage_by_purpose": {
+                "main": {
+                  "cache_read_tokens": null,
+                  "cache_write_tokens": null,
+                  "calls": 13,
+                  "input_tokens": null,
+                  "output_tokens": null
+                }
+              },
+              "usage_samples": 13
+            },
+            "model_calls": 13,
+            "session_id": "99b32581747f43c1aed829ced9ccc29d",
+            "status": "fail",
+            "variant": "standard"
+          }
+        }
+      ],
+      "pending": [
+        "baseline/standard/P02"
+      ],
+      "status": "interrupted_for_engineering_fix",
+      "pending_status": "cancelled; no fabricated outcome; costs retained"
+    },
+    "evaluation-live-20261017-99f65a6566bd": {
+      "outcomes": [],
+      "pending": [
+        "baseline/standard/P01"
+      ],
+      "status": "interrupted_for_engineering_fix",
+      "pending_status": "cancelled; no fabricated outcome; costs retained"
+    },
+    "evaluation-live-20261017-5c6929291c9c": {
+      "outcomes": [
+        {
+          "key": "baseline/standard/P01",
+          "outcome": {
+            "accounted_tokens": 19267,
+            "answer": "I read the project notes, identified the entry file, and wrote `result.json`.\n\n**Result:**\n```json\n{\n  \"entry\": \"app.py\",\n  \"evidence\": \"README.md\"\n}\n```\n\n**Evidence file paths:**\n- `source.json` — states `{\"entry\": \"app.py\", \"evidence\": \"README.md\"}`\n- `README.md` — \"Project Aurora: entry is app.py. app.render calls engine.normalize, which calls storage.persist.\"\n- `app.py`, `engine.py`, `storage.py` — used to independently confirm the call chain\n\n**How I arrived at the values:** I did not take the supplied `source.json` at face value. The three source files corroborate it: `app.py` imports `normalize` from `engine` and defines the top-level `render` function; `engine.py` imports `persist` from `storage`; and `storage.py` holds the terminal `persist` implementation. `app.py` is the outermost module with no inbound imports from the other two, so it is the entry point. The `evidence` value is `README.md` because that is the file `source.json` cites as its justification, and the README does make that claim.\n\n**Two caveats worth flagging:**\n- I copied the `README.md` value from `source.json` rather than deriving it. It is arguably slightly odd, since `app.py` itself is direct evidence of the entry point. I kept it because the task said to infer from `source.json` and not invent facts.\n- The environment context named the project path as `.../evaluation-fixtures/.../P01-713b9ff6d8`, but that directory listed as empty and shell access was denied. The fixture files were actually at the project root. The relative paths above are correct, but the absolute location in the context metadata does not match where the files live.\n\nI did not modify `protected.txt`, which is marked \"DO NOT MODIFY\".",
+            "checks": {
+              "artifact_json": true,
+              "protected_file_unchanged": true,
+              "source_evidence_read": true
+            },
+            "cost_cny": "0.0763273439953",
+            "elapsed_seconds": 35.1242,
+            "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P01-713b9ff6d8",
+            "group": "baseline",
+            "id": "P01",
+            "metrics": {
+              "branch": "baseline/standard",
+              "cache_read_tokens": 16768,
+              "cache_write_tokens": 0,
+              "cost_known": false,
+              "first_token_seconds": 4.3682432426673286,
+              "input_tokens": 18211,
+              "output_tokens": 1056,
+              "parent_context_chars": 9610,
+              "request_latencies": [
+                {
+                  "attempt_id": "53032352f62e4a02afeb0e0b4321402e",
+                  "duration_seconds": 8.096822416002396,
+                  "first_text_seconds": 7.040902790999098,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "0575ff7a83df4ea5ad5445d0bd23a893",
+                  "duration_seconds": 3.85024754099868,
+                  "first_text_seconds": 3.2846327500010375,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "cb53663a746541bbac7fdc635cc8f91a",
+                  "duration_seconds": 3.485234957995999,
+                  "first_text_seconds": 2.8545454579943907,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "9eddb19e2810440c8653fd75b6e3207c",
+                  "duration_seconds": 4.410210290996474,
+                  "first_text_seconds": 3.815465291001601,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "d96975fd959f4250b00cb3eccb104000",
+                  "duration_seconds": 6.59810520800238,
+                  "first_text_seconds": 6.0692755410054815,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "7645e9d8bd134306b245403b831c0989",
+                  "duration_seconds": 3.192891041006078,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "8eb2040a16754ce9ba8b4cdc228fedf8",
+                  "duration_seconds": 5.327417207998224,
+                  "first_text_seconds": 3.1446376250023604,
+                  "purpose": "main",
+                  "state": "completed"
+                }
+              ],
+              "usage_by_purpose": {
+                "main": {
+                  "cache_read_tokens": 16768,
+                  "cache_write_tokens": 0,
+                  "calls": 7,
+                  "input_tokens": 18211,
+                  "output_tokens": 1056
+                }
+              },
+              "usage_samples": 7
+            },
+            "model_calls": 7,
+            "session_id": "a1430f3df79846bfb10621cecd357f3f",
+            "status": "pass",
+            "variant": "standard"
+          }
+        },
+        {
+          "key": "baseline/standard/P02",
+          "outcome": {
+            "accounted_tokens": 27274,
+            "answer": "I traced the call chain from the entry point in the actual code, not from names.\n\n**Written:** `result.json` → `{\"call_chain\": [\"app.render\", \"engine.normalize\", \"storage.persist\"]}`\n\n**Evidence (all in the fixture directory):**\n- `app.py` — the entry module: `from engine import normalize`; `def render(data): return normalize(data)`, so the chain begins at `app.render`.\n- `engine.py` — `from storage import persist`; `def normalize(data): return persist(str(data))`, so `engine.normalize` is the second call.\n- `storage.py` — `def persist(text): return text.encode(\"utf-8\")` is the terminal call; it imports nothing from the chain, so the chain ends there.\n- `source.json` — records the same three-element `call_chain`; this matches what the code shows, so it was not used as the sole basis.\n- `README.md` — states the same chain in prose (secondary corroboration only).\n- `protected.txt` — contains \"DO NOT MODIFY\"; I did not touch it.\n\n**Method note:** the import statements plus `return <call>(...)` bodies corroborate each hop. `grep_search` was unreliable here (it returned no matches for patterns like `def ` that clearly exist in these files), so conclusions rest on direct file reads. Note `Weyra/.../P02-...` (as given in `project`) and `.weyra/evaluation-fixtures/...` resolved differently: `list_files` on the long snapshot path returned `[]`, while the working directory itself contained the fixtures. Shell execution was unavailable (`Permission denied`), so I could not confirm the absolute on-disk location.",
+            "checks": {
+              "artifact_json": true,
+              "protected_file_unchanged": true,
+              "source_evidence_read": true
+            },
+            "cost_cny": "0.1047925571293",
+            "elapsed_seconds": 42.0546,
+            "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P02-7521d3abfe",
+            "group": "baseline",
+            "id": "P02",
+            "metrics": {
+              "branch": "baseline/standard",
+              "cache_read_tokens": 22528,
+              "cache_write_tokens": 0,
+              "cost_known": false,
+              "first_token_seconds": 3.265505937499256,
+              "input_tokens": 26235,
+              "output_tokens": 1039,
+              "parent_context_chars": 10398,
+              "request_latencies": [
+                {
+                  "attempt_id": "e679cb63355e432aaf9d7f429ccf0a82",
+                  "duration_seconds": 4.209422499996435,
+                  "first_text_seconds": 3.4275697079938254,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "c77f0d23d49d4135a1b3cf7d71bd2a0e",
+                  "duration_seconds": 4.622994292003568,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "859840e0602f4ee993310f42af3bd4da",
+                  "duration_seconds": 3.239692459006619,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "bb179fd5e1834ad89237474afe706c50",
+                  "duration_seconds": 3.9717163750028703,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "6e930ce444fa4136a0566a6619270df8",
+                  "duration_seconds": 3.3701577500032727,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "f9b719f5d9c2455daf5d9fd58a4daa22",
+                  "duration_seconds": 4.441274791999604,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "9cbe1500cec7433e81fe68c7a7ecd226",
+                  "duration_seconds": 4.125117166004202,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "1effb231b1d4481987d0a094f9d54154",
+                  "duration_seconds": 4.8224891670033685,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "b3e6c6535eb9401191c0e1ef5b4c3b15",
+                  "duration_seconds": 3.802826915998594,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "de152c1271364297b24baefdbdb5bd76",
+                  "duration_seconds": 5.1847942500025965,
+                  "first_text_seconds": 3.103442167004687,
+                  "purpose": "main",
+                  "state": "completed"
+                }
+              ],
+              "usage_by_purpose": {
+                "main": {
+                  "cache_read_tokens": 22528,
+                  "cache_write_tokens": 0,
+                  "calls": 10,
+                  "input_tokens": 26235,
+                  "output_tokens": 1039
+                }
+              },
+              "usage_samples": 10
+            },
+            "model_calls": 10,
+            "session_id": "b534b0fee4e84ec8b2b6ed86cd731183",
+            "status": "pass",
+            "variant": "standard"
+          }
+        },
+        {
+          "key": "baseline/standard/P03",
+          "outcome": {
+            "accounted_tokens": 25993,
+            "answer": "Done. Summary of what I did, in the order required:\n\n**1. Read the original file before modifying**\n`engine.py` originally was:\n```python\nfrom storage import persist\ndef normalize(data):\n    return persist(str(data))\n```\nSo `normalize` converted the input to a string and handed it straight to `storage.persist`, which UTF-8 encodes it — any surrounding whitespace was preserved into the persisted record.\n\n**2. Change description (变更说明)**\n- File: `engine.py`, function `normalize`. Single-line change — `.strip()` is now applied to the string **before** `persist` is called, so leading/trailing whitespace is removed prior to persistence.\n- After: `return persist(str(data).strip())`\n- Deliberately untouched: `storage.py`, `app.py`, `README.md`, and `protected.txt` (verified after the edit — still reads `DO NOT MODIFY`). The call chain `app.render → engine.normalize → storage.persist` is unchanged; only the value passed along it differs.\n- Note: `str.strip()` with no arguments strips all leading/trailing whitespace (spaces, tabs, newlines), not just spaces. Behavior for non-string input is unchanged, since `str()` is still applied first.\n\n**3. `result.json`** written with exactly the two fields `function` and `change`, values inferred from `source.json` → `{\"function\": \"normalize\", \"change\": \"strip whitespace\"}`. Verified by re-reading the file.\n\nOne honesty note: I could not run the code. `run_shell` returned \"Permission denied\" in this environment, so I cannot claim any tests pass or that the module imports cleanly — the verification above is by reading the files only.\n\n**Evidence file paths**\n- `/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P03-452f58acd6/source.json` (values for `result.json`)\n- `.../P03-452f58acd6/engine.py` (file modified; read before and after)\n- `.../P03-452f58acd6/storage.py` (confirms `persist` is an encode-only sink)\n- `.../P03-452f58acd6/app.py` (confirms call chain)\n- `.../P03-452f58acd6/README.md` (confirms `app.py` entry and chain)\n- `.../P03-452f58acd6/protected.txt` (protected, unmodified)\n- `.../P03-452f58acd6/result.json` (output written)",
+            "checks": {
+              "artifact_json": true,
+              "edit_engine.py": true,
+              "protected_file_unchanged": true,
+              "source_evidence_read": false
+            },
+            "cost_cny": "0.1060028665612",
+            "elapsed_seconds": 35.4921,
+            "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P03-452f58acd6",
+            "group": "baseline",
+            "id": "P03",
+            "metrics": {
+              "branch": "baseline/standard",
+              "cache_read_tokens": 20608,
+              "cache_write_tokens": 0,
+              "cost_known": false,
+              "first_token_seconds": 3.363873489499383,
+              "input_tokens": 24144,
+              "output_tokens": 1849,
+              "parent_context_chars": 12228,
+              "request_latencies": [
+                {
+                  "attempt_id": "a8578dc35fa842fdb249d5c040556031",
+                  "duration_seconds": 3.71151841700339,
+                  "first_text_seconds": 2.8869287080015056,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "6b94e3671d0f423a850c2855bedd481b",
+                  "duration_seconds": 3.769550708006136,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "5dcdb202b27a4996bb42ae149f9c781f",
+                  "duration_seconds": 5.464108374995703,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "68cf9f1a3ff34093af168e8cbc9d59e3",
+                  "duration_seconds": 4.304314458997396,
+                  "first_text_seconds": 3.4751399169981596,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "091d65e336cc4d0b99efcbff5404a801",
+                  "duration_seconds": 3.945293667005899,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "cdaddb2494834e2eabd2e31b8abed8f0",
+                  "duration_seconds": 4.582557374997123,
+                  "first_text_seconds": 3.8742059579963097,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "2f58e16c5c1540c0b4a74d318182996d",
+                  "duration_seconds": 3.3926602919964353,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "2b6e17c66c334f2786f137346b50f9c0",
+                  "duration_seconds": 6.1189894170020125,
+                  "first_text_seconds": 3.2192193750015576,
+                  "purpose": "main",
+                  "state": "completed"
+                }
+              ],
+              "usage_by_purpose": {
+                "main": {
+                  "cache_read_tokens": 20608,
+                  "cache_write_tokens": 0,
+                  "calls": 8,
+                  "input_tokens": 24144,
+                  "output_tokens": 1849
+                }
+              },
+              "usage_samples": 8
+            },
+            "model_calls": 8,
+            "session_id": "16efd75592af4b629c708d695a2c7e95",
+            "status": "fail",
+            "variant": "standard"
+          }
+        },
+        {
+          "key": "baseline/standard/P04",
+          "outcome": {
+            "accounted_tokens": 21598,
+            "answer": "Done. `result.json` was written and verified:\n\n```json\n{\"marker\": \"AURORA-731\", \"line\": 2501}\n```\n\n**Evidence files** (all under `.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P04-b7076a9eb6/`):\n\n- **`source.json`** — declares `{\"marker\": \"AURORA-731\", \"line\": 2501}`; the primary source of both field values.\n- **`long.txt`** — the large log file where the marker actually lives. A grep for `AURORA-731` returns exactly one hit, `long.txt:2501`, and reading lines 2497–2501 shows `AURORA-731` alone on line 2501, preceded by ordinary `ordinary log entry` lines. This independently confirms the line number rather than relying only on `source.json`.\n- **`README.md`** — describes the call chain `app.py → engine.normalize → storage.persist`. Context only; it does not bear on the marker values.\n- **`protected.txt`** — marked `DO NOT MODIFY`; read but untouched.\n\nNotes on process:\n- The grep hit count matters here: had the marker appeared more than once, `source.json`'s line would have needed corroboration to disambiguate. Only one occurrence exists, so the two sources agree.\n- I attempted a shell cross-check (`awk`/`wc`) for an independent line count, but `run_shell` was denied permission. The grep and ranged-read results above are the evidence base instead; the file reportedly has 2502 lines, consistent with 2501 being near the tail.\n- `P04-…/protected.txt` was not modified, and no other fixture files were altered — only `result.json` was created.",
+            "checks": {
+              "artifact_json": true,
+              "protected_file_unchanged": true,
+              "source_evidence_read": false
+            },
+            "cost_cny": "0.0881911291450",
+            "elapsed_seconds": 28.7523,
+            "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P04-b7076a9eb6",
+            "group": "baseline",
+            "id": "P04",
+            "metrics": {
+              "branch": "baseline/standard",
+              "cache_read_tokens": 16512,
+              "cache_write_tokens": 0,
+              "cost_known": false,
+              "first_token_seconds": 3.1960538747498504,
+              "input_tokens": 20046,
+              "output_tokens": 1552,
+              "parent_context_chars": 10127,
+              "request_latencies": [
+                {
+                  "attempt_id": "d293dd375c3445d8bd253cd614252f9b",
+                  "duration_seconds": 3.695884583001316,
+                  "first_text_seconds": 3.0403636250048294,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "3671c96443764fc2b3c21e705f3d406c",
+                  "duration_seconds": 3.294671916999505,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "b9f8abe29f854c60ac8797ab20d61196",
+                  "duration_seconds": 4.1217732910008635,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "5ed2eae07c33488fb99b373f1722fe5f",
+                  "duration_seconds": 3.9730407079987344,
+                  "first_text_seconds": 2.5472765829981654,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "d252d579c2f14fd0bfd9979e4721a550",
+                  "duration_seconds": 3.9114799160015536,
+                  "first_text_seconds": 3.3513262909982586,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "564783caa25c475a9d55fcdde51ee7c1",
+                  "duration_seconds": 3.6963086249961634,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "b4f4516f65224c8497cf916a46a7ce2d",
+                  "duration_seconds": 5.816640791999816,
+                  "first_text_seconds": 3.845248999998148,
+                  "purpose": "main",
+                  "state": "completed"
+                }
+              ],
+              "usage_by_purpose": {
+                "main": {
+                  "cache_read_tokens": 16512,
+                  "cache_write_tokens": 0,
+                  "calls": 7,
+                  "input_tokens": 20046,
+                  "output_tokens": 1552
+                }
+              },
+              "usage_samples": 7
+            },
+            "model_calls": 7,
+            "session_id": "5d4de022162e42d698071fdcba7e8f98",
+            "status": "fail",
+            "variant": "standard"
+          }
+        },
+        {
+          "key": "baseline/standard/P05",
+          "outcome": {
+            "accounted_tokens": 22850,
+            "answer": "Done — the refactor continued in the same project directory (the fixture is the working project here; there is no separate host repo copy).\n\n**What changed**\n- `engine.py`: `normalize` now strips surrounding whitespace before persisting:\n  - before: `return persist(str(data))`\n  - after: `return persist(str(data).strip())`\n- `result.json` created with exactly two fields, values taken verbatim from `source.json`: `{\"constraint\": \"preserve protected.txt\", \"change\": \"trim\"}`. Interpreted as \"trim\" in this codebase = strip whitespace on the string prior to `storage.persist`; no other behavior was altered.\n\n**Constraint honored**\n- `protected.txt` is untouched, still reads `DO NOT MODIFY`. I did not edit `storage.py`, `app.py`, or `source.json`.\n\n**Evidence file paths** (all under `/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P05-b6bfbfc1d3/`)\n- `source.json` — source of the `constraint` and `change` values\n- `engine.py` — file modified (`normalize` strip-before-persist)\n- `storage.py` — confirms `persist` receives the string and encodes UTF-8\n- `README.md` — confirms call chain `app.render → engine.normalize → storage.persist`\n- `app.py` — entry point of that chain\n- `protected.txt` — protected file, verified unmodified\n- `result.json` — the written output\n\n**Uncertainty**: I could not execute the code to verify runtime behavior — shell execution was denied (permission error). Verification of `engine.py` and `result.json` content was done by re-reading the files after writing; `result.json` was written as a single-line JSON object but I did not run a JSON parser to confirm validity, though the formatting is a plain valid object.",
+            "checks": {
+              "artifact_json": true,
+              "edit_engine.py": true,
+              "protected_file_unchanged": true,
+              "source_evidence_read": false
+            },
+            "cost_cny": "0.0940891041422",
+            "elapsed_seconds": 28.6249,
+            "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P05-b6bfbfc1d3",
+            "group": "baseline",
+            "id": "P05",
+            "metrics": {
+              "branch": "baseline/standard",
+              "cache_read_tokens": 17792,
+              "cache_write_tokens": 0,
+              "cost_known": false,
+              "first_token_seconds": 2.670581354497699,
+              "input_tokens": 21098,
+              "output_tokens": 1752,
+              "parent_context_chars": 11998,
+              "request_latencies": [
+                {
+                  "attempt_id": "89c089eba17147938daf2f8979c73ea6",
+                  "duration_seconds": 2.8588703329951386,
+                  "first_text_seconds": 2.344646499994269,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "c01e068f1876491486e0aaf1d64bff15",
+                  "duration_seconds": 4.879077666999365,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "775765e14d0c4b87af1bd28cd2acce73",
+                  "duration_seconds": 4.615949042003194,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "a3a59f567a7c47dba41cfcaddc9fe083",
+                  "duration_seconds": 3.703509375001886,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "4d409ef94453406382ebdef0f1f0f31a",
+                  "duration_seconds": 3.646888624993153,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "aabc4a5cb5c04bcdba27d9b3913bd1ad",
+                  "duration_seconds": 3.593693209004414,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "ee2d0751baf04b46bcdd4500e78ccbba",
+                  "duration_seconds": 5.144591417003539,
+                  "first_text_seconds": 2.996516209001129,
+                  "purpose": "main",
+                  "state": "completed"
+                }
+              ],
+              "usage_by_purpose": {
+                "main": {
+                  "cache_read_tokens": 17792,
+                  "cache_write_tokens": 0,
+                  "calls": 7,
+                  "input_tokens": 21098,
+                  "output_tokens": 1752
+                }
+              },
+              "usage_samples": 7
+            },
+            "model_calls": 7,
+            "session_id": "1f7c9b35583e48368198e031ed2ed7a0",
+            "status": "fail",
+            "variant": "standard"
+          }
+        },
+        {
+          "key": "baseline/standard/P06",
+          "outcome": {
+            "accounted_tokens": 13335,
+            "answer": "Wrote `result.json` with exactly the field `modules`.\n\n**Result:**\n```json\n{\"modules\": [\"app.py\", \"engine.py\", \"storage.py\"]}\n```\n\n**Evidence, and how it corroborates:**\n- `source.json` — authoritative list of modules: `[\"app.py\", \"engine.py\", \"storage.py\"]` (used verbatim; no facts invented).\n- `README.md` — describes the call chain `app.render → engine.normalize → storage.persist`, matching the three-file module set.\n- `engine.py` — `from storage import persist`, `normalize(data) -> persist(str(data))`.\n- `storage.py` — `persist(text) -> text.encode(\"utf-8\")` (comment: records are UTF-8).\n- `app.py` — `from engine import normalize`, `render(data) -> normalize(data)`.\n- `protected.txt` — contains \"DO NOT MODIFY\"; it is not a source module, so it is excluded from `modules`, and nothing was edited in it.\n\nI read all three modules directly (in parallel) rather than inferring from a single source; the README chain and the import statements agree with `source.json`, so there was no conflicting evidence to resolve. Note the fixture directory and my working directory resolve to the same file set, so `result.json` was written alongside the fixtures — if it should live elsewhere, tell me the path and I'll move it.\n\nFiles referenced: `source.json`, `README.md`, `engine.py`, `storage.py`, `app.py`, `protected.txt`, and the written `result.json` (all under the fixture project `.../baseline/standard/P06-e81a6f109c`).",
+            "checks": {
+              "artifact_json": true,
+              "protected_file_unchanged": true,
+              "source_evidence_read": true
+            },
+            "cost_cny": "0.0532638412197",
+            "elapsed_seconds": 21.2672,
+            "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/evaluation-fixtures/live-20261017-5c6929291c9c/baseline/standard/P06-e81a6f109c",
+            "group": "baseline",
+            "id": "P06",
+            "metrics": {
+              "branch": "baseline/standard",
+              "cache_read_tokens": 9600,
+              "cache_write_tokens": 0,
+              "cost_known": false,
+              "first_token_seconds": 3.1242941253318954,
+              "input_tokens": 12543,
+              "output_tokens": 792,
+              "parent_context_chars": 7865,
+              "request_latencies": [
+                {
+                  "attempt_id": "507ff6dafe254501bffd164431885cf5",
+                  "duration_seconds": 3.1964657089993125,
+                  "first_text_seconds": 2.589979083997605,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "20d5369e625a424c9e0373ff7acfd213",
+                  "duration_seconds": 3.4277166669999133,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "aa5ca25121b348b48d9c1e8644827f18",
+                  "duration_seconds": 3.4691149170030258,
+                  "first_text_seconds": 2.8320226249998086,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "7d3e99a13d7541c6bee60d7e83c69dc9",
+                  "duration_seconds": 5.081927082996117,
+                  "first_text_seconds": null,
+                  "purpose": "main",
+                  "state": "completed"
+                },
+                {
+                  "attempt_id": "c5a167567d4645519c53fba3204831a7",
+                  "duration_seconds": 5.9713919589994475,
+                  "first_text_seconds": 3.9508806669982732,
+                  "purpose": "main",
+                  "state": "completed"
+                }
+              ],
+              "usage_by_purpose": {
+                "main": {
+                  "cache_read_tokens": 9600,
+                  "cache_write_tokens": 0,
+                  "calls": 5,
+                  "input_tokens": 12543,
+                  "output_tokens": 792
+                }
+              },
+              "usage_samples": 5
+            },
+            "model_calls": 5,
+            "session_id": "38ff1bf935d14064bb457d4e94a36952",
+            "status": "pass",
+            "variant": "standard"
+          }
+        }
+      ],
+      "pending": [
+        "baseline/standard/P07"
+      ],
+      "status": "interrupted_for_engineering_fix",
+      "pending_status": "cancelled; no fabricated outcome; costs retained"
+    }
+  },
+  "native_provider_matrix": "OpenAI, DeepSeek and Anthropic adapters tested offline; CUN compatibility results do not validate native endpoints.",
+  "latency_definition": "Client attempt start to first text event; unknown for tool-only output or missing text.",
+  "claims": "Deterministic fixture facts and artifacts only. No statistical significance or general writing-quality claim."
+}

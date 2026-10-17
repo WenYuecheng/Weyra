@@ -5,10 +5,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from weyra.context import ContextManager, complete_groups
-from weyra.contracts import Message, ModelInfo, ToolCall
-from weyra.runtime_state import Budget
-from weyra.session import SessionStore
+from agents.context import ContextManager, complete_groups
+from agents.contracts import Message, ModelInfo, ToolCall
+from agents.runtime_state import Budget
+from agents.session import SessionStore
 
 
 class CoreRegressionTests(unittest.TestCase):
@@ -57,26 +57,26 @@ class CoreRegressionTests(unittest.TestCase):
             path = Path(directory) / "s.jsonl"
             model = ModelInfo("test", "test", 10000, 100)
             store = SessionStore(path, directory)
-            manager = ContextManager(store, model, "rules")
+            manager = ContextManager(store, model, "rules", policy={"headroom_tokens":100,"max_tokens":100})
             manager.request(({"name": "one"},))
             store.close()
             store = SessionStore(path, directory)
             self.addCleanup(store.close)
-            manager = ContextManager(store, model, "rules")
+            manager = ContextManager(store, model, "rules", policy={"headroom_tokens":100,"max_tokens":100})
             old_version = manager.version
             manager.request(({"name": "two"},))
             self.assertGreater(manager.version, old_version)
 
     def test_parallel_summary_failure_cancels_remaining_components(self):
-        from weyra.contracts import ModelResponse
-        from weyra.runtime_state import RunContext
+        from agents.contracts import ModelResponse
+        from agents.runtime_state import RunContext
 
         async def run():
             with tempfile.TemporaryDirectory() as directory:
                 store = SessionStore(Path(directory) / "s.jsonl", directory)
                 try:
                     model = ModelInfo("test", "test", 10000, 100)
-                    manager = ContextManager(store, model, "rules", summary_mode="three_parallel")
+                    manager = ContextManager(store, model, "rules", summary_mode="three_parallel", policy={"headroom_tokens":100,"max_tokens":100})
                     gate = asyncio.Event()
                     pending = set()
 

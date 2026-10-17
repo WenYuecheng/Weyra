@@ -8,19 +8,24 @@ version = "0.1.0"
 description = "A lightweight, inspectable Python agent harness"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["openai>=1.0", "anthropic>=0.25", "jsonschema>=4.20"]
+dependencies = ["openai>=1.0", "anthropic>=0.25", "jsonschema>=4.20", "python-dotenv>=1.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.9", "build>=1"]
 
 [project.scripts]
-weyra = "weyra.cli:main"
+weyra = "agents.main:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["agents*"]
+
+[tool.setuptools.data-files]
+"share/weyra/data" = ["data/scenarios.json"]
+"share/weyra/data/upstream" = ["data/upstream/*.txt", "data/upstream/*.json"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["."]
 testpaths = ["tests"]
 
 [tool.ruff]

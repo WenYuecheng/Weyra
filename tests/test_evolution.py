@@ -1,8 +1,8 @@
 import tempfile
 import unittest
 from pathlib import Path
-from weyra.knowledge import SkillStore
-from weyra.evolution import EvolutionStore
+from agents.knowledge import SkillStore
+from agents.skill_evolution import EvolutionStore
 
 
 class EvolutionTests(unittest.TestCase):
@@ -104,7 +104,7 @@ class EvolutionBoundaryTests(unittest.TestCase):
         from unittest.mock import patch
 
         before = self.path.read_text()
-        with patch("weyra.evolution.atomic", side_effect=OSError("snapshot unavailable")):
+        with patch("agents.skill_evolution.atomic", side_effect=OSError("snapshot unavailable")):
             result = self.apply([{"type": "append", "text": "new"}])
         self.assertEqual(result["status"], "rejected")
         self.assertEqual(self.path.read_text(), before)
@@ -115,14 +115,14 @@ class EvolutionBoundaryTests(unittest.TestCase):
 
     def test_postpublication_failure(self):
         from unittest.mock import patch
-        from weyra.knowledge import atomic
+        from agents.knowledge import atomic
 
         def failing(path, text):
             if Path(path).name == "1.0.1.md":
                 raise OSError("auxiliary unavailable")
             return atomic(path, text)
 
-        with patch("weyra.evolution.atomic", side_effect=failing):
+        with patch("agents.skill_evolution.atomic", side_effect=failing):
             result = self.apply([{"type": "append", "text": "new"}])
         self.assertEqual(result["status"], "updated")
         self.assertTrue(result["auxiliary_errors"])
@@ -298,7 +298,7 @@ class EvolutionBoundaryTests(unittest.TestCase):
         from unittest.mock import AsyncMock, patch
 
         model = AsyncMock(return_value={"action": "discard"})
-        with patch("weyra.evolution.os.fsync", side_effect=OSError("disk unavailable")):
+        with patch("agents.skill_evolution.os.fsync", side_effect=OSError("disk unavailable")):
             result = asyncio.run(self.store.maintain({}, model, authorized=True))
         self.assertEqual(result["status"], "rejected")
         model.assert_not_awaited()

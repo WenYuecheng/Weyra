@@ -3,8 +3,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from weyra.contracts import ModelInfo, ModelResponse, ToolCall, ToolSpec
-from weyra.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+from agents.contracts import ModelInfo, ModelResponse, ToolCall, ToolSpec
+from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
 
 
 def scripted(responses):
@@ -17,7 +17,7 @@ def scripted(responses):
 
 class AgentTests(unittest.TestCase):
     def test_actual_tool_loop_keeps_request_prefix_stable(self):
-        from weyra.agent_loop import Agent
+        from agents.agent import Agent
 
         async def run():
             with tempfile.TemporaryDirectory() as folder:
@@ -46,7 +46,7 @@ class AgentTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_truncated_response_never_executes_valid_call(self):
-        from weyra.agent_loop import Agent
+        from agents.agent import Agent
 
         async def run():
             with tempfile.TemporaryDirectory() as folder:
@@ -71,7 +71,7 @@ class AgentTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_steering_is_admitted_after_complete_batch(self):
-        from weyra.agent_loop import Agent
+        from agents.agent import Agent
 
         async def run():
             with tempfile.TemporaryDirectory() as folder:
@@ -99,7 +99,7 @@ class AgentTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_context_fork_excludes_current_turn(self):
-        from weyra.agent_loop import Agent
+        from agents.agent import Agent
 
         async def run():
             with tempfile.TemporaryDirectory() as folder:
@@ -107,7 +107,7 @@ class AgentTests(unittest.TestCase):
                 agent = Agent(folder, runtime, enable_evolution=False)
                 await agent.run_once("old request")
                 agent.session.add_message(
-                    __import__("weyra.contracts", fromlist=["Message"]).Message(
+                    __import__("agents.contracts", fromlist=["Message"]).Message(
                         "user", "in progress"
                     )
                 )

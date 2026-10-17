@@ -28,8 +28,49 @@ def test_personalized_writing_demo():
 
 
 def test_fixed_scenario_manifest_has_twenty_cases():
-    cases = json.loads(Path("examples/scenarios.json").read_text())
+    index = json.loads(Path("examples/scenarios.json").read_text())
+    cases = json.loads((Path("examples") / index["source"]).resolve().read_text())
     assert len(cases) == 20
     assert len({case["id"] for case in cases}) == 20
     assert sum(case["family"] == "project" for case in cases) == 10
     assert sum(case["family"] == "writing" for case in cases) == 10
+
+
+def test_unified_demo_runs_both_scenarios(tmp_path):
+    import asyncio
+    from agents.demos import run_demo
+
+    async def run():
+        analysis = await run_demo("analysis", project=tmp_path / "analysis")
+        writing = await run_demo("writing", project=tmp_path / "writing")
+        assert analysis["scenario"] == "analysis" and analysis["mode"] == "offline"
+        assert analysis["child_state"] == "completed"
+        assert analysis["actual_tool_results"] >= 3
+        assert writing["updated_version"] == "1.0.1"
+        assert writing["rollback_version"] == "1.0.2"
+        assert "no quality claim" in writing["model"]
+
+    asyncio.run(run())
+
+
+def test_live_demo_requires_constructed_runtime():
+    import asyncio
+    import pytest
+    from agents.demos import run_demo
+
+    with pytest.raises(ValueError, match="runtime"):
+        asyncio.run(run_demo("analysis", offline=False))
+
+
+def test_demo_keeps_inspectable_session_and_report(tmp_path):
+    import asyncio
+    from agents.demos import run_demo
+
+    report = asyncio.run(run_demo("analysis", project=tmp_path))
+    folder = Path(report["fixture_project"])
+    assert folder.is_relative_to(tmp_path)
+    assert (folder / ".weyra/state.db").is_file()
+    assert (
+        json.loads((folder / ".weyra/demo-report.json").read_text())["session_id"]
+        == report["session_id"]
+    )

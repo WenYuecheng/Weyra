@@ -4,16 +4,16 @@ import unittest
 from pathlib import Path
 from unittest.mock import AsyncMock
 
-from weyra.contracts import Message, ModelInfo, PreparedRequest
-from weyra.knowledge import MemoryStore
-from weyra.runtime_state import Budget, RunContext
-from weyra.session import SessionStore
+from agents.contracts import Message, ModelInfo, PreparedRequest
+from agents.knowledge import MemoryStore
+from agents.runtime_state import Budget, RunContext
+from agents.session import SessionStore
 
 
 class DeliveryTests(unittest.TestCase):
     def test_read_pool_reuses_a_slot_before_slowest_read_finishes(self):
-        from weyra.contracts import ToolCall, ToolSpec
-        from weyra.tool_runtime import ToolRuntime
+        from agents.contracts import ToolCall, ToolSpec
+        from agents.tool_runtime import ToolRuntime
 
         async def run():
             with tempfile.TemporaryDirectory() as directory:
@@ -42,9 +42,9 @@ class DeliveryTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_resume_preserves_session_budget_spend(self):
-        from weyra.agent_loop import Agent
-        from weyra.contracts import ModelResponse, Usage
-        from weyra.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+        from agents.agent import Agent
+        from agents.contracts import ModelResponse, Usage
+        from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
 
         async def run():
             with tempfile.TemporaryDirectory() as directory:
@@ -53,11 +53,11 @@ class DeliveryTests(unittest.TestCase):
                     "test", ScriptedProvider([ModelResponse("done", usage=Usage(8, 2))])
                 )
                 runtime = ModelRuntime(registry, {"main": ModelInfo("test", "test", 10000, 100)})
-                agent = Agent(directory, runtime, enable_evolution=False)
+                agent = Agent(directory, runtime, enable_evolution=False, context_policy={"headroom_tokens":100,"max_tokens":100})
                 await agent.run_once("one")
-                path = agent.session.path
+                session_id = agent.session.session_id
                 await agent.close()
-                resumed = Agent(directory, runtime, session_path=path, enable_evolution=False)
+                resumed = Agent(directory, runtime, session_id=session_id, enable_evolution=False, context_policy={"headroom_tokens":100,"max_tokens":100})
                 self.assertEqual(resumed.budget.total_tokens, 10)
                 self.assertEqual(resumed.budget.calls, 1)
                 await resumed.close()
@@ -65,15 +65,15 @@ class DeliveryTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_text_only_model_projects_existing_tool_history_as_observations(self):
-        from weyra.context import ContextManager
-        from weyra.contracts import ToolCall
+        from agents.context import ContextManager
+        from agents.contracts import ToolCall
 
         with tempfile.TemporaryDirectory() as directory:
             store = SessionStore(Path(directory) / "s.jsonl", directory)
             store.add_message(Message("assistant", tool_calls=(ToolCall("one", "read", {}),)))
             store.add_message(Message("tool", "evidence", tool_call_id="one", name="read"))
             manager = ContextManager(
-                store, ModelInfo("test", "text-only", 10000, 100, supports_tools=False), "rules"
+                store, ModelInfo("test", "text-only", 10000, 100, supports_tools=False), "rules", policy={"headroom_tokens":100,"max_tokens":100}
             )
             request = manager.request(({"name": "read", "parameters": {}},))
             self.assertEqual(request.tools, ())
@@ -83,15 +83,15 @@ class DeliveryTests(unittest.TestCase):
             store.close()
 
     def test_cleanup_failure_does_not_skip_other_resources(self):
-        from weyra.agent_loop import Agent
-        from weyra.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+        from agents.agent import Agent
+        from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
 
         async def run():
             with tempfile.TemporaryDirectory() as directory:
                 registry = ProviderRegistry()
                 registry.register("test", ScriptedProvider([]))
                 runtime = ModelRuntime(registry, {"main": ModelInfo("test", "test", 10000, 100)})
-                agent = Agent(directory, runtime, enable_evolution=False)
+                agent = Agent(directory, runtime, enable_evolution=False, context_policy={"headroom_tokens":100,"max_tokens":100})
                 agent.mcp.close = AsyncMock(side_effect=OSError("close failed"))
                 agent.jobs.close = AsyncMock()
                 runtime.close = AsyncMock()
@@ -130,7 +130,7 @@ class DeliveryTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_auth_parameters_never_reach_request_log(self):
-        from weyra.model_runtime import ModelError, ModelRuntime, ProviderRegistry, ScriptedProvider
+        from agents.model_runtime import ModelError, ModelRuntime, ProviderRegistry, ScriptedProvider
 
         async def run():
             with tempfile.TemporaryDirectory() as directory:
@@ -144,7 +144,7 @@ class DeliveryTests(unittest.TestCase):
                 )
                 with self.assertRaises(ModelError):
                     await runtime.complete(request, RunContext(Path(directory), store, Budget()))
-                self.assertNotIn("test-private-value", store.path.read_text())
+                self.assertNotIn("test-private-value", store.export_jsonl())
                 store.close()
 
         asyncio.run(run())

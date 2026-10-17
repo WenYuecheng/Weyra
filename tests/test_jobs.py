@@ -1,5 +1,5 @@
 import asyncio
-from weyra.jobs import Jobs
+from agents.jobs import Jobs
 
 
 def test_job(tmp_path):

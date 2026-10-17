@@ -6,9 +6,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
-from weyra.agent_loop import Agent
-from weyra.contracts import ModelInfo, ModelResponse, ToolCall
-from weyra.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+from agents.agent import Agent
+from agents.contracts import ModelInfo, ModelResponse, ToolCall
+from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
 
 
 def runtime_with(responses):
@@ -160,7 +160,7 @@ class AgentRegressionTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_cancel_during_result_event_keeps_next_turn_tool_pairs_valid(self):
-        from weyra.context import complete_groups
+        from agents.context import complete_groups
 
         async def run():
             with tempfile.TemporaryDirectory() as directory:

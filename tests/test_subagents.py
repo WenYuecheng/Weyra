@@ -3,7 +3,7 @@ from types import SimpleNamespace as NS
 
 import pytest
 
-from weyra.subagents import ChildManager
+from agents.subagent import ChildManager
 
 
 class Session:
@@ -200,5 +200,70 @@ def test_child_usage_excludes_concurrent_shared_budget_calls():
         result2 = await manager.send(result["task_id"], "more")
         assert (await manager.wait(result2["task_id"]))["usage"] == 7
         await manager.close()
+
+    asyncio.run(run())
+
+
+def test_truncated_child_is_failed_with_durable_unresolved_reason(tmp_path):
+    from agents.agent import Agent
+    from agents.contracts import ModelInfo, ModelResponse
+    from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+
+    async def run():
+        registry = ProviderRegistry()
+        registry.register("p", ScriptedProvider([ModelResponse("partial", stop_reason="length")]))
+        runtime = ModelRuntime(registry, {"main": ModelInfo("p", "m", 200000, 1000)})
+        parent = Agent(tmp_path, runtime, enable_memory=False, enable_evolution=False)
+        try:
+            result = await parent.children.spawn("Finish the delegated task.")
+            assert result["state"] == "failed"
+            assert result["unresolved"] == ["Child turn ended incomplete"]
+            assert parent.session.pending_child_results()[0]["state"] == "failed"
+        finally:
+            await parent.close()
+
+    asyncio.run(run())
+
+
+def test_child_delivers_durable_evidence_and_written_artifact_refs(tmp_path):
+    from agents.agent import Agent
+    from agents.contracts import ModelInfo, ModelResponse, ToolCall, Usage
+    from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+
+    async def run():
+        (tmp_path / "source.txt").write_text("evidence")
+        registry = ProviderRegistry()
+        registry.register(
+            "p",
+            ScriptedProvider(
+                [
+                    ModelResponse(
+                        tool_calls=(
+                            ToolCall("read", "read_file", {"path": "source.txt"}),
+                            ToolCall(
+                                "write", "write_file", {"path": "result.txt", "content": "artifact"}
+                            ),
+                        ),
+                        usage=Usage(1, 1),
+                    ),
+                    ModelResponse("done", usage=Usage(1, 1)),
+                ]
+            ),
+        )
+        parent = Agent(
+            tmp_path,
+            ModelRuntime(registry, {"main": ModelInfo("p", "m", 200000, 1000)}),
+            permission_mode="acceptEdits",
+            enable_memory=False,
+            enable_evolution=False,
+        )
+        try:
+            result = await parent.children.spawn("Read evidence and save result.")
+            assert result["state"] == "completed"
+            assert any("read" in ref for ref in result["evidence"])
+            assert str(tmp_path / "result.txt") in result["artifacts"]
+            assert parent.session.pending_child_results()[0]["evidence"] == result["evidence"]
+        finally:
+            await parent.close()
 
     asyncio.run(run())

@@ -2,9 +2,9 @@ import asyncio
 import tempfile
 import unittest
 
-from weyra.agent_loop import Agent
-from weyra.contracts import Message, ModelInfo, ModelResponse, PreparedRequest, Usage
-from weyra.model_runtime import ModelError, ModelRuntime, ProviderRegistry, ScriptedProvider
+from agents.agent import Agent
+from agents.contracts import Message, ModelInfo, ModelResponse, PreparedRequest, Usage
+from agents.model_runtime import ModelError, ModelRuntime, ProviderRegistry, ScriptedProvider
 
 
 class AdditionalTests(unittest.TestCase):
@@ -77,7 +77,7 @@ class AdditionalTests(unittest.TestCase):
                 from unittest.mock import patch
 
                 with patch(
-                    "weyra.agent_loop.asyncio.sleep",
+                    "agents.agent.asyncio.sleep",
                     new=__import__("unittest.mock", fromlist=["AsyncMock"]).AsyncMock(),
                 ):
                     self.assertEqual(await agent.run_once("only input"), "fallback answer")

@@ -12,3 +12,9 @@ dist/
 !.env.example
 .DS_Store
 .idea/
+
+# Personal model routing and experiment state
+weyra.toml
+
+# Local review application metadata
+.workbuddy/

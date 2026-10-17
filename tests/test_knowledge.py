@@ -2,7 +2,7 @@ import asyncio
 import tempfile
 import unittest
 from pathlib import Path
-from weyra.knowledge import MemoryStore, SkillStore
+from agents.knowledge import MemoryStore, SkillStore
 
 
 class KnowledgeTests(unittest.TestCase):

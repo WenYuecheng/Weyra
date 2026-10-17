@@ -1,0 +1,5 @@
+# 与 pyproject.toml 的运行依赖一致；开发检查使用 pip install -e '.[dev]'。
+openai>=1.0
+anthropic>=0.25
+jsonschema>=4.20
+python-dotenv>=1.0

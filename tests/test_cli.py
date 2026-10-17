@@ -3,13 +3,13 @@ import subprocess
 import sys
 from pathlib import Path
 import pytest
-from weyra.config import load_config
+from agents.config import load_config
 
 
 def invoke(*args):
-    env = {**os.environ, "PYTHONPATH": str(Path(__file__).parents[1] / "src")}
+    env = {**os.environ, "PYTHONPATH": str(Path(__file__).parents[1])}
     return subprocess.run(
-        [sys.executable, "-m", "weyra.cli", *args],
+        [sys.executable, "-m", "agents.main", *args],
         env=env,
         text=True,
         capture_output=True,
@@ -22,7 +22,7 @@ def test_help_and_offline_demo(tmp_path):
     result = invoke("--demo", "--project", str(tmp_path))
     assert result.returncode == 0, result.stderr
     assert "Weyra offline demo" in result.stdout
-    assert list((tmp_path / ".weyra" / "sessions").glob("*.jsonl"))
+    assert (tmp_path / ".weyra" / "state.db").is_file()
 
 
 def test_config_requires_limits_and_fallback(tmp_path):
@@ -58,7 +58,7 @@ def test_config_rejects_plaintext_and_protocol(tmp_path):
 def test_single_input_approval_and_eof():
     import asyncio
     from types import SimpleNamespace
-    from weyra.cli import InputCoordinator
+    from agents.main import InputCoordinator
 
     async def run():
         inputs = InputCoordinator()
@@ -77,19 +77,19 @@ def test_single_input_approval_and_eof():
 
 def test_session_fork_and_refresh_commands(tmp_path):
     import asyncio
-    from weyra.cli import command, demo_runtime
-    from weyra.agent_loop import Agent
+    from agents.main import command, demo_runtime
+    from agents.agent import Agent
 
     async def run():
         agent = Agent(tmp_path, demo_runtime(tmp_path), enable_memory=False, enable_evolution=False)
         try:
             await command(agent, "/refresh")
             await command(agent, "/fork copied")
-            assert (tmp_path / ".weyra" / "sessions" / "copied.jsonl").exists()
+            assert any(row["session_id"] == "copied" for row in __import__("agents.session",fromlist=["SessionStore"]).SessionStore.list_sessions(tmp_path))
             # The fork's writer is released immediately.
-            from weyra.session import SessionStore
+            from agents.session import SessionStore
 
-            store = SessionStore(tmp_path / ".weyra" / "sessions" / "copied.jsonl", tmp_path)
+            store = SessionStore(project=tmp_path,session_id="copied")
             store.close()
         finally:
             await agent.close()
@@ -112,7 +112,7 @@ def test_config_explicit_fallbacks(tmp_path):
 def test_branch_command_dispatch():
     import asyncio
     from types import SimpleNamespace
-    from weyra.cli import command
+    from agents.main import command
 
     called = []
     agent = SimpleNamespace(_running=False, branch=lambda record: called.append(record))
@@ -143,7 +143,7 @@ def test_mcp_config_and_model_capabilities(tmp_path):
 def test_mcp_commands_do_not_display_environment(capsys):
     import asyncio
     from types import SimpleNamespace
-    from weyra.cli import command
+    from agents.main import command
 
     calls = []
     client = SimpleNamespace(

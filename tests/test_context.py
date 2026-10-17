@@ -3,19 +3,19 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from weyra.contracts import Message, ModelInfo, ModelResponse, ToolCall
-from weyra.runtime_state import Budget, RunContext
-from weyra.session import SessionStore
+from agents.contracts import Message, ModelInfo, ModelResponse, ToolCall
+from agents.runtime_state import Budget, RunContext
+from agents.session import SessionStore
 
 
 class ContextTests(unittest.TestCase):
     def test_ordinary_append_keeps_prior_messages_and_baseline(self):
-        from weyra.context import ContextManager
+        from agents.context import ContextManager
 
         with tempfile.TemporaryDirectory() as folder:
             store = SessionStore(Path(folder) / "s.jsonl", folder)
             model = ModelInfo("test", "test", 10000, 100)
-            manager = ContextManager(store, model, "stable")
+            manager = ContextManager(store, model, "stable", policy={"headroom_tokens": 100})
             store.add_message(Message("user", "first"))
             before = manager.request(()).to_dict()
             store.add_message(Message("assistant", "second"))
@@ -25,8 +25,8 @@ class ContextTests(unittest.TestCase):
             store.close()
 
     def test_compaction_preserves_tool_pairs_and_raw_records(self):
-        from weyra.context import ContextManager
-        from weyra.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+        from agents.context import ContextManager
+        from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
 
         async def run():
             with tempfile.TemporaryDirectory() as folder:
@@ -45,7 +45,7 @@ class ContextTests(unittest.TestCase):
                     )
                 store.add_message(Message("user", "continue"))
                 context = RunContext(Path(folder), store, Budget())
-                manager = ContextManager(store, model, "stable")
+                manager = ContextManager(store, model, "stable", policy={"headroom_tokens": 100})
                 count = len(store.records)
                 self.assertTrue(await manager.compact(runtime, context))
                 self.assertGreater(len(store.records), count)
@@ -61,7 +61,7 @@ class ContextTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_empty_summary_does_not_publish(self):
-        from weyra.context import validate_summary
+        from agents.context import validate_summary
 
         with self.assertRaises(ValueError):
             validate_summary("{}")

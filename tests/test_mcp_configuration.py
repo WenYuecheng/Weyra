@@ -2,9 +2,9 @@ import asyncio
 import tempfile
 import unittest
 
-from weyra.agent_loop import Agent
-from weyra.contracts import ModelInfo
-from weyra.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
+from agents.agent import Agent
+from agents.contracts import ModelInfo
+from agents.model_runtime import ModelRuntime, ProviderRegistry, ScriptedProvider
 
 
 def runtime(config):
@@ -20,7 +20,7 @@ class MCPConfigTests(unittest.TestCase):
         async def run():
             with tempfile.TemporaryDirectory() as directory:
                 server = {"local": {"command": "python3", "args": ["safe.py"], "env": {}}}
-                agent = Agent(directory, runtime(server), enable_evolution=False)
+                agent = Agent(directory, runtime(server), enable_evolution=False, context_policy={"headroom_tokens":100,"max_tokens":100})
                 self.assertIn("local", agent.mcp.clients)
                 self.assertFalse(agent.mcp.clients["local"].trusted)
                 with self.assertRaises(PermissionError):
@@ -29,7 +29,7 @@ class MCPConfigTests(unittest.TestCase):
                 self.assertTrue(agent.mcp.clients["local"].trusted)
                 await agent.close()
                 server["local"]["args"] = ["changed.py"]
-                changed = Agent(directory, runtime(server), enable_evolution=False)
+                changed = Agent(directory, runtime(server), enable_evolution=False, context_policy={"headroom_tokens":100,"max_tokens":100})
                 self.assertFalse(changed.mcp.clients["local"].trusted)
                 await changed.close()
 

@@ -1,7 +1,7 @@
 import asyncio
 from types import SimpleNamespace
-from weyra.contracts import ToolCall, ToolSpec
-from weyra.tool_runtime import ToolRuntime
+from agents.contracts import ToolCall, ToolSpec
+from agents.tool_runtime import ToolRuntime
 
 
 class Session:
@@ -38,8 +38,8 @@ def test_schema_and_denial(tmp_path):
 
 
 def test_file_versions_and_symlink(tmp_path):
-    from weyra.tool_runtime import install_builtin_tools
-    from weyra.jobs import Jobs
+    from agents.tool_runtime import install_builtin_tools
+    from agents.jobs import Jobs
 
     async def run():
         session = Session()
@@ -82,7 +82,7 @@ def test_file_versions_and_symlink(tmp_path):
 
 def test_reader_barrier(tmp_path):
     async def run():
-        runtime = ToolRuntime(tmp_path, Session(), permission_mode="bypass")
+        runtime = ToolRuntime(tmp_path, Session(), permission_mode="bypass", concurrency=3)
         running = 0
         high = 0
 
@@ -169,5 +169,37 @@ def test_cancellation_has_results_for_unstarted(tmp_path):
         result = await runtime.execute_batch([ToolCall(str(i), "x", {}) for i in range(3)], ctx)
         assert [r.status for r in result] == ["success", "cancelled", "cancelled"]
         assert [r.started for r in result] == [True, False, False]
+
+    asyncio.run(run())
+
+
+def test_permission_revocation_during_approval_prevents_start(tmp_path):
+    from agents.runtime_state import Budget, RunContext
+    from agents.session import SessionStore
+
+    async def run():
+        session = SessionStore(project=tmp_path)
+        entered, answer = asyncio.Event(), asyncio.Event()
+        effects = []
+
+        async def confirm(spec, args, context):
+            entered.set()
+            await answer.wait()
+            return True
+
+        runtime = ToolRuntime(tmp_path, session, confirm=confirm)
+        runtime.register(
+            ToolSpec("write", "", {"type": "object"}, lambda a, c: effects.append("write"))
+        )
+        ctx = RunContext(tmp_path, session, Budget())
+        task = asyncio.create_task(runtime.execute(ToolCall("a", "write", {}), ctx))
+        await entered.wait()
+        ctx.permission_mode = "dontAsk"
+        answer.set()
+        result = await task
+        assert result.status == "denied" and not result.started
+        assert effects == []
+        assert not any(r["kind"] == "tool_intent" for r in session.records)
+        session.close()
 
     asyncio.run(run())
