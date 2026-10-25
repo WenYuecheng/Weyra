@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.weyra/
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+
+# Personal model routing and experiment state
+weyra.toml
+
+# Local review application metadata
+.workbuddy/
+
+# Source-only historical experiment outputs
+.benchmarks/results/

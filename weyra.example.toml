@@ -1,0 +1,47 @@
+# 说明性 DeepSeek 配置；容量必须按实际端点核对，不是服务能力承诺。
+[providers.deepseek]
+protocol = "openai"
+api_key_env = "DEEPSEEK_API_KEY"
+base_url = "https://api.deepseek.com"
+
+[routes.main]
+provider = "deepseek"
+model = "deepseek-chat"
+context_window = 131072
+max_output_tokens = 8192
+
+[routes.main.parameters]
+max_output_tokens = 4096
+
+[context_policy]
+threshold_ratio = 0.8
+headroom_tokens = 65536
+retain_ratio = 0.16
+# DSH 默认压缩输出上限等于 H；这里显式覆盖以匹配模型输出能力。
+summary_max_tokens = 8192
+compaction_retries = 1
+max_overflow_retries = 1
+summary_mode = "dsh_checkpoint"
+
+# compression/memory/evolution 未配置时继承 main。
+# 可为每个用途指定 provider/model/context_window/max_output_tokens。
+# 真实调用前，按已核实控制台计价组和汇率填入人民币每百万 token 单价。
+# [pricing."deepseek/deepseek-chat"]
+# currency = "CNY"
+# input_per_million = "填写已核实数值"
+# output_per_million = "填写已核实数值"
+
+# 技能自进化默认关闭。独立裁判和固定验证集均配置后才可开启。
+# 模型名按你的兼容端点核实；本项目本轮验证使用 gpt-5.6-luna。
+# [routes.skill_judge]
+# provider = "your-compatible-provider"
+# model = "your-judge-model"
+# context_window = 128000
+# max_output_tokens = 16384
+# [routes.skill_judge.parameters]
+# max_output_tokens = 512
+# [skill_evolution]
+# enabled = true
+# judge_route = "skill_judge"
+# validation_manifest = ".weyra/validation/evidence.json"
+# 裁判计价也必须在 pricing 中显式配置；禁止自动回退到主模型。

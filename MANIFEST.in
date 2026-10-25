@@ -1,0 +1,7 @@
+include weyra.example.toml .env.example requirements.txt THIRD_PARTY_NOTICES.md CONTRIBUTING.md
+recursive-include docs *.md *.json
+recursive-include examples *.py *.json
+recursive-include data *.json *.txt *.py
+recursive-include paper *.md
+recursive-include scripts *.py
+recursive-include tests *.py

@@ -1,0 +1,576 @@
+{
+  "source_artifact": ".benchmarks/results/polyglot-64-20261024/campaign-report.json",
+  "source_sha256": "6f942099eb13cb88f80d49cdc9b727de44fff40dd14421baa9dcddffa16fd1e5",
+  "denominator": 64,
+  "retained_passed": 29,
+  "newly_passed": 21,
+  "rerun_denominator": 35,
+  "newly_passed_rate": 0.6,
+  "passed": 50,
+  "cumulative_solved_rate": 0.78125,
+  "languages": {
+    "python": {
+      "denominator": 32,
+      "passed": 28
+    },
+    "javascript": {
+      "denominator": 32,
+      "passed": 22
+    }
+  },
+  "status_counts": {
+    "retained_pass": 29,
+    "passed": 21,
+    "resource_exhausted": 14
+  },
+  "cost_cny": {
+    "previous_old": "9.5190181642435",
+    "previous_v2": "5.8554306629531",
+    "previous_total": "15.3744488271966",
+    "current": "34.1137738430587",
+    "cumulative": "49.4882226702553"
+  },
+  "cost_basis": "conservative_ceiling_not_provider_invoice",
+  "round_curve": [
+    {
+      "round": 0,
+      "newly_passed": 2,
+      "passed": 31,
+      "cumulative_solved_rate": 0.484375
+    },
+    {
+      "round": 1,
+      "newly_passed": 9,
+      "passed": 38,
+      "cumulative_solved_rate": 0.59375
+    },
+    {
+      "round": 2,
+      "newly_passed": 12,
+      "passed": 41,
+      "cumulative_solved_rate": 0.640625
+    },
+    {
+      "round": 3,
+      "newly_passed": 16,
+      "passed": 45,
+      "cumulative_solved_rate": 0.703125
+    },
+    {
+      "round": 4,
+      "newly_passed": 19,
+      "passed": 48,
+      "cumulative_solved_rate": 0.75
+    },
+    {
+      "round": 5,
+      "newly_passed": 20,
+      "passed": 49,
+      "cumulative_solved_rate": 0.765625
+    },
+    {
+      "round": 6,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    },
+    {
+      "round": 7,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    },
+    {
+      "round": 8,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    },
+    {
+      "round": 9,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    },
+    {
+      "round": 10,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    },
+    {
+      "round": 11,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    },
+    {
+      "round": 12,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    },
+    {
+      "round": 13,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    },
+    {
+      "round": 14,
+      "newly_passed": 21,
+      "passed": 50,
+      "cumulative_solved_rate": 0.78125
+    }
+  ],
+  "tasks": [
+    {
+      "id": "javascript/affine-cipher",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/rectangles",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 4,
+      "cost_cny": "1.2780156797676"
+    },
+    {
+      "id": "python/two-bucket",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/phone-number",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 2,
+      "cost_cny": "0.2287928093677"
+    },
+    {
+      "id": "javascript/sum-of-multiples",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 4,
+      "cost_cny": "0.8471520532876"
+    },
+    {
+      "id": "javascript/state-of-tic-tac-toe",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 4,
+      "cost_cny": "0.4975731731935"
+    },
+    {
+      "id": "python/affine-cipher",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/book-store",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/forth",
+      "language": "python",
+      "status": "passed",
+      "rounds": 5,
+      "cost_cny": "0.6769423425467"
+    },
+    {
+      "id": "javascript/bottle-song",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/killer-sudoku-helper",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 13,
+      "cost_cny": "3.5215417794801"
+    },
+    {
+      "id": "python/paasio",
+      "language": "python",
+      "status": "passed",
+      "rounds": 4,
+      "cost_cny": "1.0963126722947"
+    },
+    {
+      "id": "javascript/complex-numbers",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 1,
+      "cost_cny": "0.3505546601914"
+    },
+    {
+      "id": "javascript/variable-length-quantity",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/beer-song",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 5,
+      "cost_cny": "0.3925270393789"
+    },
+    {
+      "id": "javascript/ocr-numbers",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 2,
+      "cost_cny": "0.4882835548839"
+    },
+    {
+      "id": "javascript/zipper",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/transpose",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 2,
+      "cost_cny": "0.6487809484820"
+    },
+    {
+      "id": "javascript/list-ops",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 1,
+      "cost_cny": "0.0197453261062"
+    },
+    {
+      "id": "python/beer-song",
+      "language": "python",
+      "status": "passed",
+      "rounds": 5,
+      "cost_cny": "1.0601273949629"
+    },
+    {
+      "id": "python/wordy",
+      "language": "python",
+      "status": "resource_exhausted",
+      "rounds": 10,
+      "cost_cny": "0.8340105191447"
+    },
+    {
+      "id": "python/food-chain",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/sgf-parsing",
+      "language": "python",
+      "status": "passed",
+      "rounds": 3,
+      "cost_cny": "0.7831752045822"
+    },
+    {
+      "id": "javascript/resistor-color-trio",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 1,
+      "cost_cny": "0.0205029079511"
+    },
+    {
+      "id": "python/pov",
+      "language": "python",
+      "status": "passed",
+      "rounds": 2,
+      "cost_cny": "0.2477832829635"
+    },
+    {
+      "id": "python/phone-number",
+      "language": "python",
+      "status": "resource_exhausted",
+      "rounds": 14,
+      "cost_cny": "3.6059399516990"
+    },
+    {
+      "id": "javascript/parallel-letter-frequency",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 12,
+      "cost_cny": "3.0493240081992"
+    },
+    {
+      "id": "python/zipper",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/tournament",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/grep",
+      "language": "python",
+      "status": "passed",
+      "rounds": 2,
+      "cost_cny": "0.2234946179388"
+    },
+    {
+      "id": "python/variable-length-quantity",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/wordy",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 3,
+      "cost_cny": "0.3530167834405"
+    },
+    {
+      "id": "python/proverb",
+      "language": "python",
+      "status": "passed",
+      "rounds": 4,
+      "cost_cny": "0.9015463426151"
+    },
+    {
+      "id": "python/zebra-puzzle",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/scale-generator",
+      "language": "python",
+      "status": "passed",
+      "rounds": 5,
+      "cost_cny": "1.6192666594503"
+    },
+    {
+      "id": "python/simple-linked-list",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/binary",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/dominoes",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/list-ops",
+      "language": "python",
+      "status": "passed",
+      "rounds": 2,
+      "cost_cny": "0.0303422878156"
+    },
+    {
+      "id": "python/go-counting",
+      "language": "python",
+      "status": "passed",
+      "rounds": 4,
+      "cost_cny": "0.4795824484936"
+    },
+    {
+      "id": "python/dot-dsl",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/robot-name",
+      "language": "python",
+      "status": "passed",
+      "rounds": 3,
+      "cost_cny": "0.3713921946019"
+    },
+    {
+      "id": "python/hangman",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/bottle-song",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/book-store",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/tree-building",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/connect",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/grade-school",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/pig-latin",
+      "language": "python",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "python/rest-api",
+      "language": "python",
+      "status": "resource_exhausted",
+      "rounds": 5,
+      "cost_cny": "0.8572556939334"
+    },
+    {
+      "id": "python/transpose",
+      "language": "python",
+      "status": "resource_exhausted",
+      "rounds": 15,
+      "cost_cny": "4.4782925730339"
+    },
+    {
+      "id": "python/bowling",
+      "language": "python",
+      "status": "passed",
+      "rounds": 2,
+      "cost_cny": "0.4289280435987"
+    },
+    {
+      "id": "javascript/triangle",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 1,
+      "cost_cny": "0.4498369999344"
+    },
+    {
+      "id": "javascript/rest-api",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 6,
+      "cost_cny": "1.3262365446228"
+    },
+    {
+      "id": "javascript/house",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 5,
+      "cost_cny": "0.7996832136133"
+    },
+    {
+      "id": "javascript/alphametics",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 4,
+      "cost_cny": "0.8408542185472"
+    },
+    {
+      "id": "javascript/say",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/rational-numbers",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/twelve-days",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/pig-latin",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/grade-school",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/forth",
+      "language": "javascript",
+      "status": "resource_exhausted",
+      "rounds": 1,
+      "cost_cny": "0.2396678921183"
+    },
+    {
+      "id": "javascript/ledger",
+      "language": "javascript",
+      "status": "retained_pass",
+      "rounds": 0,
+      "cost_cny": "0"
+    },
+    {
+      "id": "javascript/queen-attack",
+      "language": "javascript",
+      "status": "passed",
+      "rounds": 7,
+      "cost_cny": "1.4282050466612"
+    }
+  ]
+}

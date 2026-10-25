@@ -1,0 +1,39 @@
+{
+  "source_artifact": "wiki/history_archive/FINAL-EVIDENCE.json",
+  "source_sha256": "9a8943f5dcdbc9f925d5e5b7f770541c066abda8849b11cad8e9a0b1208b8646",
+  "localization": {
+    "old": {
+      "planned": 48,
+      "pass": 26,
+      "statuses": {
+        "pass": 26,
+        "fail": 22,
+        "not_run": 0
+      },
+      "success_rate": 0.5416666666666666
+    },
+    "new": {
+      "planned": 48,
+      "pass": 40,
+      "statuses": {
+        "pass": 40,
+        "fail": 8,
+        "not_run": 0
+      },
+      "success_rate": 0.8333333333333334
+    }
+  },
+  "localization_pairs": {
+    "complete_pairs": 48,
+    "independent_tasks": 24,
+    "candidate_only_success": 14,
+    "baseline_only_success": 0,
+    "same": 34,
+    "difference_pp": 29.166666666666668,
+    "task_bootstrap_95_pp": [
+      12.5,
+      50.0
+    ]
+  },
+  "scope": "24 independent tasks, 2 repetitions each; skill localization comparison"
+}

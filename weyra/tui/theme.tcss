@@ -1,0 +1,306 @@
+/* Weyra Geek Cyberpunk / Tokyo Night Theme — strictly matching BearCode styling */
+$bg_screen: #0b0f19;
+$bg_panel: #0f172a;
+$bg_input: #111827;
+$bg_focus: #1e293b;
+
+$cyan_glow: #00f2fe;
+$cyan_soft: #38bdf8;
+$neon_emerald: #10b981;
+$mint: #34d399;
+$purple_glow: #c084fc;
+$violet: #a855f7;
+$amber_gold: #fbbf24;
+$warm_orange: #f97316;
+$rose_red: #f43f5e;
+$muted_slate: #64748b;
+$border_dark: #334155;
+$text_light: #f8fafc;
+
+Screen {
+    background: $bg_screen;
+    color: $text_light;
+}
+
+StatusBar {
+    height: 3;
+    padding: 0 2;
+    background: $bg_panel;
+    border-bottom: solid $border_dark;
+    content-align: left middle;
+}
+
+ChatView {
+    height: 1fr;
+    padding: 0 2;
+    background: $bg_screen;
+    scrollbar-gutter: stable;
+    scrollbar-size: 1 1;
+    scrollbar-color: $muted_slate;
+    scrollbar-background: $bg_screen;
+}
+
+#welcome-banner {
+    height: auto;
+    width: 100%;
+    margin: 1 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+UserMessageWidget {
+    height: auto;
+    width: 100%;
+    margin: 1 0;
+    padding: 0 2;
+    background: $bg_panel;
+    border-left: thick $cyan_glow;
+}
+
+AssistantMessageWidget {
+    height: auto;
+    width: 100%;
+    margin: 1 0;
+    padding: 0 2;
+    background: transparent;
+    border-left: thick $purple_glow;
+}
+
+.message-label {
+    height: 1;
+    margin: 0 0 1 0;
+    color: $purple_glow;
+}
+
+AssistantMessageWidget Markdown {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+SystemNoticeWidget {
+    height: auto;
+    width: 100%;
+    margin: 0 0 1 0;
+    padding: 0 2;
+    background: $bg_panel;
+    border-left: thick $cyan_soft;
+    color: $muted_slate;
+}
+
+ThinkingCardWidget, ToolCardWidget {
+    height: auto;
+    width: 100%;
+    margin: 0 0 1 0;
+    background: $bg_panel;
+    border: round $border_dark;
+    padding: 0;
+}
+
+ToolCardWidget.running {
+    border: round $amber_gold;
+    border-left: thick $amber_gold;
+}
+
+ToolCardWidget.success {
+    border: round $border_dark;
+    border-left: thick $neon_emerald;
+}
+
+ToolCardWidget.failed {
+    border: round $border_dark;
+    border-left: thick $rose_red;
+}
+
+CollapsibleTitle {
+    padding: 0 1;
+    color: $text_light;
+    background: $bg_panel;
+}
+
+CollapsibleTitle:hover {
+    background: $bg_focus;
+    color: $cyan_glow;
+}
+
+CollapsibleTitle:focus {
+    background: $bg_focus;
+    color: $cyan_glow;
+}
+
+CollapsibleContents {
+    padding: 1 2;
+    background: $bg_panel;
+}
+
+ToolCardWidget Vertical {
+    height: auto;
+}
+
+.thinking-content {
+    height: auto;
+    color: $violet;
+}
+
+EditorArea {
+    height: auto;
+    min-height: 5;
+    max-height: 11;
+    width: 1fr;
+    margin: 0 2;
+    padding: 0 1;
+    background: $bg_panel;
+    border: round $border_dark;
+}
+
+EditorArea:focus-within {
+    border: round $cyan_glow;
+}
+
+#editor-header {
+    height: 1;
+    width: 100%;
+}
+
+#btn-quick-slash {
+    height: 1;
+    min-width: 6;
+    width: auto;
+    border: none;
+    padding: 0 1;
+    margin-right: 1;
+    background: $bg_focus;
+    color: $cyan_glow;
+    text-style: bold;
+}
+
+#btn-quick-slash:hover {
+    background: $cyan_glow;
+    color: #0b0f19;
+}
+
+#command-recommendations {
+    max-height: 5;
+    height: auto;
+    background: $bg_panel;
+    border: solid $border_dark;
+    padding: 0;
+    margin: 0;
+}
+
+#editor-input {
+    height: auto;
+    min-height: 2;
+    max-height: 5;
+    padding: 0;
+    background: $bg_panel;
+    border: none;
+}
+
+#editor-status {
+    height: 1;
+    color: $muted_slate;
+}
+
+FooterBar {
+    height: 1;
+    width: 1fr;
+    margin: 0 2;
+    padding: 0 1;
+    color: $muted_slate;
+    background: $bg_screen;
+}
+
+ModalScreen {
+    align: center middle;
+    background: #000000 80%;
+}
+
+.modal-dialog {
+    width: 90;
+    max-width: 95%;
+    height: auto;
+    max-height: 90%;
+    background: $bg_panel;
+    border: round $border_dark;
+    padding: 1 2;
+}
+
+.modal-title {
+    height: auto;
+    text-align: left;
+    text-style: bold;
+    color: $cyan_glow;
+    padding: 0 0 1 0;
+    margin-bottom: 1;
+    border-bottom: solid $border_dark;
+}
+
+.modal-dialog DataTable {
+    height: auto;
+    max-height: 14;
+    background: $bg_panel;
+}
+
+.modal-dialog VerticalScroll {
+    height: auto;
+    max-height: 18;
+}
+
+.modal-dialog Static {
+    height: auto;
+}
+
+.modal-buttons {
+    height: auto;
+    min-height: 3;
+    margin-top: 1;
+    align: right middle;
+}
+
+.modal-buttons Button {
+    min-width: 12;
+    margin-left: 1;
+}
+
+#btn-reject {
+    background: $rose_red;
+    color: #ffffff;
+    text-style: bold;
+}
+
+#btn-approve {
+    background: $neon_emerald;
+    color: #0b0f19;
+    text-style: bold;
+}
+
+#output-modal-container {
+    width: 110;
+}
+
+#jump-latest {
+    height: 1;
+    min-width: 16;
+    width: auto;
+    margin: 0 3;
+    border: none;
+    background: $bg_focus;
+    color: $cyan_glow;
+    text-style: bold;
+}
+
+.view-output {
+    margin-top: 1;
+    height: 1;
+    min-width: 18;
+    background: $bg_focus;
+    color: $cyan_soft;
+    border: none;
+}
+
+.view-output:hover {
+    background: $cyan_soft;
+    color: #0b0f19;
+}

@@ -1,0 +1,880 @@
+{
+  "source_artifact": ".benchmarks/results/polyglot-64-20261024/protocol.json",
+  "source_sha256": "8acc032535680477e6ac80d5c18ef9a4dc4a9c46d3ee87aab8eda1e99001e192",
+  "version": "weyra-polyglot-64-v3",
+  "limits": {
+    "task_cny": ".95",
+    "campaign_cny": "33.25",
+    "combined_v2_v3_cny": "40",
+    "model_steps": 80,
+    "physical_requests": 120,
+    "task_seconds": 720,
+    "first_steps": 40,
+    "feedback_steps": 20,
+    "verifier_seconds": 120,
+    "verifier_retries": 2,
+    "feedback_characters": 6000,
+    "parallel": 4,
+    "main_output_tokens": 4096,
+    "summary_output_tokens": 2048,
+    "summary_expanded_tokens": 4096,
+    "context_window": 16384
+  },
+  "routes": {
+    "main": {
+      "provider_id": "cun",
+      "model_id": "DeepSeek-V4.1-Flash",
+      "context_window": 16384,
+      "max_output_tokens": 8192,
+      "supports_tools": true,
+      "supports_reasoning": true,
+      "supports_cache": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "reasoning_format": "thinking"
+    },
+    "compression": {
+      "provider_id": "cun",
+      "model_id": "DeepSeek-V4.1-Flash",
+      "context_window": 16384,
+      "max_output_tokens": 8192,
+      "supports_tools": true,
+      "supports_reasoning": true,
+      "supports_cache": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "reasoning_format": "thinking"
+    },
+    "memory": {
+      "provider_id": "cun",
+      "model_id": "DeepSeek-V4.1-Flash",
+      "context_window": 16384,
+      "max_output_tokens": 8192,
+      "supports_tools": true,
+      "supports_reasoning": true,
+      "supports_cache": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "reasoning_format": "thinking"
+    },
+    "evolution": {
+      "provider_id": "cun",
+      "model_id": "DeepSeek-V4.1-Flash",
+      "context_window": 16384,
+      "max_output_tokens": 8192,
+      "supports_tools": true,
+      "supports_reasoning": true,
+      "supports_cache": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "reasoning_format": "thinking"
+    },
+    "skill_judge": {
+      "provider_id": "cun",
+      "model_id": "gpt-5.6-luna",
+      "context_window": 128000,
+      "max_output_tokens": 16384,
+      "supports_tools": false,
+      "supports_reasoning": false,
+      "supports_cache": false,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "reasoning_format": null
+    }
+  },
+  "fallbacks": {
+    "main": [
+      {
+        "provider_id": "cun",
+        "model_id": "gpt-5.6-luna",
+        "context_window": 128000,
+        "max_output_tokens": 16384,
+        "supports_tools": true,
+        "supports_reasoning": false,
+        "supports_cache": true,
+        "input_price_per_million": null,
+        "output_price_per_million": null,
+        "reasoning_format": null
+      }
+    ]
+  },
+  "route_parameters": {
+    "main": {
+      "max_output_tokens": 4096
+    },
+    "skill_judge": {
+      "max_output_tokens": 512
+    }
+  },
+  "cost_basis": "conservative_ceiling_not_provider_invoice",
+  "tasks": [
+    {
+      "id": "javascript/affine-cipher",
+      "language": "javascript",
+      "editable": [
+        "affine-cipher.js"
+      ],
+      "agent_files_sha256": {
+        "affine-cipher.js": "0a01e2b1f213eea89bb8f002f6a472d906e9e7597f05a4f172e21284a0cf967b",
+        "INSTRUCTIONS.md": "8ca08c38274662d67f1bd6482242161a36a6268851ad1e61acf1bb327b20c729",
+        "package.json": "b64ac5b2d7ff887d75ef7a57b010009bf609ac887d4fb89049746dd3cbfcf26f",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/rectangles",
+      "language": "javascript",
+      "editable": [
+        "rectangles.js"
+      ],
+      "agent_files_sha256": {
+        "rectangles.js": "239f0f3a02f4f3d96e91207af046fbe08674f2c439a7868dfd12480b4b24b9f3",
+        "INSTRUCTIONS.md": "9d79ea05c5188315a7fd181ff07c2567cd10fb99c355519fec84cb1494ca50d2",
+        "package.json": "433b62217458cb33a8ca8c745531662824ba92d6956f07d9063a01956aa87f16",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/two-bucket",
+      "language": "python",
+      "editable": [
+        "two_bucket.py"
+      ],
+      "agent_files_sha256": {
+        "two_bucket.py": "6ed45b4d895c2e1ff15732719df5c832f1b67a610b069f71c1c0c8c528da1dd4",
+        "INSTRUCTIONS.md": "9c12407c5f16de652f83e535542759a401d4e0a309336909172e26d1744c8533"
+      }
+    },
+    {
+      "id": "javascript/phone-number",
+      "language": "javascript",
+      "editable": [
+        "phone-number.js"
+      ],
+      "agent_files_sha256": {
+        "phone-number.js": "fd10fe10af5ca79a1e9e10485d59106befaad96a9140b690917f85930bd5129c",
+        "INSTRUCTIONS.md": "ca1e2c1c43454c151e519a2f784439621c243bb2824715c69a8e0904abc473a5",
+        "package.json": "28c6da9e88ef4549c57fdf7b399a98772c37c0a663effc4c7c36cc7826344304",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/sum-of-multiples",
+      "language": "javascript",
+      "editable": [
+        "sum-of-multiples.js"
+      ],
+      "agent_files_sha256": {
+        "sum-of-multiples.js": "d30ca41376970ba0bc123f26d6b08f41e55b07a568d8c460ec59db2b11eac4b8",
+        "INSTRUCTIONS.md": "98b1c89fe33e9fa9fcb2273dbe9e81b9e022a67cee495b8e808f417b7d7c5b07",
+        "package.json": "83c7402f907e1dbfb65d7da47aaa49e6b0a049f0c631167b0ba1adcae814395b",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/state-of-tic-tac-toe",
+      "language": "javascript",
+      "editable": [
+        "state-of-tic-tac-toe.js"
+      ],
+      "agent_files_sha256": {
+        "state-of-tic-tac-toe.js": "03f47c68006682b5e6a3460e4a2d22883f999b3dbeb74ba0fbb6731a3661fce8",
+        "INSTRUCTIONS.md": "3b4c78cd40e496d055eb85276dfa17196ee7bfd72d0961ef570d7df22b849cd0",
+        "package.json": "e4789241afec3260d2a4a4ebc5df168afe799e8ff0ff1f65f68acf14a9704421",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/affine-cipher",
+      "language": "python",
+      "editable": [
+        "affine_cipher.py"
+      ],
+      "agent_files_sha256": {
+        "affine_cipher.py": "d3164dc77d13a429fb14899cd5e74a81d848ed0c7b95b02db3247a75e0bbd72b",
+        "INSTRUCTIONS.md": "23f5742488b1e76228ee544d74f96967f617740a22fc3c9075872e576fbd7871"
+      }
+    },
+    {
+      "id": "javascript/book-store",
+      "language": "javascript",
+      "editable": [
+        "book-store.js"
+      ],
+      "agent_files_sha256": {
+        "book-store.js": "dddec1d9d2a60c4c7e32f4f7b9f9245078907d46e3d24a7dbc1011e2738d882f",
+        "INSTRUCTIONS.md": "27bfec9d62235249397c6a508108e55ef3ca66f16c1d5e6958e15cf748dca5be",
+        "package.json": "7ccac13eae6b8a35fd5e2f0dcdf472f447cc7ef8b16dcee07d10fba75c0f8e85",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/forth",
+      "language": "python",
+      "editable": [
+        "forth.py"
+      ],
+      "agent_files_sha256": {
+        "forth.py": "9acd281e02feff4fc5ae766063a1ce1290b625bb930cc8f54c15a0109610e562",
+        "INSTRUCTIONS.md": "12b1f8fd772c56a32bcb24cd57a03b5523ba9df3842ef7e7eb5532962ca5b19f"
+      }
+    },
+    {
+      "id": "javascript/bottle-song",
+      "language": "javascript",
+      "editable": [
+        "bottle-song.js"
+      ],
+      "agent_files_sha256": {
+        "bottle-song.js": "50a057c35838a01ce23bec9fc28e4237435a7fdc41cf53a6c28149709dfb906b",
+        "INSTRUCTIONS.md": "0e4fd6e0e83949fe62ef118036e7b28fb597666ed19a478eca3d3d9018614b11",
+        "package.json": "42b7b76a56c04a6131de66debbf528cdfaa52cb49823f2fb5d5cb5a8222abddc",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/killer-sudoku-helper",
+      "language": "javascript",
+      "editable": [
+        "killer-sudoku-helper.js"
+      ],
+      "agent_files_sha256": {
+        "killer-sudoku-helper.js": "13155d0f15fe6507808c3341d159f7b8f182a19eded887c8dc451bbf41f90a49",
+        "INSTRUCTIONS.md": "c3207868af12f5fb93165ea820866e918cab7eec70621ec88a00c08e7ce32059",
+        "package.json": "2a4ded4b930b00cd301948f6c5f2431e53e7c7912e904cf4c956221e645cd696",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/paasio",
+      "language": "python",
+      "editable": [
+        "paasio.py"
+      ],
+      "agent_files_sha256": {
+        "paasio.py": "9a6238e652c6289fee1211c8a530563c091b7d386dbe5347a999b28d2a7211e8",
+        "INSTRUCTIONS.md": "4f389a21f0b352607babb959e45bb449ab5d9b9970d1e3aaf5c2423b2ffc0c33"
+      }
+    },
+    {
+      "id": "javascript/complex-numbers",
+      "language": "javascript",
+      "editable": [
+        "complex-numbers.js"
+      ],
+      "agent_files_sha256": {
+        "complex-numbers.js": "c123539d8148074269d5602fad6d2d1365392539a1b6f02d073847d2809eeb1d",
+        "INSTRUCTIONS.md": "60949140b676a34a7884c23fe931fa9e40e0710e2acc66d9f0303a8fcdb261cc",
+        "package.json": "37f09f9af4ef16b4a7d30d09f4c51976084d5b8ac04cc39d2a355eb27d9de74a",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/variable-length-quantity",
+      "language": "javascript",
+      "editable": [
+        "variable-length-quantity.js"
+      ],
+      "agent_files_sha256": {
+        "variable-length-quantity.js": "797521f2ded6ef525675db3a6b1693016d3686c74c5ca4e16b6d58a18b11b80e",
+        "INSTRUCTIONS.md": "665731f052d645396f9b7017d27c1ba77c8100f156de4fcad92300bddefb1484",
+        "package.json": "2ccbb343ea01bb399fdab831f8fd30c529f76cfbb9cf2de53f57bc47796e5727",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/beer-song",
+      "language": "javascript",
+      "editable": [
+        "beer-song.js"
+      ],
+      "agent_files_sha256": {
+        "beer-song.js": "9fb295fea48fc7db1d0b43737e14eb8e525e8e3d4eea3bc5a2bd782f62ac93a3",
+        "INSTRUCTIONS.md": "74f85047feabcf41b1846d5c58ad0133a51e0963567d0afbc5e21541beb37e4f",
+        "package.json": "ae5d247d478ca0a62fa233cdf6f4c6a96c5cfb6c1e486fb94d92299a32755f6a",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/ocr-numbers",
+      "language": "javascript",
+      "editable": [
+        "ocr-numbers.js"
+      ],
+      "agent_files_sha256": {
+        "ocr-numbers.js": "b55519b6f7ba2ec3aeba5a3686181abf8dfaaf8d6165415c8ba8912fb9cacb16",
+        "INSTRUCTIONS.md": "cc9dae7e1e774a12dbf608991fa20d3ce08257abdc90d9e8d5d52725b6d911d0",
+        "package.json": "1c4bc76a882398293af6a9b945af11affa6b718490fff18d4f58078009afcb4a",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/zipper",
+      "language": "javascript",
+      "editable": [
+        "zipper.js"
+      ],
+      "agent_files_sha256": {
+        "zipper.js": "89313857b68ac2e98be20b7fab35b00bf9f72084b52e7bad423195667b5bc7dc",
+        "INSTRUCTIONS.md": "30c3fa8f9de3afdd691f3ff72e0407581da6676426ad7f175ef1553504df6066",
+        "package.json": "1719761a880245bc1ff344db8e802d737df71ff908cb0dff89fe3771fb341ad2",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/transpose",
+      "language": "javascript",
+      "editable": [
+        "transpose.js"
+      ],
+      "agent_files_sha256": {
+        "transpose.js": "774228dc5fde110756f16d38d455e955d2f1b61160a2865775166ba063501968",
+        "INSTRUCTIONS.md": "4107fc3ed25cb2106df05774f9e6328663bf96777712df14ab5c3090438c6c66",
+        "package.json": "2d4886500d0a549518ced5954a298eb7ab7fc98f9536b11d46fcb3c710bfca8d",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/list-ops",
+      "language": "javascript",
+      "editable": [
+        "list-ops.js"
+      ],
+      "agent_files_sha256": {
+        "list-ops.js": "d05699d21fe386dff6fe295b6e1309af618325853f423c70200572b41b65243c",
+        "INSTRUCTIONS.md": "dec87e81ae1792f48a0e59ba658bd00486f11a8375ea2d3f89c636bafcf6e9c2",
+        "package.json": "d35bce1e5a66129e0fdac6aaa14f3689802cc0f303b2bb10f8106492453441b2",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/beer-song",
+      "language": "python",
+      "editable": [
+        "beer_song.py"
+      ],
+      "agent_files_sha256": {
+        "beer_song.py": "942234e1d907d3867f9eee8102573a8c398520a28ad1ca10cd23a0d9247134bc",
+        "INSTRUCTIONS.md": "74f85047feabcf41b1846d5c58ad0133a51e0963567d0afbc5e21541beb37e4f"
+      }
+    },
+    {
+      "id": "python/wordy",
+      "language": "python",
+      "editable": [
+        "wordy.py"
+      ],
+      "agent_files_sha256": {
+        "wordy.py": "3a8e9cf28b599898ff62c4714ad747b95ec84e8e04034b3dbf14b9f40afe0ee1",
+        "INSTRUCTIONS.md": "7371828cb529433bf3a7fb8599c12cb8493a8ce5e65156fbe7eaa4ccf963f4eb"
+      }
+    },
+    {
+      "id": "python/food-chain",
+      "language": "python",
+      "editable": [
+        "food_chain.py"
+      ],
+      "agent_files_sha256": {
+        "food_chain.py": "d7c1f854251ec4677ff36fdabbc87ef0ebcff8e8559fdee91b52fdeb8c3dc6b5",
+        "INSTRUCTIONS.md": "282ba689e0653e74892e2104962c2ed4ef79fd307a182c343cd72ae807e466f3"
+      }
+    },
+    {
+      "id": "python/sgf-parsing",
+      "language": "python",
+      "editable": [
+        "sgf_parsing.py"
+      ],
+      "agent_files_sha256": {
+        "sgf_parsing.py": "e821e6d68abd9336a222d56049ed9fb89c001b6d8ac62e2d10da44a36f76de9d",
+        "INSTRUCTIONS.md": "e9c043e3fd24958237c4818e7c1c4fe4c094086adeb0866be032a8872e90abf7"
+      }
+    },
+    {
+      "id": "javascript/resistor-color-trio",
+      "language": "javascript",
+      "editable": [
+        "resistor-color-trio.js"
+      ],
+      "agent_files_sha256": {
+        "resistor-color-trio.js": "99de4979f291fb9d3670d6fbfdd1799675a5181c8f128630898ab4d72c4e5230",
+        "INSTRUCTIONS.md": "2f9e3ed82470bd9e9cf73d0cb99328d7b154f14dfd26ca212d3841949b757d01",
+        "package.json": "ce80535e253469341929cd928ef7c70ad6c222fdf87ae72b3979614e5775ca68",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/pov",
+      "language": "python",
+      "editable": [
+        "pov.py"
+      ],
+      "agent_files_sha256": {
+        "pov.py": "ed7eba5f0b64b69a0a1904dc338ce39039b5de3ea2aa74019d8d494ca46b11ba",
+        "INSTRUCTIONS.md": "f771bc69b991182ef93c1054c34b2e145ec331ed97001ada0c7ceb5ba08d39c3"
+      }
+    },
+    {
+      "id": "python/phone-number",
+      "language": "python",
+      "editable": [
+        "phone_number.py"
+      ],
+      "agent_files_sha256": {
+        "phone_number.py": "be4018194beaf2c67df5d95e277d5cf7a7344c03a3c64d283aabcf0a2a0480d7",
+        "INSTRUCTIONS.md": "47640b87531641c448b75d29246acd4f8f39bc7b80e4cca1171525653c562dd0"
+      }
+    },
+    {
+      "id": "javascript/parallel-letter-frequency",
+      "language": "javascript",
+      "editable": [
+        "parallel-letter-frequency.js"
+      ],
+      "agent_files_sha256": {
+        "parallel-letter-frequency.js": "d65bbcbc2ce0061b0cab1d4e96757d5279b26b7e1ed7fbb44ab6d149cbab7f40",
+        "INSTRUCTIONS.md": "df30c48daeac1a7ebbfc2747d7a0ec2305cf8257674801792b0fb8d2185b20e6",
+        "package.json": "88f3c304ff9d76edf2ccebf50556814e43211b4cba24014630170ef28fd7dd28",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/zipper",
+      "language": "python",
+      "editable": [
+        "zipper.py"
+      ],
+      "agent_files_sha256": {
+        "zipper.py": "66276107d448f53a12509da6f503280e0dca4a6bbd9d690a774fb0972a55f926",
+        "INSTRUCTIONS.md": "30c3fa8f9de3afdd691f3ff72e0407581da6676426ad7f175ef1553504df6066"
+      }
+    },
+    {
+      "id": "javascript/tournament",
+      "language": "javascript",
+      "editable": [
+        "tournament.js"
+      ],
+      "agent_files_sha256": {
+        "tournament.js": "15fd75d53313f39aaa6882d329e0fed2e32ddd04f816de5ebf3f662ee550094c",
+        "INSTRUCTIONS.md": "a545d4c4160a1d9310ad162434a716f20db989b3a995bb818fec8038c1362b6e",
+        "package.json": "3592730a2b6264fe59e3bcc703bb4ab8489a42ee5d28366838f8c0ac4604366e",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/grep",
+      "language": "python",
+      "editable": [
+        "grep.py"
+      ],
+      "agent_files_sha256": {
+        "grep.py": "00350df01f0993f6268ba128c4d05a693a7188573fb9fca5275be53738fe829a",
+        "INSTRUCTIONS.md": "c68254de5f7f8eb68527d638595ce53dedfec499cd52cca0ad5bff8b3065e980"
+      }
+    },
+    {
+      "id": "python/variable-length-quantity",
+      "language": "python",
+      "editable": [
+        "variable_length_quantity.py"
+      ],
+      "agent_files_sha256": {
+        "variable_length_quantity.py": "c065d92722a1b8b9723bae2de3662583b65287c3fa2a459768f65e667a2ac695",
+        "INSTRUCTIONS.md": "9b28b8fd3eff6d044644d3debaa1e360a07197fc18661d764eab9d0b52520464"
+      }
+    },
+    {
+      "id": "javascript/wordy",
+      "language": "javascript",
+      "editable": [
+        "wordy.js"
+      ],
+      "agent_files_sha256": {
+        "wordy.js": "a3e38272e31830d28d4b7e796287b7e838e0963f4dcdd219585d6b08d10212a6",
+        "INSTRUCTIONS.md": "b9e24dd95b27fa04f706e4dd9e5c7f430684b1af13a1cfde34faee705300aeee",
+        "package.json": "038d0628628b8256b9bd6cf507d1f62d1036a78f0eb509ef766832b0ef588a46",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/proverb",
+      "language": "python",
+      "editable": [
+        "proverb.py"
+      ],
+      "agent_files_sha256": {
+        "proverb.py": "6ffde7190552cc3a19fdabc7d0624359302e3663a06671b28e1c65b13af61a42",
+        "INSTRUCTIONS.md": "ed53decbb501ea11aafd7d9918dd22273d9d132780b557d0423ebf2cae665813"
+      }
+    },
+    {
+      "id": "python/zebra-puzzle",
+      "language": "python",
+      "editable": [
+        "zebra_puzzle.py"
+      ],
+      "agent_files_sha256": {
+        "zebra_puzzle.py": "6916bddd73997faa6920d6ef41a6a9f593e65bac41252dedc19deb65df844c67",
+        "INSTRUCTIONS.md": "a102d88fc4ea1906ad0e3ff30b4e020db8f87c097a46df99a1670126f00881be"
+      }
+    },
+    {
+      "id": "python/scale-generator",
+      "language": "python",
+      "editable": [
+        "scale_generator.py"
+      ],
+      "agent_files_sha256": {
+        "scale_generator.py": "3dbc77dd439f4f4e1e41c6ec3f07dce2a55cb40f6e203797b66a27f251be8c24",
+        "INSTRUCTIONS.md": "4101835869d2d6376accf0644e51bb216fa0bd252ba93b7102827e43b6342859"
+      }
+    },
+    {
+      "id": "python/simple-linked-list",
+      "language": "python",
+      "editable": [
+        "simple_linked_list.py"
+      ],
+      "agent_files_sha256": {
+        "simple_linked_list.py": "99ae2a714c113f895a899f79728ead86001e0a3c2c8042485bea4279269e0101",
+        "INSTRUCTIONS.md": "88ed05792fe7eec837362b11bb7ef2379f01e2c8d2c6f3bdc5553e053e980d8a"
+      }
+    },
+    {
+      "id": "javascript/binary",
+      "language": "javascript",
+      "editable": [
+        "binary.js"
+      ],
+      "agent_files_sha256": {
+        "binary.js": "ff58cf939e7e7e1bdb80f0bd18556a14fe20edba63a739b01b9338f0fbcb6d5b",
+        "INSTRUCTIONS.md": "444f6b49146b4462471b7ec73a6cc841da218243bd96c73fd15f56c3ff9d89f3",
+        "package.json": "08c410311f549b46f69ba6e2bdcd43618821d9b11de15581c472e4afd7d7fc40",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "python/dominoes",
+      "language": "python",
+      "editable": [
+        "dominoes.py"
+      ],
+      "agent_files_sha256": {
+        "dominoes.py": "89f1fede34db8dbd73fb7103476080307e769425049014bf60b7d5e632f9743b",
+        "INSTRUCTIONS.md": "4d0e12e178b83a18ea3e4cdc2b108e0a2ae01ae7e66625887d2895672db7fece"
+      }
+    },
+    {
+      "id": "python/list-ops",
+      "language": "python",
+      "editable": [
+        "list_ops.py"
+      ],
+      "agent_files_sha256": {
+        "list_ops.py": "a3ff5742b7a38f4f35d7a9cb0d86f10fa6b7ac31777e9adf3fc06099978e38c8",
+        "INSTRUCTIONS.md": "99b119333c4f19ab2563d6205781813f165bcef909c227a206305543d739e74b"
+      }
+    },
+    {
+      "id": "python/go-counting",
+      "language": "python",
+      "editable": [
+        "go_counting.py"
+      ],
+      "agent_files_sha256": {
+        "go_counting.py": "93533b48aa59c4b85a8ddd8a6f212f28491dfe6c016a660d0ef7c97192ee18d3",
+        "INSTRUCTIONS.md": "25844380f773acf5dd1da806cb1eda345c5b59da0eb19649858a0b45caa88acb"
+      }
+    },
+    {
+      "id": "python/dot-dsl",
+      "language": "python",
+      "editable": [
+        "dot_dsl.py"
+      ],
+      "agent_files_sha256": {
+        "dot_dsl.py": "e13b484dcf24ab01d5d8c2f9ee259bc725069c69d80a1b9855d81cfd742b386a",
+        "INSTRUCTIONS.md": "1dab7804566cd0785b1b3562291b6743c9db6c311ad86452d6bff36463fc4492"
+      }
+    },
+    {
+      "id": "python/robot-name",
+      "language": "python",
+      "editable": [
+        "robot_name.py"
+      ],
+      "agent_files_sha256": {
+        "robot_name.py": "cc89225ac6cb0b5dae3133d02620f6f7ca5831274afa8ea9e462eb5d6b66f21d",
+        "INSTRUCTIONS.md": "bbb01d54e892de555eb900b3b93fd3645ad7fcfd09eace353fb6b81e768c4310"
+      }
+    },
+    {
+      "id": "python/hangman",
+      "language": "python",
+      "editable": [
+        "hangman.py"
+      ],
+      "agent_files_sha256": {
+        "hangman.py": "9ed6db0932276c19a9aaac728211c1bda0d8a143c4ac4c6a3c5c23b941137562",
+        "INSTRUCTIONS.md": "ec0fc34a2bdeb810c7587f37b8c52d1097cabf91bcb95a1759cc75daba7fd6dd"
+      }
+    },
+    {
+      "id": "python/bottle-song",
+      "language": "python",
+      "editable": [
+        "bottle_song.py"
+      ],
+      "agent_files_sha256": {
+        "bottle_song.py": "942234e1d907d3867f9eee8102573a8c398520a28ad1ca10cd23a0d9247134bc",
+        "INSTRUCTIONS.md": "0e4fd6e0e83949fe62ef118036e7b28fb597666ed19a478eca3d3d9018614b11"
+      }
+    },
+    {
+      "id": "python/book-store",
+      "language": "python",
+      "editable": [
+        "book_store.py"
+      ],
+      "agent_files_sha256": {
+        "book_store.py": "5c22fe209f90b16dbbacff457199d0b14152b48616c875085c8ff1f6f7188ec2",
+        "INSTRUCTIONS.md": "025999b58db674568be4d2239fc577b749ec40e98593fc3638e21e72915ad4c5"
+      }
+    },
+    {
+      "id": "python/tree-building",
+      "language": "python",
+      "editable": [
+        "tree_building.py"
+      ],
+      "agent_files_sha256": {
+        "tree_building.py": "ee9128807b278a39a851ee4df53479dec6d5da7dbb066a86fac810c8f28ba285",
+        "INSTRUCTIONS.md": "5473273d84113a3d3c1ef8acd1e3e9577536ba3e83a85b28887e87ddd9618135"
+      }
+    },
+    {
+      "id": "python/connect",
+      "language": "python",
+      "editable": [
+        "connect.py"
+      ],
+      "agent_files_sha256": {
+        "connect.py": "2e5d51380a8160d906d2eacc8655eceea5ce87abb7f0783a010a1521cf608216",
+        "INSTRUCTIONS.md": "3c717817dc88865be3fd9ad5b084d0244602e8bd416a59eca9c3cbea546b70aa"
+      }
+    },
+    {
+      "id": "python/grade-school",
+      "language": "python",
+      "editable": [
+        "grade_school.py"
+      ],
+      "agent_files_sha256": {
+        "grade_school.py": "d2af6e7a288b738c4d98ec1989f5a604809a07abe42d76a7aebe223d7460d53d",
+        "INSTRUCTIONS.md": "d5dc6c7d5980376d00993229a9328ad3231e9578590753d185e9a758b22555d5"
+      }
+    },
+    {
+      "id": "python/pig-latin",
+      "language": "python",
+      "editable": [
+        "pig_latin.py"
+      ],
+      "agent_files_sha256": {
+        "pig_latin.py": "fbef923db1bc51436424e83ca92e8d5d4f2505c5796fee8daf3fe276b2259e63",
+        "INSTRUCTIONS.md": "4fc5d6189e0864159fb2bd909601a89c0da7ca3f432fb548b9e9b7236fe5ed29"
+      }
+    },
+    {
+      "id": "python/rest-api",
+      "language": "python",
+      "editable": [
+        "rest_api.py"
+      ],
+      "agent_files_sha256": {
+        "rest_api.py": "249967634165d5b28853c6b7ce2ff83f384b864c2547bcdaf82f93d00df7575a",
+        "INSTRUCTIONS.md": "bcbbaeccabfca6fa8e8958c623f2ac972205c94e69e7b6c61310201a9fd131b2"
+      }
+    },
+    {
+      "id": "python/transpose",
+      "language": "python",
+      "editable": [
+        "transpose.py"
+      ],
+      "agent_files_sha256": {
+        "transpose.py": "009152d0e004d0e7ec4de2c7aec36bdfbb0c3dd7061553e9494cabeaae7c4797",
+        "INSTRUCTIONS.md": "4107fc3ed25cb2106df05774f9e6328663bf96777712df14ab5c3090438c6c66"
+      }
+    },
+    {
+      "id": "python/bowling",
+      "language": "python",
+      "editable": [
+        "bowling.py"
+      ],
+      "agent_files_sha256": {
+        "bowling.py": "a356c0682b6c0c04e9e30a7da603b2014c227426b43bbe37f34cd99913d368b6",
+        "INSTRUCTIONS.md": "4ec644a2d0722730dab904e02ecaef152c7583a568c8b417af25a565fa45be8f"
+      }
+    },
+    {
+      "id": "javascript/triangle",
+      "language": "javascript",
+      "editable": [
+        "triangle.js"
+      ],
+      "agent_files_sha256": {
+        "triangle.js": "d7ec2169538324e8351c991a90048e0edb2bc891664133235ca88f4494502759",
+        "INSTRUCTIONS.md": "2eea028301cc7e0a6d66844d583662f8d4091b32a75f7165472b72b9560bb377",
+        "package.json": "fedfdbd6bccd7a83984565fa159856df00a2668d0170fb3500004d79de192de6",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/rest-api",
+      "language": "javascript",
+      "editable": [
+        "rest-api.js"
+      ],
+      "agent_files_sha256": {
+        "rest-api.js": "7c4f32bf2ec002ffde08a1c41df4e62b42e57d2b092c2bb64f4ccf9109dfc5b4",
+        "INSTRUCTIONS.md": "f54b9857b90a22db6a02729868d5720739486a2ed16d32134c5b10afbb8a8739",
+        "package.json": "b94a16f4dcf8dafc432a7b78a50af957bf96f72cc9ec79f0368387d831cd78f5",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/house",
+      "language": "javascript",
+      "editable": [
+        "house.js"
+      ],
+      "agent_files_sha256": {
+        "house.js": "a4e2c066a4a5be6e9a1537a1eda9ad4183e0394bbcff742cd037371d6860f580",
+        "INSTRUCTIONS.md": "70540211217baa8d993ed7545ae35b2e0a917461cce9704f6207a5df92cea22a",
+        "package.json": "77110379c5ee790219345d4230d8de67dfed9acfff55eb13942c3be482d5cfe0",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/alphametics",
+      "language": "javascript",
+      "editable": [
+        "alphametics.js"
+      ],
+      "agent_files_sha256": {
+        "alphametics.js": "a92685d4f0ff6101044eec39a638822ed811823c3d3e6d1f812bc102c6c1e18e",
+        "INSTRUCTIONS.md": "8f798632934cfd35d9e2f36b9e66cae5ffa23279a09ddc61974f64e88180c4de",
+        "package.json": "ccef9743ff6c63164e86b4c4621cccfddb9ce4e1106e371c12c87ef4810b7944",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/say",
+      "language": "javascript",
+      "editable": [
+        "say.js"
+      ],
+      "agent_files_sha256": {
+        "say.js": "c1f09750ce25e14250134ac4bc3ab574f3d306f6271d0141f8bab03226f791a7",
+        "INSTRUCTIONS.md": "e909ff790735fc0d7b922da2d4ae9b6c386d866aa4f2ed39a705144ddf11e471",
+        "package.json": "b68fd9e895700bee3ea74d225be001162558ea90319d470642490585a445111d",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/rational-numbers",
+      "language": "javascript",
+      "editable": [
+        "rational-numbers.js"
+      ],
+      "agent_files_sha256": {
+        "rational-numbers.js": "b055afca02854d04d8852a55c53fbc7965bb97282d625da7aaf5394023232644",
+        "INSTRUCTIONS.md": "982aefbb4814ff536d58bd076f3ee21ead2bb0c893d8cb776b8818eaabbc980d",
+        "package.json": "3e333b4ab51b83f0c2e8a134c23f373e473e6235612a1de4ad17ea83009e566d",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/twelve-days",
+      "language": "javascript",
+      "editable": [
+        "twelve-days.js"
+      ],
+      "agent_files_sha256": {
+        "twelve-days.js": "dedaee57a1577810ca388ee4a9a797e299d6ddfea87049bc57974b30d7fa4887",
+        "INSTRUCTIONS.md": "b166677b08685e52d20fd150195fede2dd124ae22dc34c719f352f8aea112964",
+        "package.json": "4817d6fc2caf8fab1905dda4aa3d197c68c020645832d23a2e974f37b520008b",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/pig-latin",
+      "language": "javascript",
+      "editable": [
+        "pig-latin.js"
+      ],
+      "agent_files_sha256": {
+        "pig-latin.js": "658bff3f1d3fb0d241ac5dc24260c3515eb1b067c1e7fde8bef0f0583d9053ed",
+        "INSTRUCTIONS.md": "4fc5d6189e0864159fb2bd909601a89c0da7ca3f432fb548b9e9b7236fe5ed29",
+        "package.json": "ff1cf555e488efc56030eee5670d7f5908c43c5bdc4a75899bb45ddb78676e1e",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/grade-school",
+      "language": "javascript",
+      "editable": [
+        "grade-school.js"
+      ],
+      "agent_files_sha256": {
+        "grade-school.js": "1eb3ebac5d31f2ab784068fc7d3ec8b93ccacfcc5507cb6882efac7a8999dce2",
+        "INSTRUCTIONS.md": "8dc7133cd5f0564717108757c27ad96ebadf44f03b5fde5c35b826aaeb0b4e0f",
+        "package.json": "641447fb0a8d3a907c0ad9f8a004d94391e0995fb603a37ee602cb7b1b0a62de",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/forth",
+      "language": "javascript",
+      "editable": [
+        "forth.js"
+      ],
+      "agent_files_sha256": {
+        "forth.js": "10b22e0a92b020bef406ad5f13fb75b28350373269a0cec097a61e7ec2eb6cc4",
+        "INSTRUCTIONS.md": "06875da79159e3783cde3d006e405f8329e16837b09b0b4b8225efc3d27a6d9c",
+        "package.json": "8ce148029270d32b3b8466ae39257d82e7f60bb9104365df62fe3be2fc7637f0",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/ledger",
+      "language": "javascript",
+      "editable": [
+        "ledger.js"
+      ],
+      "agent_files_sha256": {
+        "ledger.js": "7ec8bb264b243bba0f8a668c4e46b0a6a1d4d7df8970f3696cf45c0ca9c8d6c3",
+        "INSTRUCTIONS.md": "f14fb62c9cec2bc0a0d2ae3064c52585023034f71cc752e92091bc2b38693424",
+        "package.json": "74567b62b3eeb9fa34df7caa3c65440e4079a26f2080d0de1ee2f267c2099801",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    },
+    {
+      "id": "javascript/queen-attack",
+      "language": "javascript",
+      "editable": [
+        "queen-attack.js"
+      ],
+      "agent_files_sha256": {
+        "queen-attack.js": "0d0bcc595e6fd74df038502199e75ba66a1bf162c72758ac5bc976e94abe98dc",
+        "INSTRUCTIONS.md": "57680bb198250a6196ce29f9ce3e071d2dae2d257e5eb84a2004ebb84219043f",
+        "package.json": "d0837f751af5aa7e33de5d418e39bb747e854a752cc80b127a10ed00cd84e8f6",
+        "babel.config.js": "76d07c91b23ee54d8064fae124c8937f9d02a6f758a63446e137f62923e0e8fa"
+      }
+    }
+  ]
+}

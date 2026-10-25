@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weyra"
+version = "0.1.4"
+description = "A lightweight, inspectable Python agent harness"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["openai>=1.0", "anthropic>=0.25", "jsonschema>=4.20", "python-dotenv>=1.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.9", "build>=1"]
+tui = ["textual==8.2.8"]
+
+[project.scripts]
+weyra = "weyra.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["weyra*"]
+
+[tool.setuptools.package-data]
+"weyra.tui" = ["*.tcss"]
+
+[tool.setuptools.data-files]
+"share/weyra" = ["THIRD_PARTY_NOTICES.md"]
+"share/weyra/data" = ["data/scenarios.json"]
+"share/weyra/data/upstream" = ["data/upstream/*.txt", "data/upstream/*.json"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
