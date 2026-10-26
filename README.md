@@ -104,4 +104,4 @@ python -m examples.sdk_service
 - [Python API](docs/API_REFERENCE.md)、[配置参考](docs/CONFIGURATION_REFERENCE.md)
 - [论文与实现映射](paper/README.md)、[贡献指南](CONTRIBUTING.md)
 
-WikiSkill 和 SkillOpt 的引用采用其 2026 年 arXiv 版本。框架机制的来源与 Weyra 的集成贡献分别说明；直接改编的 my-pi-agent 接口、保留的 DSH 提示词及其 MIT 许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。Weyra 采用 [MIT License](LICENSE)。
+WikiSkill 和 SkillOpt 的引用采用其 2026 年 arXiv 版本。框架机制的来源与 Weyra 的集成贡献分别说明；接口组件、保留的 DSH 提示词及其第三方版权与 MIT 许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。Weyra 采用 [MIT License](LICENSE)。

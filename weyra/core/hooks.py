@@ -7,7 +7,7 @@
 入参合法性校验、敏感信息脱敏改写甚至直接物理阻断。
 
 【设计思想与开源血统】
-1. 深度借鉴 Pi Agent (packages/agent/src/agent.ts & my-pi-agent):
+1. 深度借鉴 Pi Agent (packages/agent/src/agent.ts):
    - 五大专职 Hook 拦截契约（*Hook）：独立于业务事件，专职负责控制流门禁，类型安全且语义精准；
    - 统一干预结果模型（HookResult）：通过 `block`、`reason` 以及具体的 `updated_*` 属性向状态机指示处置策略；
    - 顺序组合执行与深度拷贝隔离：拦截器按注册顺序流水线串联，每次传递深拷贝副本，防御中间件并发篡改。

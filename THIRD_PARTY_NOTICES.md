@@ -1,6 +1,9 @@
 # Third-party notices
 
-Weyra adapts the loop, host assembly and Hook interfaces of my-pi-agent, commit a54582d160a2798b7c4199636767dab47012e322 (https://github.com/zxj-2023/my-pi-agent). Adaptations retain Weyra persistence, permission, budget and cancellation contracts.
+## Adapted agent interfaces
+
+Portions of the loop, host assembly and Hook interfaces are distributed under
+the following third-party MIT copyright and license notice.
 
 MIT License
 

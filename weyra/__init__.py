@@ -3,7 +3,7 @@
 核心架构与开源血统传承:
     Weyra 是一个专为严肃研发工程打造的高性能、企业级 Python AI Agent 运行时。
     深度融合了工业界顶级大厂规范、开源智能体先驱与前沿学术论文的卓越设计：
-    - Pi Agent (piagent, my-pi-agent, dg-ai-notes):
+    - Pi Agent (piagent, dg-ai-notes):
       * Session Tree DAG 会话事件图（基于 parent 与 id 建立不可变追加树，leaf 游标无损分支/回溯）；
       * ReAct 执行微内核与双队列交互调度（人类意图 Steering 抢占干预与 Follow-up 队列跟进）；
       * 提示词缓存前缀严格对齐与 Anthropic 4-breakpoint KV Cache 标准；
