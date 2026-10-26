@@ -1,9 +1,40 @@
-# Python API 参考
+# Weyra Python SDK 编程式开发与 API 参考手册 (Python API Reference)
 
-Weyra 提供两层常用接口：`CodingAgent` 用于直接执行任务，`WeyraAppService` 用于应用集成、事件订阅与会话管理。以下签名对应当前源码。
+> **API 参考手册**：Weyra 提供了极简且强大的分层 Python API，涵盖面向任务执行的领域智能体门面 `CodingAgent`、面向企业级应用集成的统一服务门面 `WeyraAppService`、5 大全生命周期 Hook 插件体系以及 `SessionStore` 事件溯源底层接口。
 
-## 直接运行任务
+---
 
+## 目录 (Table of Contents)
+
+- [一、 架构分层与 API 门面选择](#一-架构分层与-api-门面选择)
+- [二、 编程式任务执行：`CodingAgent`](#二-编程式任务执行codingagent)
+- [三、 企业级应用服务门面：`WeyraAppService`](#三-企业级应用服务门面weyraappservice)
+- [四、 异步事件流订阅与数据契约 (`events.py`)](#四-异步事件流订阅与数据契约-eventspy)
+- [五、 5 大全生命周期 Hook 插件体系](#五-5-大全生命周期-hook-插件体系)
+- [六、 底层状态引擎接口：`SessionStore`](#六-底层状态引擎接口sessionstore)
+- [七、 核心异常定义与处理字典](#七-核心异常定义与处理字典)
+
+---
+
+## 一、 架构分层与 API 门面选择
+
+Weyra 的 API 按照调用复杂度与控制粒度设计为双层体系：
+
+```mermaid
+graph TD
+    ClientApp["外部宿主系统 / FastAPI / Web 后端 / CI 脚本"] --> Choice{接入场景选择}
+
+    Choice -->|单任务极速执行 / 离线脚本| CodingAgent["<b>CodingAgent 门面 (weyra.coding.agent)</b><br/>• 轻量直接<br/>• 面向单一长任务<br/>• 自动消费 Steering / Follow-up"]
+    Choice -->|会话管理 / 事件流推送| AppService["<b>WeyraAppService 门面 (weyra.service)</b><br/>• 企业级服务生命周期 (start/close)<br/>• 异步事件发布订阅 (Pub/Sub)<br/>• 幂等请求受理 (SubmissionReceipt)<br/>• 人工双阶段权限审批流程"]
+```
+
+---
+
+## 二、 编程式任务执行：`CodingAgent`
+
+`CodingAgent` 是面向编码领域的纯核心门面，封装了项目规则、记忆检索、技能发现与双队列循环。
+
+### 2.1 极速入门代码示例
 ```python
 import asyncio
 from pathlib import Path
@@ -11,12 +42,19 @@ from weyra.config import load_config
 from weyra.coding.agent import CodingAgent
 
 async def main():
-    project = Path.cwd()
-    runtime = load_config(project).build_runtime()
-    agent = CodingAgent(project, runtime, enable_evolution=False)
+    project_dir = Path.cwd()
+    runtime = load_config(project_dir).build_runtime()
+
+    agent = CodingAgent(
+        project=project_dir,
+        runtime=runtime,
+        permission_mode="default",
+        max_steps=40,
+    )
     try:
-        answer = await agent.run_once("阅读 README.md 并总结项目用途")
-        print(answer)
+        # 执行单轮或多轮任务 (自动处理工具调用与追问)
+        answer = await agent.run_once("分析当前仓库结构并撰写核心技术概述")
+        print("Agent 执行完成:\n", answer)
     finally:
         await agent.close()
 
@@ -24,70 +62,196 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-此示例需要已配置的模型端点和密钥。默认权限会阻止未经批准的写入；嵌入应用可通过 `confirm` 回调提供审批。
+### 2.2 `CodingAgent` 构造参数与方法契约
 
-`CodingAgent(project, runtime, *, session_id=None, context_policy=None, permission_mode="default", confirm=None, budget=None, system=None, max_steps=40, task_token_limit=None, enable_memory=True, enable_evolution=None, ...)`。
+| 方法签名 | 返回类型 | 功能语义与核心契约 |
+| :--- | :--- | :--- |
+| `await agent.run_once(prompt)` | `str` | 启动单次 ReAct 循环，消费所有排队追问，返回模型终态文本。 |
+| `agent.steer(text)` | `str` (item_id) | 向 Pi 风格 Steering 队列插入即时纠偏指令，在当前工具步结束后立即介入。 |
+| `agent.follow_up(text)` | `str` (item_id) | 向 Pi 风格 Follow-up 队列追加跟进任务，待整轮结束后自动开启新轮次。 |
+| `await agent.resume_pending()` | `str` | 自动消费并执行此前崩溃重启后遗留的未消费排队追问。 |
+| `agent.abort()` | `None` | 向当前正在运行的轮次派发优雅打断取消信号。 |
+| `await agent.compact()` | `bool` | 手动执行 DSH 8 节结构化检查点提炼，返回是否成功缩减。 |
+| `agent.clear_session()` | `None` | 安全清空当前视窗，保留底层的不可变事件日志与累计财务账本。 |
+| `agent.branch(record_id)` | `str` (leaf_id) | 切换会话树活动叶子指针，秒级实现分支切换。 |
+| `await agent.spawn_child(mode="spawn")` | `CodingAgent` | 派生子智能体，spawn 使用空上下文；fork 使用父级已完成投影，均共享项目与父级预算。 |
+| `await agent.close()` | `None` | 释放 SQLite 锁句柄与模型运行时连接。 |
 
-| 接口 | 返回 / 用途 |
-| --- | --- |
-| `await agent.run_once(prompt)` | `str`；执行任务并消费排队追问 |
-| `agent.steer(text)` / `agent.follow_up(text)` | 输入项目 ID；插话或排队 |
-| `await agent.resume_pending()` | `str`；恢复未消费追问 |
-| `agent.abort()` | 取消当前执行 |
-| `await agent.compact()` | 是否应用了压缩 |
-| `agent.clear_session()` | 清空活动投影与旧排队输入，保留历史和账本 |
-| `agent.branch(record_id)` | 新活动叶节点 ID |
-| `await agent.spawn_child(mode="spawn")` | 子 CodingAgent；调用者负责关闭 |
-| `await agent.close()` | 关闭资源；默认同时关闭 runtime |
+---
 
-流式接入使用 `on_event(kind, data)` 回调。底层 `AgentHarness.run_turn(host, context)` 同样返回字符串，完成状态写入 `context.turn_state`。
+## 三、 企业级应用服务门面：`WeyraAppService`
 
-## 应用服务
+`WeyraAppService` 是生产级 Web 服务、桌面客户端与微服务集成的统一入口。
 
-`WeyraAppService(project, runtime_factory=None, *, session_id=None, permission_mode="default", max_steps=40, task_token_limit=None, enable_memory=True, enable_evolution=None, budget_limit_tokens=200000, budget_limit_calls=50, budget_limit_cost_cny=None, maintenance_limit=20000)`。
+```mermaid
+sequenceDiagram
+    autonumber
+    participant App as 外部业务系统
+    participant Service as WeyraAppService
+    participant Store as SessionStore (SQLite)
+    participant Agent as CodingAgent
 
-默认从项目目录加载配置；自定义运行时通过无参 `runtime_factory` 注入。返回对象定义在 `weyra.service` 与 `weyra.events` 中。
+    App->>Service: await service.start()
+    Service->>Store: 初始化数据库连接、获取 fcntl 排他锁
+    Service-->>App: 返回初始 StateSnapshot 快照
 
-| 接口 | 契约 |
-| --- | --- |
-| `await service.start()` | `StateSnapshot` |
-| `await service.submit(text, *, mode="auto", client_request_id=...)` | `SubmissionReceipt(accepted, request_id, mode, message)` |
-| `await service.execute_command(line, *, client_request_id=...)` | `CommandResult(ok, code, message, data)` |
-| `await service.cancel_turn()` | `CommandResult` |
-| `await service.get_snapshot()` | `StateSnapshot` |
-| `await service.list_sessions()` | `list[SessionSummary]` |
-| `await service.open_session(session_id)` / `new_session()` | `StateSnapshot` |
-| `await service.get_history(limit=100)` | `HistoryPage` |
-| `await service.subscribe(subscriber_id=None)` | `(StateSnapshot, Subscription)` |
-| `service.unsubscribe(subscriber_id)` | 是否已解除订阅 |
-| `await service.resolve_approval(request_id, approved)` | `CommandResult` |
-| `await service.close()` | `CommandResult` |
+    App->>Service: await service.subscribe("client-id")
+    App->>Service: service.submit("优化SQL查询", client_request_id="req-001")
+    Service-->>App: 返回 SubmissionReceipt(accepted=True, mode="prompt")
 
-提交和命令的 `client_request_id` 为必填关键字参数。同一请求重试时复用 ID；不同任务使用不同 ID。
+    loop 异步事件流推送
+        Service-->>App: 发布事件("turn_start")
+        Service-->>App: 发布事件("text_delta")
+        alt 工具需要人工审批
+            Service-->>App: 发布事件("approval_requested")
+            App->>Service: service.resolve_approval(request_id, approved=True)
+        end
+        Service-->>App: 发布事件("tool_end")
+    end
 
-可直接运行的完整离线示例：[examples/sdk_service.py](../examples/sdk_service.py)。它创建预设模型响应，先订阅，再提交任务，等待 `turn_end`，最后解除订阅并关闭服务：
-
-```bash
-python -m examples.sdk_service
-# Weyra SDK ready.
+    Service-->>App: 发布事件("turn_end")
+    App->>Service: await service.close()
 ```
 
-## 生命周期 Hook
+### 3.1 核心服务方法字典
+
+| 方法签名 | 返回类型 | 核心功能与参数说明 |
+| :--- | :--- | :--- |
+| `await service.start()` | `StateSnapshot` | 启动服务，加载当前项目会话树，返回当前状态快照。 |
+| `await service.submit(text, *, mode="auto", client_request_id)` | `SubmissionReceipt` | 幂等提交用户需求指令。`client_request_id` 用于防重幂等校验。 |
+| `await service.execute_command(line, *, client_request_id)` | `CommandResult` | 执行斜杠控制指令（如 `/plan on`, `/compact`, `/clear` 等）。 |
+| `await service.cancel_turn()` | `CommandResult` | 取消当前正在执行的任务轮次（触发三段式中断）。 |
+| `await service.get_snapshot()` | `StateSnapshot` | 获取当前会话状态、活跃模型、预算消耗与未决审批的完整镜像。 |
+| `await service.list_sessions()` | `list[SessionSummary]` | 列出当前项目下的所有历史会话摘要（包含更新时间、消息数与活动叶节点）。 |
+| `await service.open_session(session_id)` | `StateSnapshot` | 切换打开指定会话，释放旧会话资源并对新会话申请写锁。 |
+| `await service.new_session()` | `StateSnapshot` | 新建全新根会话并挂载。 |
+| `await service.subscribe(subscriber_id=None)` | `(StateSnapshot, Subscription)` | 注册异步事件监听队列，获得事件订阅器。 |
+| `service.unsubscribe(subscriber_id)` | `bool` | 解除指定订阅器的事件流监听。 |
+| `await service.resolve_approval(request_id, approved)` | `CommandResult` | 决议处于挂起状态的敏感工具调用审批（同意/拒绝）。 |
+| `await service.close()` | `CommandResult` | 安全清理所有订阅、终止所有后台子任务并释放排他文件锁。 |
+
+---
+
+## 四、 异步事件流订阅与数据契约 (`events.py`)
+
+### 4.1 核心状态快照实体 (`StateSnapshot`)
+```python
+from dataclasses import dataclass
+from typing import Any
+
+@dataclass
+class StateSnapshot:
+    schema_version: int
+    service_id: str
+    through_seq: int
+    session_generation: int
+    project: dict[str, str]
+    session: dict[str, Any]  # session_id / leaf 等会话信息
+    routes: dict[str, Any]
+    permission_mode: str
+    lifecycle: str
+    activity: str  # idle / generating / executing_tools / awaiting_approval 等
+    budget: dict[str, Any]
+    pending_inputs: list[dict[str, Any]]
+    pending_approvals: list[dict[str, Any]]
+    background: dict[str, Any]
+    last_outcome: str | None
+```
+
+### 4.2 核心生命周期事件字典清单
+
+| 事件类型 (`kind`) | 携带数据核心字段 (`data`) | 触发场景 |
+| --- | --- | --- |
+| `turn_start` | `prompt` | 服务接纳新的任务轮次 |
+| `text_delta` | `delta` | 正文增量 |
+| `thinking_delta` | `delta` | 思考增量（视提供商支持） |
+| `approval_requested` | `request_id`, `name`, `arguments`, `permission` | 请求人工审批 |
+| `tool_start` | `call_id`, `name`, `arguments` | 工具获准执行 |
+| `tool_end` | `call_id`, `status`, `name`, `result`, `artifact_path` | 工具完成 |
+| `compaction_start` / `compaction_end` | 该次压缩的数据载荷 | 压缩生命周期 |
+| `state_changed` | StateSnapshot 的序列化字段 | 状态同步；预算在 budget 字段中 |
+| `turn_end` | `turn_id`, `state` | completed / incomplete / failed / cancelled |
+
+`budget_checkpoint` 是持久化账本事件，不是上述前端订阅事件的别名。
+
+---
+
+## 五、 5 大全生命周期 Hook 插件体系
+
+Weyra 在 `weyra.core.hooks` 中提供了强契约的 Hook 注册管道：
 
 ```python
-from weyra.core.hooks import AgentStartHook, HookResult
+from weyra.core.hooks import (
+    UserInputHook,
+    AgentStartHook,
+    BeforeModelCallHook,
+    ToolCallHook,
+    ToolResultHook,
+    HookResult,
+)
 
+# 1. 拦截用户输入 (修改输入文本或安全阻断)
+agent.hooks.register(
+    UserInputHook,
+    lambda payload: HookResult(block=True, reason="请求需要人工复核")
+    if "rm -rf" in payload.input_text else HookResult()
+)
+
+# 2. 轮次启动前动态注入额外系统规则 (轮次覆写不污染底层基线)
 agent.hooks.register(
     AgentStartHook,
-    lambda hook: HookResult(updated_system_prompt="按本应用的领域规则处理当前任务。"),
+    lambda payload: HookResult(updated_system_prompt=payload.system_prompt + "\n请以 Python 架构师风格回答。")
+)
+
+# 3. 工具执行前参数重定向
+agent.hooks.register(
+    ToolCallHook,
+    lambda payload: HookResult(updated_args={**payload.args, "path": "safe/path.py"})
+    if payload.tool_name == "read_file" else HookResult()
 )
 ```
 
-`UserInputHook` 支持改写输入；`AgentStartHook` 支持当前轮次系统提示词覆写；`BeforeModelCallHook` 支持模型请求消息改写；`ToolCallHook` 支持参数修改与阻止；`ToolResultHook` 支持模型可见结果改写。改写后仍执行相应模式、权限和容量校验。轮次提示词覆写不改变持久化基线。
+---
 
-## 存储与技能
+## 六、 底层状态引擎接口：`SessionStore`
 
-- `SessionStore(project=..., session_id=...)`：`append(kind, data)` 返回事件字典；`project()` 返回消息序列；`recover_interrupted()` 修复未闭合调用；`fork()` 返回独立存储实例，使用后调用 `close()`。
-- `MemoryStore(project_path)`：`create/update/get/list/search` 管理 Markdown 事实记忆。
-- `SkillStore(root)`：`capture_catalog/load/search/resolve_target` 管理技能快照和选择。
-- `EvolutionStore` 管理技能补丁、版本与发布记录；启用自动演化需要显式裁判路由和验证依据，见[技能演进](SKILL_EVOLUTION.md)。
+位于 `weyra/session.py`，负责不可变事件树 DAG 与 SQLite 物理交互：
+
+```python
+from weyra.session import SessionStore
+
+# 实例化会话引擎 (自动开启 SQLite WAL 与 fcntl 排他锁)
+store = SessionStore(project=".", session_id="my-session-001")
+
+try:
+    # 1. 追加不可变事件
+    from weyra.contracts import Message
+    event = store.add_message(Message("user", "Hello Agent"))
+    print(f"写入事件 ID: {event['id']}, 父事件 ID: {event['parent']}")
+
+    # 2. 从指定叶节点投影出完整消息历史
+    messages = store.project(leaf=store.leaf)
+
+    # 3. 崩溃自愈恢复未闭合工具调用
+    store.recover_interrupted()
+
+    # 4. 派生独立会话分支
+    forked_store = store.fork(session_id="experiment-branch")
+    forked_store.close()
+
+finally:
+    store.close()
+```
+
+---
+
+## 七、 核心异常定义与处理字典
+
+| 异常类名 | 所属模块 | 抛出原因与工业级处理指引 |
+| :--- | :--- | :--- |
+| **`SessionError`** | `weyra.session` | 发生跨目录逃逸、符号链接越权、或会话已被其他写入者独占加锁。应捕获并提示用户检查并发冲突。 |
+| **`BudgetExceeded`** | `weyra.core.state` | 消耗达到配置的 Token 上限、调用次数或人民币金额硬上限。Fail-Closed 立即熔断。需提示用户调大预算或结束任务。 |
+| **`ContextOverflow`** | `weyra.core.context`| 上下文切割割裂了成对工具拓扑，或压缩后内容依然超出模型硬上限。应调用 `/clear` 刷新视窗。 |
+| **`PermissionError`** | Python 内置异常| 在只读计划模式或未获审批的情况下尝试调用非只读写入工具。系统自动阻断该工具执行。 |
+
+可直接运行的完整服务订阅示例见 [examples/sdk_service.py](../examples/sdk_service.py)，通过 `turn_end` 等待完成。

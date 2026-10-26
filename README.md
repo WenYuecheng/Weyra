@@ -41,14 +41,14 @@ Polyglot 结果采用累计保留与多轮修复协议，主输出上限为 4096
 
 ```mermaid
 flowchart TD
-    UI[CLI / Textual TUI] --> Service[应用服务与事件流]
-    Service --> Coding[CodingAgent 领域装配]
-    Coding --> Core[AgentHarness 与执行循环]
-    Core --> LLM[模型协议与用途路由]
-    Core --> Tools[权限检查与工具调度]
-    Coding --> Context[上下文投影与检查点压缩]
-    Coding --> Skills[技能检索与验证驱动更新]
-    Coding --> Store[SQLite 会话树与预算账本]
+    UI["CLI / Textual TUI"] --> Service["应用服务与事件流"]
+    Service --> Coding["CodingAgent 领域装配"]
+    Coding --> Core["AgentHarness 与执行循环"]
+    Core --> LLM["模型协议与用途路由"]
+    Core --> Tools["权限检查与工具调度"]
+    Coding --> Context["上下文投影与检查点压缩"]
+    Coding --> Skills["技能检索与验证驱动更新"]
+    Coding --> Store["SQLite 会话树与预算账本"]
 ```
 
 目录：`weyra/llm` 负责协议，`weyra/core` 负责执行契约，`weyra/coding` 装配领域能力，`weyra/service.py` 提供应用服务，`weyra/tui` 提供终端界面。核心测试位于 `tests/`，离线示例位于 `examples/`。
@@ -97,6 +97,7 @@ python -m examples.sdk_service
 ## 文档与来源
 
 - [架构与执行链路](docs/ARCHITECTURE.md)
+- [架构深度演进与高频技术答辩指南](docs/INTERVIEW_DEFENSE.md)
 - [框架借鉴与项目贡献](docs/FRAMEWORK_COMPARISON.md)
 - [技能演进机制](docs/SKILL_EVOLUTION.md)
 - [评测结果与协议](docs/BENCHMARKS.md)
