@@ -1,8 +1,0 @@
-{
-  "source_commit": "d743267388641bc76f17c45ce8b4c231aed1d32c",
-  "source_path": "packages/compaction/compaction-basic/src/summarizer.ts",
-  "instruction_sha256": "3b7aa71f525b9a82afc2f1747c4434ceb7b3bc1fadf8b64c37c4e97db70d074b",
-  "preamble_sha256": "306ffa304ad5eee1b9a19a5744b7bf665eac77c4fd154ad3eed572987a534da1",
-  "summary_open_tag": "<compacted-summary>",
-  "summary_close_tag": "</compacted-summary>"
-}

@@ -23,8 +23,7 @@ def verify():
         assert not any(e.filename.startswith(('benchmarks/', 'agents/')) for e in entries)
         assert not any('/data/' in e.filename and Path(e.filename).name.startswith(('core-', 'finish-', 'final-')) for e in entries)
         assert any(e.filename.endswith('theme.tcss') for e in entries)
-        assert all(contents.getinfo('weyra/' + name + '.py').file_size < 1000 for name in
-                   ('core_evaluation', 'finish_evaluation', 'final_delivery_eval'))
+        assert not any(e.filename == 'weyra/_benchmark_compat.py' for e in entries)
         unpacked = sum(e.file_size for e in entries)
     env = {**os.environ, 'PYTHONPATH': sysconfig.get_path('purelib')}
     with tempfile.TemporaryDirectory(prefix='weyra-package-check-') as folder:

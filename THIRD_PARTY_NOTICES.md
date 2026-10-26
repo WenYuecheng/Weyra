@@ -27,8 +27,8 @@ SOFTWARE.
 
 ## DeepSeek Harness checkpoint prompts
 
-The files `data/upstream/dsh-compaction-instruction.txt` and
-`data/upstream/dsh-checkpoint-preamble.txt` retain checkpoint prompt text from
+The constants `COMPACTION_INSTRUCTION` and `CHECKPOINT_PREAMBLE` in
+`weyra/core/compaction_prompt.py` retain checkpoint prompt text from
 DeepSeek Harness, commit d743267388641bc76f17c45ce8b4c231aed1d32c,
 `packages/compaction/compaction-basic/src/summarizer.ts`.
 Source: https://github.com/deepseek-ai/deepseek-harness/tree/d743267388641bc76f17c45ce8b4c231aed1d32c

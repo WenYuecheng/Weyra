@@ -7,7 +7,7 @@ import pytest
 
 from weyra.mcp_client import MCPClient
 
-FIXTURE = Path(__file__).resolve().parents[1] / "data" / "fixtures" / "mcp_server.py"
+FIXTURE = Path(__file__).resolve().parent / "fixtures" / "mcp_server.py"
 
 
 def test_real_stdio_initialize_call_schema_change_timeout_shutdown():

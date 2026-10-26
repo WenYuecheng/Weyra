@@ -1,7 +1,5 @@
 import asyncio
 import hashlib
-import json
-from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -82,15 +80,17 @@ def test_dsh_checkpoint_replays_prefix_and_tools(tmp_path):
     asyncio.run(run())
 
 
-def test_prompt_fixture_is_exact_and_hashed():
-    from weyra.prompt import COMPACTION_INSTRUCTION
+def test_prompt_constants_match_pinned_upstream_hashes():
+    # DeepSeek Harness d743267388641bc76f17c45ce8b4c231aed1d32c,
+    # packages/compaction/compaction-basic/src/summarizer.ts.
+    from weyra.prompt import COMPACTION_INSTRUCTION, CHECKPOINT_PREAMBLE
 
-    base = Path(__file__).parents[1] / "data" / "upstream"
-    content = (base / "dsh-compaction-instruction.txt").read_bytes()
-    assert content.decode() == COMPACTION_INSTRUCTION
-    manifest = json.loads((base / "dsh-prompts.json").read_text())
-    assert hashlib.sha256(content).hexdigest() == manifest["instruction_sha256"]
-    assert manifest["source_commit"] == "d743267388641bc76f17c45ce8b4c231aed1d32c"
+    assert hashlib.sha256(COMPACTION_INSTRUCTION.encode()).hexdigest() == (
+        "3b7aa71f525b9a82afc2f1747c4434ceb7b3bc1fadf8b64c37c4e97db70d074b"
+    )
+    assert hashlib.sha256(CHECKPOINT_PREAMBLE.encode()).hexdigest() == (
+        "306ffa304ad5eee1b9a19a5744b7bf665eac77c4fd154ad3eed572987a534da1"
+    )
 
 
 def test_pruning_uses_unicode_points_and_all_tool_groups(tmp_path):

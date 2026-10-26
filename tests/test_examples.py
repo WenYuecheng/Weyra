@@ -28,8 +28,7 @@ def test_personalized_writing_demo():
 
 
 def test_fixed_scenario_manifest_has_twenty_cases():
-    index = json.loads(Path("examples/scenarios.json").read_text())
-    cases = json.loads((Path("examples") / index["source"]).resolve().read_text())
+    cases = json.loads(Path("data/scenarios.json").read_text())
     assert len(cases) == 20
     assert len({case["id"] for case in cases}) == 20
     assert sum(case["family"] == "project" for case in cases) == 10

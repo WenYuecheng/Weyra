@@ -27,7 +27,6 @@ include = ["weyra*"]
 [tool.setuptools.data-files]
 "share/weyra" = ["THIRD_PARTY_NOTICES.md"]
 "share/weyra/data" = ["data/scenarios.json"]
-"share/weyra/data/upstream" = ["data/upstream/*.txt", "data/upstream/*.json"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

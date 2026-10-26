@@ -1,4 +1,0 @@
-{
-  "source": "../data/scenarios.json",
-  "description": "Canonical twenty-scenario evaluation manifest; load via weyra.evaluation.load_cases."
-}
