@@ -97,6 +97,9 @@ def install_builtin_tools(runtime, jobs):
         path = runtime.resolve_path(args["path"])
         async with runtime.file_lock:
             raw = path.read_bytes()
+            capture = ctx.services.get("replay_capture")
+            if capture is not None:
+                capture.file(path.relative_to(runtime.project).as_posix(), raw)
             ctx.read_versions[str(path)] = hashlib.sha256(raw).hexdigest()
         lines = raw.decode("utf-8").split("\n")
         start = args.get("offset", 1)
@@ -139,6 +142,10 @@ def install_builtin_tools(runtime, jobs):
             raise PermissionError("Harness state is managed through dedicated operations")
         old_text = ""
         async with runtime.file_lock:
+            capture = ctx.services.get("replay_capture")
+            if capture is not None:
+                capture.file(path.relative_to(runtime.project).as_posix(),
+                             path.read_bytes() if path.exists() else None, write=True)
             if path.exists():
                 raw = path.read_bytes()
                 current = hashlib.sha256(raw).hexdigest()

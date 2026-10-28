@@ -6,12 +6,20 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-import sysconfig
 import tarfile
 import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def package_environment():
+    """Keep clean installs independent of the developer's Python paths."""
+    env = dict(os.environ)
+    for key in ('PYTHONPATH', 'PYTHONHOME', 'VIRTUAL_ENV'):
+        env.pop(key, None)
+    env['PYTHONNOUSERSITE'] = '1'
+    return env
 
 
 def verify():
@@ -25,13 +33,13 @@ def verify():
         assert any(e.filename.endswith('theme.tcss') for e in entries)
         assert not any(e.filename == 'weyra/_benchmark_compat.py' for e in entries)
         unpacked = sum(e.file_size for e in entries)
-    env = {**os.environ, 'PYTHONPATH': sysconfig.get_path('purelib')}
+    env = package_environment()
     with tempfile.TemporaryDirectory(prefix='weyra-package-check-') as folder:
         work = Path(folder)
 
         def run(name, args, *, cwd=work, expected=0, environment=env):
             result = subprocess.run([str(a) for a in args], cwd=cwd, env=environment,
-                                    capture_output=True, text=True, timeout=90)
+                                    capture_output=True, text=True, timeout=300)
             checks.append({'name': name, 'exit_code': result.returncode,
                            'passed': result.returncode == expected, 'output': (result.stdout + result.stderr)[-8000:]})
             if result.returncode != expected:
@@ -42,7 +50,8 @@ def verify():
         run('isolated_environment', [sys.executable, '-m', 'venv', work / 'env'])
         python = work / 'env/bin/python'
         cli = work / 'env/bin/weyra'
-        run('wheel_install', [python, '-m', 'pip', 'install', '--no-deps', wheel])
+        run('wheel_install', [python, '-m', 'pip', 'install', wheel])
+        run('installed_dependencies', [python, '-m', 'pip', 'check'])
         (work / 'agents').mkdir()
         (work / 'agents/__init__.py').write_text('unrelated = True\n', encoding='utf-8')
         run('wheel_resources', [python, '-c',
@@ -56,12 +65,15 @@ def verify():
         for scenario in ('analysis', 'writing'):
             run(scenario + '_demo', [cli, 'demo', '--offline', '--scenario', scenario, '--project', work / scenario])
         run('offline_evaluation', [cli, 'eval', '--offline', '--project', work / 'evaluation'])
+        run('sdist_install', [python, '-m', 'pip', 'install', '--force-reinstall', archive])
+        run('sdist_dependencies', [python, '-m', 'pip', 'check'])
+        run('sdist_cli_help', [cli, '--help'])
         source_root = work / 'source'
         source_root.mkdir()
         with tarfile.open(archive) as source:
             source.extractall(source_root, filter='data')
         extracted = next(source_root.iterdir())
-        source_env = {**env, 'PYTHONPATH': str(extracted) + os.pathsep + env['PYTHONPATH']}
+        source_env = {**env, 'PYTHONPATH': str(extracted)}
         run('source_resources', [python, '-c',
             "from pathlib import Path; import weyra; from weyra.evaluation import load_cases; "
             "assert Path(weyra.__file__).resolve().is_relative_to(Path.cwd()); "

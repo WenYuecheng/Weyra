@@ -75,7 +75,7 @@ judge_route = "skill_judge"
 validation_manifest = ".weyra/validation/evidence.json"
 ```
 
-开启前配置显式 `routes.skill_judge`、对应费率与固定验证清单。裁判不允许隐式继承或备用路由；细节见[技能演进](SKILL_EVOLUTION.md)。
+开启前配置显式 `routes.skill_judge`、对应费率与固定验证清单。裁判不允许隐式继承或备用路由。在线冻结最多 2 个开发及 2 个独立验证样本，只生成 1 个候选；原任务作为开发证据，缺少独立验证不发布。纯文本清单使用 `output_mode = "text"` 与明确的 `rubric`；自定义在线回调需提供 `validation_cases`。完整清单保留给显式评测；窗口、缓存和共用维护预算细节见[技能演进](SKILL_EVOLUTION.md)。
 
 ## 环境变量与检查
 

@@ -374,8 +374,14 @@ class CodingLifecycle:
         )
         self.context.services["agent"] = self
         self.context.services["on_request_checkpoint"] = self._ack_inputs
+        if self.enable_evolution:
+            from weyra.skill_replay import ReplayCapture
+            self.context.services["replay_capture"] = ReplayCapture(
+                self.context.id, self.session.project(),
+                system_instructions=self.context_manager.system)
         self.context.budget_scope = getattr(self, "_delegation_task_id", None) or self.context.id
-        self.budget.set_scope_limit(self.context.budget_scope, self.task_token_limit)
+        if self.context.budget_scope not in self.budget._scopes:
+            self.budget.set_scope_limit(self.context.budget_scope, self.task_token_limit)
         ctx = self.context
         self.session.append(
             "turn_start",
@@ -394,12 +400,28 @@ class CodingLifecycle:
                 raise PermissionError(agent_start_hook.reason or "Agent start blocked")
             if agent_start_hook and agent_start_hook.updated_system_prompt is not None:
                 ctx.services["run_system"] = agent_start_hook.updated_system_prompt
+                if capture := ctx.services.get("replay_capture"):
+                    updated = agent_start_hook.updated_system_prompt
+                    if len(updated) <= 16000:
+                        capture.system_instructions = updated
+                    else:
+                        capture.reason = capture.reason or "instructions_exceed_replay_limit"
             if queued_input:
                 self._consume(queued_input["kind"])
             else:
                 self.session.add_message(Message("user", prompt))
             self.session.append("environment", self._environment_snapshot(), True)
             await self._knowledge(prompt, ctx)
+            if capture := ctx.services.get("replay_capture"):
+                # Memory/child results arriving this turn are factual replay inputs.
+                extra = [{"role": m.role, "content": m.content}
+                         for m in self.session.project()
+                         if m.source in {"memory", "child"} and m.role == "user"
+                         and {"role": m.role, "content": m.content} not in capture.context]
+                if sum(len(m["content"]) for m in capture.context + extra) <= 8000 and len(capture.context + extra) <= 8:
+                    capture.context.extend(extra)
+                else:
+                    capture.reason = capture.reason or "context_exceeds_replay_limit"
             final_text = await run_agent_loop(self._loop_host(), ctx)
             state = getattr(ctx, "turn_state", "completed")
             return final_text
@@ -410,6 +432,9 @@ class CodingLifecycle:
             state = "failed"
             raise
         finally:
+            capture = ctx.services.get("replay_capture")
+            if capture is not None:
+                self._last_replay_snapshot = capture.snapshot()
             self.session.append("turn_end", {"turn_id": ctx.id, "state": state}, checkpoint=True)
             self._repair_tool_messages()
             await ctx.close()
@@ -481,6 +506,7 @@ class CodingLifecycle:
                     tuple[str, dict]: 最终回答与捕获的交互视窗字典。
                 """
                 prior = {record["id"] for record in self.session.chain()}
+                self._last_replay_snapshot = None
                 result = await self._run_turn(text, queued_input=queued)
                 used = []
                 for record in self.session.chain():
@@ -493,6 +519,8 @@ class CodingLifecycle:
                         if structured["name"] not in used:
                             used.append(structured["name"])
                 window = {"user": text, "assistant": result}
+                if self._last_replay_snapshot is not None:
+                    window["replay"] = self._last_replay_snapshot
                 if used:
                     window["used_skill_ids"] = used
                 return result, window

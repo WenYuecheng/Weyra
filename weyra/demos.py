@@ -112,6 +112,28 @@ def _offline_runtime(scenario):
     )
 
 
+class _DemoJudge(ScriptedProvider):
+    """Scripted batch judgments over observed demo outputs; no quality claim."""
+
+    async def stream(self, request, context):
+        cases = json.loads(request.messages[0].content)
+        judgments = {}
+        for case_id, case in cases.items():
+            scores = {alias: {key: True for key in
+                      ("correctness", "constraint_adherence", "preservation", "clarity")}
+                      for alias in ("A", "B")}
+            for alias in scores:
+                scores[alias]["constraint_adherence"] = not case[alias]["final"].startswith("结论：")
+            totals = {alias: sum(row.values()) for alias, row in scores.items()}
+            winner = "tie" if totals["A"] == totals["B"] else "A" if totals["A"] > totals["B"] else "B"
+            judgments[case_id] = {"scores": scores, "winner": winner,
+                "evidence": {alias: "Observed scripted output: " + case[alias]["final"]
+                             for alias in ("A", "B")}}
+        self.responses.append(_response(json.dumps({"cases": judgments}, ensure_ascii=False)))
+        async for event in super().stream(request, context):
+            yield event
+
+
 async def run_demo(
     scenario="analysis",
     provider=None,
@@ -156,32 +178,23 @@ async def run_demo(
         seed_proposal = json.loads(runtime.registry.get("maintenance").responses[0].content)
         seed.create(seed_proposal["name"], seed_proposal["body"], description=seed_proposal["description"],
                     permission_mode="acceptEdits")
-        checks = ("correctness", "constraint_adherence", "preservation", "clarity")
-        judgments = []
-        for winner in ("B", "A"):
-            scores = {alias: {key: True for key in checks} for alias in ("A", "B")}
-            scores["A" if winner == "B" else "B"]["constraint_adherence"] = False
-            judgments.append(_response(json.dumps({"scores": scores, "winner": winner,
-                "evidence": {"A": "Scripted story fixture output", "B": "Scripted story fixture output"}})))
-        runtime.registry.register("demo_judge", ScriptedProvider(judgments))
+        # Replay both the captured user correction and an independent host task.
+        # Each arm loads the real installed skill through the production tool.
+        for _case in range(2):
+            for answer in ("结论：这是一段故事。", "小舟推开门，故事从冲突展开。"):
+                runtime.registry.get("offline").responses.extend([
+                    _response(calls=[ToolCall("load-skill", "skill", {"name": seed_proposal["name"]})]),
+                    _response(answer),
+                ])
+        runtime.registry.register("demo_judge", _DemoJudge())
         runtime.routes["skill_judge"] = ModelInfo("demo_judge", "gpt-5.6-luna", 200000, 1024)
-        async def demo_gate(old, candidate):
-            """写作演化场景下的离线模拟验证门禁。"""
-            outcomes = []
-            for index, body in enumerate((old.body, candidate.body)):
-                validation_runtime = scripted_runtime([_response(
-                    "结论：这是一段故事。" if index == 0 else "小舟推开门，故事从冲突展开。")])
-                validation = Agent(fixture / f"validation-{index}", validation_runtime,
-                                   system=body, enable_memory=False, enable_evolution=False)
-                try:
-                    outcomes.append(await validation.run_once("写故事，按叙事需要展开。"))
-                finally:
-                    await validation.close()
-            return {"old": {"successes": 0, "hard_failures": 0},
-                    "candidate": {"successes": 1, "hard_failures": 0},
-                    "task": "Offline scripted story fixture: narrative opening, no report conclusion preamble.",
-                    "old_artifacts": {"answer": outcomes[0]},
-                    "candidate_artifacts": {"answer": outcomes[1]}}
+        from .skill_judge import ConfiguredSkillGate
+        demo_gate = ConfiguredSkillGate(runtime, None, {"cases": [{
+            "id": "independent-story-opening",
+            "prompt": "写一个陌生旅人在雨夜抵达渡口的故事开头，直接进入场景。",
+            "files": {}, "output_mode": "text",
+            "rubric": "从场景与冲突展开，不使用正式汇报的结论前言。",
+        }]})
     agent = None
     calls_before = budget.calls if budget is not None else 0
     tokens_before = budget.total_tokens if budget is not None else 0

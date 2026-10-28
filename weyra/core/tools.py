@@ -339,6 +339,9 @@ class ToolRuntime:
                     return result
                 context.check_cancelled()
                 context.services["tools"] = self
+                capture = context.services.get("replay_capture")
+                if capture is not None:
+                    capture.tool(call.name)
                 self.session.append(
                     "tool_intent",
                     {"call_id": call.id, "name": call.name, "arguments": call.arguments},

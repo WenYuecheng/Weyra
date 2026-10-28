@@ -48,6 +48,16 @@ def test_unified_demo_runs_both_scenarios(tmp_path):
         assert writing["updated_version"] == "1.0.1"
         assert writing["rollback_version"] == "1.0.2"
         assert "no quality claim" in writing["model"]
+        published = next(event for event in writing["evolution_events"]
+                         if event["status"] == "updated")
+        validation = published["validation_report"]
+        assert validation["validation_policy"] == "bounded-replay-v1"
+        assert validation["candidate"]["successes"] == 1
+        assert {case["split"] for case in validation["per_case"]} == {"development", "validation"}
+        for case in validation["per_case"]:
+            for arm in ("old", "candidate"):
+                assert {check["name"]: check["passed"] for check in case[arm]["hard_checks"]}["skill_loaded"]
+            assert len(case["judge"]["evidence"]) == 4
 
     asyncio.run(run())
 

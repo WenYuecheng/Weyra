@@ -906,6 +906,8 @@ class EvolutionStore:
         target_snapshot=None,
         validation_gate=None,
         resolution=None,
+        validation_context=None,
+        run_context=None,
     ):
         """记录执行证据并调度大模型生成补丁，经沙箱验证门禁后原子更新技能 (Closed-Loop Skill Maintenance)。
 
@@ -947,6 +949,12 @@ class EvolutionStore:
                 "content_hash": target_snapshot.content_hash,
             },
         }
+        if validation_context is not None:
+            source_record["validation_window"] = {
+                "version": validation_context.version,
+                "samples": [{"id": c["id"], "split": c["split"]}
+                            for c in validation_context.cases],
+            }
         evidence_path = self.root / "evidence.jsonl"
         try:
             reject_symlinks(evidence_path)
@@ -963,6 +971,12 @@ class EvolutionStore:
                 "failure_kind": "failure_to_apply",
                 "task_quality": None,
             }
+        if (validation_context is not None and target_snapshot is not None
+                and not validation_context.reason
+                and validation_gate.saturated(target_snapshot, validation_context)):
+            result = self.discard(target_snapshot.name, event_id=event_id, reason="validation_saturated")
+            result["window_version"] = validation_context.version
+            return result
         proposal = await model_call(frozen_window)
         if not proposal:
             proposal = {"action": "discard"}
@@ -1034,11 +1048,35 @@ class EvolutionStore:
                     candidate = self.apply(**proposal, _prepare_only=True, _expected_resources=target.resources)
                     if isinstance(candidate, dict):
                         return candidate
+                    if validation_context is not None and proposal.get("knowledge_note"):
+                        self._save_note(name, proposal["knowledge_note"], event_id, target.version)
+                    if validation_context is not None and validation_context.reason:
+                        result = {"status": "incubating", "event_id": event_id,
+                                  "reason": validation_context.reason,
+                                  "proposal_ref": str(proposal_path),
+                                  "window_version": validation_context.version,
+                                  "validation": "unvalidated", "task_quality": None}
+                        self._record(name, result)
+                        return result
                     try:
-                        scores = await validation_gate(target, candidate)
+                        if validation_context is not None:
+                            scores = await validation_gate.evaluate(
+                                target, candidate, validation_context, context=run_context)
+                        else:
+                            scores = await validation_gate(target, candidate)
+                        report_path = self.root / "validation" / (sha(str(event_id)) + ".json")
+                        atomic(report_path, json.dumps(scores, ensure_ascii=False))
+                        if self.session is not None:
+                            self.session.append("skill_validation", {"event_id": event_id,
+                                "report_ref": str(report_path)}, checkpoint=True)
                         old_score, new_score = scores['old'], scores['candidate']
                         if getattr(validation_gate, 'requires_model_review', False) and scores.get('model_approved') is not True:
-                            return self._reject(name, event_id, 'Independent model review did not approve candidate')
+                            reason = (scores.get("reason", "Independent model review did not approve candidate")
+                                      if validation_context is not None else
+                                      'Independent model review did not approve candidate')
+                            result = self._reject(name, event_id, reason)
+                            result.update(validation_report=scores, validation_report_ref=str(report_path))
+                            return result
                         for score in (old_score, new_score):
                             if any(type(score[k]) is not int or score[k] < 0 for k in ('successes', 'hard_failures')):
                                 raise ValueError('Invalid validation metrics')
@@ -1051,7 +1089,9 @@ class EvolutionStore:
                         return self._reject(name, event_id, 'Validation failed: ' + type(error).__name__)
                     if self.skills.load(name).resources != target.resources:
                         return self._reject(name, event_id, 'Resource drift during validation')
-                    return self.apply(**proposal, _validation='validated', _expected_resources=target.resources)
+                    result = self.apply(**proposal, _validation='validated', _expected_resources=target.resources)
+                    result.update(validation_report=scores, validation_report_ref=str(report_path))
+                    return result
                 return self.apply(**proposal)
             except (TypeError, ValueError) as error:
                 return self._reject(name, event_id, str(error))

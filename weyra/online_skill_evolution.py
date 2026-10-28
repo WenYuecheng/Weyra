@@ -28,6 +28,7 @@ from __future__ import annotations
 import asyncio
 import copy
 import json
+import time
 
 from .contracts import Message, PreparedRequest, canonical, new_id
 from .runtime_state import RunContext
@@ -84,15 +85,21 @@ class OnlineSkillEvolution:
                       "candidates": [s.name for s in matches]}
 
         event_id = new_id()
+        gate = self.evolution_validation_gate
+        validation_context = gate.freeze(evidence) if hasattr(gate, "freeze") else None
 
         async def maintain():
             """异步演化工作流闭环实现。"""
             ctx = RunContext(self.project, self.session, self.budget, self.permission_mode)
+            ctx.budget_scope = "skill-maintenance-" + event_id
+            self.budget.set_scope_limit(ctx.budget_scope, self.budget.maintenance_limit
+                                       if self.budget.maintenance_limit is not None else 20000)
+            started = time.monotonic()
 
             async def propose(_):
                 """向演化专用大模型发起结构化推演请求。"""
                 data = {
-                    "evidence": evidence,
+                    "evidence": {key: value for key, value in evidence.items() if key != "replay"},
                     "related": [
                         {"name": s.name, "description": s.description} for s in matches[:5]
                     ],
@@ -127,7 +134,11 @@ class OnlineSkillEvolution:
                     target_snapshot=target,
                     resolution=resolution,
                     validation_gate=self.evolution_validation_gate,
+                    validation_context=validation_context,
+                    run_context=ctx,
                 )
+                result.update(elapsed_seconds=time.monotonic() - started,
+                              accounted_tokens=self.budget._scopes[ctx.budget_scope]["tokens"])
                 self.session.append("evolution_result", result, True)
                 if self.on_event:
                     res = self.on_event("skill_evolution_end", result)
