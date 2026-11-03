@@ -31,9 +31,11 @@ def test_runtime_data_and_dependency_sources_are_separate():
 
 
 def test_legacy_source_entrypoint_works_outside_checkout(tmp_path):
+    import os
     import subprocess
     import sys
     result = subprocess.run([sys.executable, '-m', 'weyra.final_delivery_eval', '--help'],
-                            cwd=tmp_path, capture_output=True, text=True, timeout=10)
+                            cwd=tmp_path, capture_output=True, text=True, timeout=10,
+                            env={**os.environ, "PYTHONPATH": str(Path(__file__).resolve().parents[1])})
     assert result.returncode == 0, result.stderr
     assert '--output' in result.stdout

@@ -5,10 +5,19 @@ from pathlib import Path
 
 import pytest
 
-from weyra import final_legacy_eval as legacy
+from benchmarks import final_legacy_eval as legacy
 
 
-def test_legacy_selection_is_exact_and_originals_are_read_only():
+@pytest.fixture
+def historical_snapshots():
+    """Historical evidence is optional and never fabricated for public CI."""
+    required = (legacy.FINISH_FREEZE, legacy.CORE_FREEZE, legacy.FINISH_SNAPSHOT,
+                legacy.CORE_SNAPSHOT, legacy.FINISH_ORIGINALS)
+    if not all(path.exists() for path in required):
+        pytest.skip("Local historical evaluation snapshots are not included in the source repository")
+
+
+def test_legacy_selection_is_exact_and_originals_are_read_only(historical_snapshots):
     finish = legacy._frozen_module(
         legacy.FINISH_FREEZE, "_weyra_test_legacy_finish", "finish_evaluation"
     )
@@ -42,7 +51,7 @@ def test_legacy_selection_is_exact_and_originals_are_read_only():
             }
 
 
-def test_frozen_modules_import_from_archived_package_namespace():
+def test_frozen_modules_import_from_archived_package_namespace(historical_snapshots):
     old_finish = legacy._frozen_module(
         legacy.FINISH_FREEZE, "_weyra_test_frozen_namespace", "finish_evaluation"
     )
@@ -51,7 +60,7 @@ def test_frozen_modules_import_from_archived_package_namespace():
     assert old_finish.FinishRunner.__module__.startswith("_weyra_test_frozen_namespace")
 
 
-def test_source_freeze_hashes_match_archived_snapshots():
+def test_source_freeze_hashes_match_archived_snapshots(historical_snapshots):
     assert len(legacy._snapshot_integrity(legacy.FINISH_FREEZE, legacy.FINISH_SNAPSHOT)) > 0
     assert len(legacy._snapshot_integrity(legacy.CORE_FREEZE, legacy.CORE_SNAPSHOT)) > 0
 
@@ -81,7 +90,7 @@ def _current_scripted_runtime(responses):
     return runtime, provider
 
 
-def test_frozen_finish_task_runs_current_runtime_tool_calls_without_network(tmp_path):
+def test_frozen_finish_task_runs_current_runtime_tool_calls_without_network(tmp_path, historical_snapshots):
     import asyncio
 
     from weyra.contracts import ModelResponse, ToolCall, Usage
@@ -115,7 +124,7 @@ def test_frozen_finish_task_runs_current_runtime_tool_calls_without_network(tmp_
         runner.close()
 
 
-def test_frozen_progressive_task_runs_current_runtime_tool_calls_without_network(tmp_path):
+def test_frozen_progressive_task_runs_current_runtime_tool_calls_without_network(tmp_path, historical_snapshots):
     import asyncio
 
     from weyra.contracts import ModelResponse, ToolCall, Usage
@@ -144,7 +153,7 @@ def test_frozen_progressive_task_runs_current_runtime_tool_calls_without_network
     assert len(provider.requests) == 2
 
 
-def test_frozen_core_runner_keeps_shared_finish_ledger_attached(tmp_path):
+def test_frozen_core_runner_keeps_shared_finish_ledger_attached(tmp_path, historical_snapshots):
     from weyra.runtime_state import Budget
     from weyra.session import SessionStore
 
@@ -166,7 +175,7 @@ def test_frozen_core_runner_keeps_shared_finish_ledger_attached(tmp_path):
         root_ledger.close()
 
 
-def test_frozen_scoped_runtime_forwards_attempt_budget_by_identity():
+def test_frozen_scoped_runtime_forwards_attempt_budget_by_identity(historical_snapshots):
     from weyra.contracts import ModelResponse
 
     finish = legacy._frozen_module(
@@ -190,3 +199,32 @@ def test_frozen_scoped_runtime_forwards_attempt_budget_by_identity():
     result = asyncio.run(finish.ScopedRuntime(Runtime()).complete(
         request, context, attempt_budget=marker))
     assert result.content == "ok"
+
+
+def test_frozen_loader_uses_archive_relative_imports(tmp_path):
+    package = tmp_path / 'agents'
+    package.mkdir()
+    (package / '__init__.py').write_text('')
+    (package / 'value.py').write_text('VALUE = "archived"\n')
+    (package / 'runner.py').write_text('from .value import VALUE\n')
+    module = legacy._frozen_module(tmp_path, '_weyra_portable_archive', 'runner')
+    assert module.VALUE == 'archived'
+    assert Path(module.__file__).is_relative_to(tmp_path)
+
+
+def test_frozen_loader_rejects_missing_package(tmp_path):
+    with pytest.raises(FileNotFoundError, match='Frozen package is missing'):
+        legacy._frozen_package(tmp_path, '_weyra_missing_archive')
+
+
+def test_snapshot_integrity_detects_changed_archive(tmp_path):
+    import hashlib
+    source = tmp_path / 'module.py'
+    source.write_text('original')
+    expected = {'module.py': hashlib.sha256(source.read_bytes()).hexdigest()}
+    snapshot = tmp_path / 'snapshot.json'
+    snapshot.write_text(json.dumps({'files': expected}))
+    assert legacy._snapshot_integrity(tmp_path, snapshot) == expected
+    source.write_text('changed')
+    with pytest.raises(ValueError, match='integrity check failed'):
+        legacy._snapshot_integrity(tmp_path, snapshot)
