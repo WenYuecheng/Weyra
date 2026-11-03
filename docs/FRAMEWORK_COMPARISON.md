@@ -1,5 +1,13 @@
 # 开源血统溯源与框架对比全景白皮书 (Pedigree & Architectural Comparison)
 
+当前步骤、工具准入、独立投影及目标 CAS 语义见 [DSH 架构改造说明](DSH_STEP_ARCHITECTURE.md)。数据库为 v2；/goal resume 保留进度，/goal restart 显式重置。
+
+
+## 当前执行语义（2026-11-03）
+
+模型切换准入、步骤工具集合以及 P1 恢复/生命周期/协议来源/可选 patch 已实现。完整接口、迁移、默认值及失败语义统一见 [P1 运行说明](P1_RUNTIME_GUIDE.md)。下文分层与算法说明沿用；涉及上下文更新时，项目规则、记忆和技能目录采用版本化事实消息，目标恢复默认不自动继续，数据库使用明确版本迁移。
+
+
 > **白皮书定位**：本文档为 **Weyra** 自主编码智能体系统的开源血统溯源、理论映射与工业级架构对比白皮书。
 > 系统性剖析 Weyra 如何深度汲取 **Pi Agent**（ReAct 极简纯函数微内核、Session Tree DAG 树状事件溯源、Steering/Follow-up 双队列优先级调度、成对工具抗 400 防御、TTY 单输入源协同）、**DeepSeek-Harness**（DSH 8 节结构化检查点压缩协议、8192 字符中间修剪、Fail-Closed 预算硬防护与微美分结算、POSIX 进程组隔离与多读单写协调锁）以及 **Hermes Agent**（配置与私密凭据分离、透明 Markdown 长期记忆）的精髓，并在原生 Python 异步并发运行时下实现的重大工程超越。
 
@@ -25,7 +33,7 @@ Weyra 在系统设计之初，深刻审视了开源界三大标杆项目的架�
 graph TD
     subgraph HeritageSources ["三大开源标杆工程血统源流"]
         direction TB
-        PI["<b>Pi Agent (Core Microkernel & State)</b><br/>• 纯函数 ReAct 循环 (run_agent_loop)<br/>• Session Tree DAG 不可变事件树<br/>• Steering / Follow-up 双队列并发调度<br/>• 成对工具抗 400 拓扑清洗<br/>• TTY 单输入源三段式 Ctrl+C 协调器<br/>• Anthropic 4 阶段前缀冻结标准"]
+        PI["<b>Pi Agent (Core Microkernel & State)</b><br/>• 依赖注入的 ReAct 循环 (run_agent_loop)<br/>• Session Tree DAG 不可变事件树<br/>• Steering / Follow-up 双队列并发调度<br/>• 成对工具抗 400 拓扑清洗<br/>• TTY 单输入源三段式 Ctrl+C 协调器<br/>• Anthropic 4 阶段前缀冻结标准"]
 
         DSH["<b>DeepSeek-Harness (Industrial Resilience & Budget)</b><br/>• DSH 八节结构化检查点压缩 (Commit d743267)<br/>• 8192 字符工具结果中间修剪 (Middle Pruning)<br/>• Fail-Closed 预算守卫与两阶段微美分结算<br/>• Goal 目标自治推进器与 2 轮无进展自停<br/>• POSIX 进程组隔离 (start_new_session=True / os.killpg)"]
 
@@ -76,7 +84,7 @@ graph TD
 
 ## 三、 Pi Agent 血统深度剖析与微内核映射
 
-### 3.1 极简纯函数 ReAct 微内核 (`weyra/core/loop.py`)
+### 3.1 极简依赖注入的 ReAct 微内核 (`weyra/core/loop.py`)
 Pi Agent 最本质的架构贡献在于：**将智能体的生命周期从繁复的框架黑盒中解放出来，回归到纯粹的单步状态转移函数**。
 Weyra 严格落地了这一微内核哲学：
 - `run_agent_loop` 接收消息流、工具池与上下文策略，在单步中只负责一次纯粹的模型推理与工具决策；
@@ -169,7 +177,7 @@ flowchart TD
 
     BoundedPatch --> TempSandbox["<b>2. 隔离沙箱真实重执行</b><br/>临时受控工作区回放基准测试<br/>硬断言验证产物存在性、返回值与耗时"]
 
-    TempSandbox --> DoubleBlindJudge["<b>3. 顺序交换双盲 LLM 仲裁器 (工程集成)</b><br/>执行 (A, B) 与 (B, A) 两次隐藏身份独立推理<br/>完全消除大模型的位置偏见 (Position Bias)"]
+    TempSandbox --> DoubleBlindJudge["<b>3. 顺序交换双盲 LLM 仲裁器 (工程集成)</b><br/>执行 (A, B) 与 (B, A) 两次隐藏身份独立推理<br/>降低大模型的位置偏见影响 (Position Bias)"]
 
     DoubleBlindJudge --> ZeroDegradationGate["<b>4. 验证集零退化安全发布门禁 (工程集成)</b><br/>固定验证集成功数严格增加 且 硬失败不增加<br/>平局/冲突 100% 拦截, 按固定验证任务检验候选质量"]
 
@@ -182,7 +190,7 @@ flowchart TD
 
 | 系统模块 | 核心理论与工程基石 | 核心设计哲学 |
 | :--- | :--- | :--- |
-| **执行内核** | **Pi Agent** | 极简纯函数状态转移、双队列优先级调度、成对工具抗 400 防御 |
+| **执行内核** | **Pi Agent** | 极简异步状态转移、双队列优先级调度、成对工具抗 400 防御 |
 | **持久状态** | **Pi Agent** + **SQLite WAL** | Session Tree DAG 不可变事件树、时间旅行、内核排他锁 |
 | **上下文与缓存** | **DeepSeek-Harness** + **Anthropic** | DSH 8 节检查点压缩、8192 字符中间修剪、最多 4 个缓存标记与稳定前缀组织 |
 | **资金风控** | **DeepSeek-Harness** | Fail-Closed 两阶段预留锁、事后微美分核销、崩溃重放防刷单 |

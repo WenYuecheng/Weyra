@@ -31,7 +31,7 @@ from weyra.core.hooks import UserInputHook, AgentStartHook
 from weyra.core.context import estimate_tokens
 from weyra.contracts import Message, PreparedRequest, ToolResult, canonical, digest, new_id
 from weyra.core.model_runtime import ModelError
-from weyra.core.state import Goal, RunContext
+from weyra.core.state import RunContext
 
 
 class CodingLifecycle:
@@ -283,16 +283,21 @@ class CodingLifecycle:
             objective: 目标主要意图描述。
             todos: 可选的细化待办项清单列表。
         """
-        if self.goal:
-            self.goal.revise(objective)
+        if self.goals.current() is None or self.goals.current().state == 'completed':
+            self.goal = self.goals.create(objective, todos)
         else:
-            self.goal = Goal(objective)
-        self.goal.todos = todos or [{"text": objective, "done": False}]
-        self._save_goal()
+            self.goal = self.goals.mutate(self.goals.ref(), 'revise', objective=objective, todos=todos)
+        self._goal_ref = self.goals.ref()
+        self.session.add_message(Message('user', 'Current goal reference: ' + canonical(asdict(self._goal_ref)), source='goal'))
+
+    def change_goal(self, operation, expected=None):
+        self.goal = self.goals.mutate(expected or self.goals.ref(), operation)
+        self._goal_ref = self.goals.ref()
+        return self.goal
 
     def _save_goal(self):
-        """将当前内存 Goal 状态机序列化并追加落盘 (Save Goal State Event)。"""
-        self.session.append("goal", asdict(self.goal), True)
+        self.goal = self.goals.update(self._goal_ref, self.goal)
+        self._goal_ref = self.goals.ref()
 
     async def _response(self, ctx: RunContext):
         """调度执行单次模型推理与流式响应聚合 (Execute Model Step Response)。
@@ -414,10 +419,16 @@ class CodingLifecycle:
             await self._knowledge(prompt, ctx)
             if capture := ctx.services.get("replay_capture"):
                 # Memory/child results arriving this turn are factual replay inputs.
-                extra = [{"role": m.role, "content": m.content}
-                         for m in self.session.project()
-                         if m.source in {"memory", "child"} and m.role == "user"
-                         and {"role": m.role, "content": m.content} not in capture.context]
+                from weyra.llm.providers import rendered_message_content
+                extra = []
+                for message in self.session.project():
+                    if message.source not in {"memory", "child"} or message.role != "user":
+                        continue
+                    item = {"role": message.role, "source": message.source,
+                            "source_kind": message.source_kind,
+                            "content": rendered_message_content(message)}
+                    if item not in capture.context and item not in extra:
+                        extra.append(item)
                 if sum(len(m["content"]) for m in capture.context + extra) <= 8000 and len(capture.context + extra) <= 8:
                     capture.context.extend(extra)
                 else:
@@ -592,37 +603,74 @@ class CodingLifecycle:
         item = self._queues["follow_up"][0]
         return await self.run_once(item["text"], _queued=item)
 
+    @staticmethod
+    def _progress_value(value):
+        # Operational metadata cannot establish meaningful work progress.
+        volatile = {"id", "call_id", "task_id", "request_id", "turn_id", "timestamp",
+                    "created_at", "updated_at", "started_at", "ended_at", "duration",
+                    "elapsed", "output_ref", "evidence"}
+        if isinstance(value, dict):
+            return {key: CodingLifecycle._progress_value(item) for key, item in value.items()
+                    if key not in volatile and not key.endswith("_id")}
+        if isinstance(value, (list, tuple)):
+            return [CodingLifecycle._progress_value(item) for item in value]
+        if isinstance(value, str) and value.lstrip().startswith(("{", "[")):
+            try:
+                parsed = json.loads(value)
+            except ValueError:
+                pass
+            else:
+                return CodingLifecycle._progress_value(parsed)
+        return value
+
+    def _goal_budget_available(self):
+        budget = self.context.budget
+        return not (
+            (budget.call_limit is not None and budget.calls >= budget.call_limit)
+            or (budget.token_limit is not None and budget.total_tokens + budget.pending_tokens >= budget.token_limit)
+            or (budget.cost_limit_cny is not None and budget.total_cost_cny >= budget.cost_limit_cny)
+        )
+
     async def _continue_goal(self) -> bool:
-        """评估并触发目标驱动模式下的自主演进迭代 (Evaluate & Trigger Goal Autonomous Step)。
-
-        【DeepSeek-Harness 目标断路器联动】
-        计算当前所有已执行成功的工具产物哈希作为 progress 指标，
-        调用 `goal.should_continue(progress)` 判定是否处于停滞死循环。
-        若通过判定，自动注入 `source="goal"` 的系统提示开启下一轮自主演进。
-
-        Returns:
-            bool: 若目标决定自发继续执行下一轮推理返回 True，否则返回 False。
-        """
-        ctx = self.context
-        if self.goal:
-            revision = self.goal.revision
-            progress = digest(
-                [r["data"] for r in self.session.chain() if r["kind"] == "tool_result"]
-            )
-            if self.goal.should_continue(progress):
-                ctx.check_cancelled()
-                if self.goal.revision == revision:
-                    self._save_goal()
-                    self.session.add_message(
-                        Message(
-                            "user",
-                            "Continue the established goal; verify remaining todos.\n"
-                            + canonical(asdict(self.goal)),
-                            source="goal",
-                        )
-                    )
-                    return True
+        goal, ctx = self.goal, self.context
+        if goal is None or not goal.armed or goal.state != "active":
+            return False
+        revision = goal.revision
+        while True:
+            ctx.check_cancelled()
+            if self.goal is not goal or goal.revision != revision or not goal.armed or goal.state != "active":
+                return False
+            if self._queues["steering"] or self._queues["follow_up"]:
+                return False
+            if not self._goal_budget_available():
+                goal.state, goal.armed = "blocked", False
+                goal.blocker_code, goal.blocker_reason = 'budget-exhausted', 'No remaining execution budget'
+                self._save_goal()
+                return False
+            active = [item for item in self.children.list() if item["state"] in {"pending", "running"}]
+            if not active:
+                break
+            # Waiting is part of the current round, never a continuation.
+            await self.children.wait(active[0]["task_id"], timeout=0.05)
+        self._accept_child_results()
+        observed = set()
+        for record in self.session.chain():
+            data = record["data"]
+            if record["kind"] == "tool_result" and data.get("status") == "success":
+                if data.get("name") in {"goal_update", "agent", "wait_agents", "interrupt_agent"}:
+                    continue
+                observed.add(canonical(self._progress_value(data)))
+            elif record["kind"] == "child_result":
+                observed.add(canonical(self._progress_value(data)))
+        progress = digest({"observed": sorted(observed), "todos": self._progress_value(goal.todos)})
+        if goal.should_continue(progress, **self.goal_policy):
             self._save_goal()
+            self.session.add_message(Message(
+                "user", "Continue the established goal; verify remaining todos.\n" + canonical(asdict(goal)),
+                source="goal",
+            ))
+            return True
+        self._save_goal()
         return False
 
     def _accept_tool_result(self, result: ToolResult):
@@ -643,11 +691,17 @@ class CodingLifecycle:
             LoopHost: 聚合了步进前后拦截、模型调用、目标自治检查与引导插话队列检查的宿主。
         """
         from weyra.core.loop import LoopHost
+        from weyra.core.step import PreparedStep
 
         async def before_step(ctx):
             """每一步模型推理发起前的拦截钩子：准入插话与消费子任务 (Before Step Hook)。"""
             await self._consume_steering()
             self._accept_child_results()
+            if self.goal is not None:
+                reference = asdict(self.goals.ref())
+                if self.session.latest('goal_reference') != reference:
+                    self.session.add_message(Message('user', 'Current goal: ' + canonical(asdict(self.goal)), source='goal'))
+                    self.session.append('goal_reference', reference)
 
         async def finish_step(ctx):
             """单步工具执行完毕后的收尾钩子：评估是否自主推进目标 (Finish Step Hook)。"""
@@ -655,7 +709,8 @@ class CodingLifecycle:
 
         return LoopHost(self.max_steps, self.session, self.context_manager, self.runtime,
                         self.tools, self.hooks, before_step, self._response, finish_step,
-                        self._accept_tool_result, lambda: bool(self._queues["steering"]))
+                        self._accept_tool_result, lambda: bool(self._queues["steering"]),
+                        step_factory=lambda ctx: PreparedStep(self, ctx))
 
     async def _consume_steering(self):
         """准入并消费高优先级引导插话队列中的紧急指令 (Consume Steering High-Priority Queue)。

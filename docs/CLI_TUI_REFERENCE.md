@@ -1,5 +1,11 @@
 # CLI / TUI 交互参考
 
+当前步骤、工具准入、独立投影及目标 CAS 语义见 [DSH 架构改造说明](DSH_STEP_ARCHITECTURE.md)。数据库为 v2；/goal resume 保留进度，/goal restart 显式重置。
+
+
+2026-11-03 更新：目标 pause/resume/complete、冷会话查询、来源回放及 tools/goal_policy/retry_policy 配置见 [P1 运行说明](P1_RUNTIME_GUIDE.md)。patch 默认关闭，部分提交不回滚。
+
+
 ## 启动
 
 ```bash

@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-10-19T21:02:58.679222+08:00",
+  "tests": {
+    "passed": true,
+    "count": 474,
+    "subtests": 5,
+    "output": "........................................................................ [ 15%]\n........................................................................ [ 30%]\n................................................................... [ 44%]\n........................................................................ [ 59%]\n........................................................................ [ 74%]\n........................................................................ [ 90%]\n...............................................                          [100%]\n474 passed, 5 subtests passed in 16.17s\n"
+  },
+  "changed_backend_static_check": {
+    "passed": true
+  },
+  "build": {
+    "passed": true,
+    "wheel_sha256": "dd6f675f34be8c30a23e65cc5bd884257daaf4375a8316d2736710038ab695c3"
+  },
+  "installed_wheel": {
+    "passed": false,
+    "source_mismatches": [
+      "agents/events.py",
+      "agents/presentation.py",
+      "agents/service.py"
+    ],
+    "packaged_heldout_cases": 24,
+    "current_workspace_matches_frozen_package": false,
+    "scope_note": "Installation/import smoke check and frozen source matching were previously completed. The passed=false value records current-workspace source mismatch, not an installation failure.",
+    "installation_smoke_check_passed": true
+  },
+  "source_drift": [
+    "agents/events.py",
+    "agents/main.py",
+    "agents/presentation.py",
+    "agents/service.py"
+  ],
+  "full_repository_static_check": {
+    "passed": true,
+    "findings": [],
+    "note": "Recorded full repository static check has zero findings; not rerun after the user requested no additional defensive tests."
+  }
+}

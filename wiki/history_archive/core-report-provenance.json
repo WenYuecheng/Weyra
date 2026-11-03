@@ -1,0 +1,8 @@
+{
+  "results_sha256": "d20159e4529a31b685e9380f2cfec6fb3ad0b57ea7ed169820e3ad4828fdf88b",
+  "protocol_sha256": "bfa6e0be5abe075f0d126b505cdf1734952579a122c02bfbfd216ba7f10a9c56",
+  "execution_eligibility": "completed-pass-fail-pending-v1",
+  "manifest_sha256": "af4edac56a3c439ca93b0b5842eaf75b32e563443a05f3d92bdf69725a5eb9f1",
+  "scoring_policy_sha256": "bc66c4c94813bb43a6953a71e23143c4d6e17acb8383671146d93767d75f436d",
+  "budget_audit_sha256": "9b4a791de3f562a9cf05d0da68c8031fe692707963cb77c933ede7efe98c5550"
+}

@@ -1,9 +1,19 @@
 # Weyra 权威量化基准与系统效能评估白皮书 (System Benchmark & Empirical Evaluation)
 
+当前步骤、工具准入、独立投影及目标 CAS 语义见 [DSH 架构改造说明](DSH_STEP_ARCHITECTURE.md)。数据库为 v2；/goal resume 保留进度，/goal restart 显式重置。
+
+
+2026-11-03 更新：目标 pause/resume/complete、冷会话查询、来源回放及 tools/goal_policy/retry_policy 配置见 [P1 运行说明](P1_RUNTIME_GUIDE.md)。patch 默认关闭，部分提交不回滚。
+
+
 > **评估定位**：本白皮书系统性公开了 **Weyra** 自主编码智能体在真实复杂软件工程任务下的全维度量化评测战报。
 > 涵盖 **跨语言受限预算代码自适应修复 (Polyglot-64)**、**领域意图路由与歧义安全弃权 (Intent Routing & Safe Abstention)**、**Fail-Closed 预算防御穿透测试** 以及 **全仓源码大厂级规范与自动化回归工程健壮性**。
 >
 > 主要成绩、任务状态与配置条件随[公开证据](evidence/README.md)提供，便于逐项核对。
+
+2026-10-28 新增的有界技能回放实验使用原有 24 题三组共 72 次计划执行，独立账本上限 50 元。当前模型服务连续三次返回 HTTP 402，保护停止后没有完成留出题评测，3 类技能均未更新；本轮没有新的效果或泛化结论。保守计账约 0.22484 元，实际用量和实扣金额未知。冻结协议、耗时、token 预留与未执行状态见[本轮记录](evidence/skill-replay-20261028-summary.json)。以下历史成绩不因本次修复改写。
+
+后续最小调用也未获得可靠输出，用户已暂停付费评测；当前仅进行离线工程检查。补充记录见[重试与暂停](evidence/skill-replay-20261028-followup.json)。HTTP 200、包含广告的回复和离线模拟通过均不计作真实任务效果。
 
 ---
 
@@ -178,3 +188,13 @@ python scripts/verify_package.py
 以上金额来自同一份累计报告，使用配置费率的保守上界口径。Weyra 在这套协议下取得 50/64 累计通过，展示了受预算约束的持续修复能力。跨模型成本收益需要相同任务、工具、轮数和计价条件的配对运行，再据此计算节省比例。
 
 完整条件见[公开协议](evidence/polyglot-64-protocol.json)，任务范围、产物与费用见[结果摘要](evidence/polyglot-64-summary.json)。
+
+## 执行准入回归（2026-11-02）
+
+`tests/test_step_admission.py` 覆盖目标模型拒绝与成功、工具注册替换以及路由日志失败后的事务/内存回滚。属于离线工程回归，不与历史 Polyglot 任务成绩合并，也不产生费用或性能改善百分比。
+
+本轮最终源码验证：`pytest -q` 为 **744 passed、3 skipped、5 subtests passed（22.60 秒）**；`ruff check .` 通过；wheel 与 sdist 构建通过。安装包隔离安装、CLI、离线演示及源码报告检查通过。以上均为本地验证，未重跑在线任务。
+
+2026-11-03 P1 最终验证：**856 passed、3 skipped、5 subtests passed，37.04 秒**；Ruff、wheel/sdist 构建通过。源码哈希与边界见 [P1 验证记录](evidence/p1-20261103-validation.json)，原始测试输出见 [测试日志](evidence/p1-20261103-tests.txt)。本轮未运行真实模型评测。
+
+DSH 步骤架构最终验证：866 passed、3 skipped、5 subtests passed；Ruff、最新 wheel/sdist 与隔离安装通过。详见 [验收记录](DSH_STEP_ACCEPTANCE.md)。读取对照不作为线上性能或任务成功率收益。

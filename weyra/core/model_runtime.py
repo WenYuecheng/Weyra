@@ -33,10 +33,24 @@ from ..llm.providers import (
     ModelError, Provider, ProviderRegistry, ScriptedProvider, OpenAIProvider,
     AnthropicProvider, default_model, _error, _validate_parameters, _validate_pairs,
     _anthropic_cache, _reasoning_format, _get, _plain, _arguments,
+    rendered_message_content, SOURCE_RENDERING_VERSION,
 )
 from .retry import RetryPolicy
 if TYPE_CHECKING:
     from ..runtime_state import RunContext
+
+
+class PreparedModelCall:
+    """One request bound to a provider; retries retain the exact binding."""
+
+    def __init__(self, runtime, request, provider):
+        self.runtime, self.request, self.provider = runtime, request, provider
+
+    def stream(self, context, *, attempt_budget=None):
+        return self.runtime.stream(self.request, context, attempt_budget=attempt_budget,
+                                   _bound_provider=self.provider, _step_metadata={
+                                       'step_id': getattr(self, 'step_id', None),
+                                       'request_series_id': getattr(self, 'request_series_id', None)})
 
 
 class ModelRuntime:
@@ -73,6 +87,7 @@ class ModelRuntime:
         self.route_parameters = {}
         self.fallback_parameters = {}
         self.pricing = {}
+        self.argument_retries = 1
 
     def resolve(self, purpose: str = "main") -> ModelInfo:
         """根据用途获取对应模型规格，未配置时安全降级至 main 主模型。"""
@@ -153,9 +168,18 @@ class ModelRuntime:
             if purpose == "main":
                 context.session.append("model_change", asdict(model), checkpoint=True)
 
-    async def stream(self, request, context, *, attempt_budget=None):
-        """Coordinate transient retries; callers reprepare overflow and failover requests."""
+    def prepare_call(self, request):
+        """Bind routing before inference without issuing I/O or reserving budget."""
         configured = self.parameters_for(request.purpose, request.model)
+        if configured:
+            request = PreparedRequest(request.model, request.system, request.messages,
+                request.tools, request.purpose, request.context_version,
+                {**configured, **request.parameters}, request.id)
+        return PreparedModelCall(self, request, self.registry.get(request.model.provider_id))
+
+    async def stream(self, request, context, *, attempt_budget=None, _bound_provider=None, _step_metadata=None):
+        """Coordinate transient retries; callers reprepare overflow and failover requests."""
+        configured = {} if _bound_provider is not None else self.parameters_for(request.purpose, request.model)
         if configured:
             request = PreparedRequest(
                 request.model,
@@ -177,7 +201,9 @@ class ModelRuntime:
                 raise ModelError("attempt_limit", "Model physical attempt limit reached")
             attempts["attempts"] += 1
             try:
-                async for event in self._stream_once(request, context):
+                stream = (self._stream_once(request, context) if _bound_provider is None
+                          else self._stream_once(request, context, provider=_bound_provider, step_metadata=_step_metadata))
+                async for event in stream:
                     if event.kind == "response":
                         response_accepted = True
                     yield event
@@ -185,7 +211,11 @@ class ModelRuntime:
             except ModelError as error:
                 if attempts["attempts"] >= attempts.get("limit", 4):
                     raise
-                if error.kind == "tool_arguments" and not response_accepted and not argument_retries:
+                if (
+                    error.kind == "tool_arguments"
+                    and not response_accepted
+                    and argument_retries < self.argument_retries
+                ):
                     argument_retries += 1
                     retry = argument_retries
                 elif error.kind == "transient" and transient_retries < policy.max_retries:
@@ -200,7 +230,7 @@ class ModelRuntime:
                     await asyncio.sleep(policy.delay(retry - 1, uniform=random.uniform))
 
     async def _stream_once(
-        self, request: PreparedRequest, context: RunContext
+        self, request: PreparedRequest, context: RunContext, *, provider=None, step_metadata=None
     ) -> AsyncIterator[StreamEvent]:
         """执行单次物理流式请求，管理金融级预算事前预扣与事后核销闭环。
 
@@ -220,11 +250,15 @@ class ModelRuntime:
             StreamEvent: 流式文本与响应事件。
         """
         context.check_cancelled()
-        provider = self.registry.get(request.model.provider_id)
+        provider = provider if provider is not None else self.registry.get(request.model.provider_id)
         _validate_parameters(request, provider)
+        rendered_messages = [
+            {**message.to_dict(), "content": rendered_message_content(message)}
+            for message in request.messages
+        ]
         estimate = request.parameters.get(
             "estimated_input_tokens",
-            max(1, (len(canonical(request.to_dict()).encode("utf-8")) + 1) // 2),
+            max(1, (len(canonical({**request.to_dict(), "messages": rendered_messages}).encode("utf-8")) + 1) // 2),
         )
         output = request.parameters.get("max_output_tokens", request.model.max_output_tokens)
         if (
@@ -235,7 +269,6 @@ class ModelRuntime:
             raise ModelError("invalid", "Output limit exceeds configured model capacity")
         if not isinstance(estimate, int) or isinstance(estimate, bool) or estimate < 0:
             raise ModelError("invalid", "Invalid input token estimate")
-        provider = self.registry.get(request.model.provider_id)
         from ..pricing import Price
 
         price_data = self.pricing.get(f"{request.model.provider_id}/{request.model.model_id}")
@@ -246,7 +279,7 @@ class ModelRuntime:
         # serialized UTF-8 bytes. Include all system/message/tool/provider data,
         # plus conservative framing allowances, without changing the request.
         source = {"system": request.system,
-                  "messages": [message.to_dict() for message in request.messages],
+                  "messages": rendered_messages,
                   "tools": request.tools}
         source_bound = len(canonical(source).encode("utf-8")) + 256 + 32 * (
             len(request.messages) + len(request.tools)
@@ -293,7 +326,7 @@ class ModelRuntime:
             attempt_logged = True
             context.session.append(
                 "model_request",
-                {**request.to_dict(), **attempt},
+                {**request.to_dict(), **attempt, **(step_metadata or {}), "source_rendering_version": SOURCE_RENDERING_VERSION},
                 checkpoint=True,
             )
             logged = True

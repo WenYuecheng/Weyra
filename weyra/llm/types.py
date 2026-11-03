@@ -41,6 +41,16 @@ def digest(value: Any) -> str:
     return hashlib.sha256(canonical(value).encode("utf-8")).hexdigest()
 
 
+def classify_source(source: str) -> str:
+    """Classify provenance without promoting retrieved content to user authority.
+
+    Keep the original source string on Message for backwards-compatible journals.
+    Unknown and derived sources are facts, including summaries of user requests.
+    This classification describes context; tool permissions remain host policy.
+    """
+    return "instruction" if source in {"user", "steering", "follow_up"} else "fact"
+
+
 @dataclass(frozen=True)
 class ToolCall:
     """大模型发起的标准化单次工具调用意图。"""
@@ -60,6 +70,11 @@ class Message:
     tool_call_id: str | None = None
     name: str | None = None
     provider_data: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def source_kind(self) -> str:
+        """Only direct user-role input may carry user instruction authority."""
+        return classify_source(self.source) if self.role == "user" else "fact"
 
     def to_dict(self) -> dict:
         """将消息对象序列化为标准字典表示。

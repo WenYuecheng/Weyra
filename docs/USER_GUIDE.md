@@ -1,5 +1,8 @@
 # Weyra 开发者全功能实战与企业级运维指南 (Developer & Operations Guide)
 
+2026-11-03 更新：目标 pause/resume/complete、冷会话查询、来源回放及 tools/goal_policy/retry_policy 配置见 [P1 运行说明](P1_RUNTIME_GUIDE.md)。patch 默认关闭，部分提交不回滚。
+
+
 > **全景指南**：系统环境就绪、双模终端（流式 CLI & Textual TUI）、5 级配置规范、交互控制指令集、Python SDK 编程式开发、5 大 Hook 插件管道、MCP 标准网桥以及生产级容器化部署。
 >
 > 适用于全栈开发者、DevOps 运维工程师与系统集成专家的完整实战手册。

@@ -218,16 +218,19 @@ async def run_session_command(agent, line, output):
         applied = await agent.compact()
         output("Compacted context." if applied else "Context did not require compaction.")
     elif name == "/goal":
-        if args:
-            description = " ".join(args)
+        description = " ".join(args)
+        if description in {"pause", "resume", "complete", "restart"}:
+            if agent.goal is None:
+                raise ValueError("No goal established")
+            agent.change_goal(description)
+            output(f"Goal {agent.goal.state}: {agent.goal.objective}")
+        elif description:
             agent.set_goal(description)
             output(f"Updated goal: {description}")
+        elif agent.goal:
+            output(f"Goal {agent.goal.state}: {agent.goal.objective}")
         else:
-            goal = agent.goal
-            if goal and goal.description:
-                output(f"Active goal: {goal.description}")
-            else:
-                output("No active goal.")
+            output("No active goal.")
     elif name == "/usage":
         output(
             {
@@ -247,7 +250,9 @@ async def run_session_command(agent, line, output):
             agent.skills._refresh()
         if getattr(agent, "memory", None) and hasattr(agent.memory, "_refresh"):
             agent.memory._refresh()
-        if hasattr(agent, "context_manager") and hasattr(agent, "_system"):
+        if getattr(agent, "resources", None):
+            agent.resources.refresh_project_rules()
+        elif hasattr(agent, "context_manager") and hasattr(agent, "_system"):
             catalog = agent.skills.capture_catalog() if getattr(agent, "skills", None) else {}
             agent.context_manager.refresh(agent._system(catalog))
         output("Refreshed skills and memory manifests.")
@@ -309,7 +314,7 @@ async def run_session_command(agent, line, output):
             raise ValueError("No MCP manager available")
     elif name == "/help":
         output(
-            "/steer text; /followup text; /cancel; /goal text; /tree; /branch record; /fork name; /memory [query | save name \"content\"]; /skills; /skill-history name; /skill-rollback name version; /refresh; /usage; /mcp; /mcp-trust name; /quit"
+            "/steer text; /followup text; /cancel; /goal [text|pause|resume|complete]; /tree; /branch record; /fork name; /memory [query | save name \"content\"]; /skills; /skill-history name; /skill-rollback name version; /refresh; /usage; /mcp; /mcp-trust name; /quit"
         )
     else:
         raise ValueError(f"Unknown session command: {name}")

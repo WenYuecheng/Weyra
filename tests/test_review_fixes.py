@@ -62,7 +62,13 @@ def test_memory_selection_accepts_only_complete_arrays(tmp_path, text, expected)
         try:
             agent.memory.create("preference", "Prefer concise answers")
             await agent.run_once("Use my preference")
-            assert sum(m.source == "memory" for m in agent.session.project()) == expected
+            recalled = [
+                m for m in agent.session.project()
+                if m.source == "memory" and m.provider_data.get("memory_path")
+            ]
+            assert len(recalled) == expected
+            assert all("Prefer concise answers" in m.content for m in recalled)
+            assert all(m.source_kind == "fact" for m in recalled)
         finally:
             await agent.close()
     asyncio.run(run())

@@ -124,11 +124,16 @@ def test_project_instruction_changes_rebuild_at_next_turn(tmp_path):
         await agent.run_once("first")
         rules.write_text("Use rule B.")
         await agent.run_once("second")
-        assert "Use rule A." in provider.requests[0].system
-        assert "Use rule B." in provider.requests[1].system
-        assert "Use rule A." not in provider.requests[1].system
+        assert provider.requests[0].system == provider.requests[1].system
+        assert "Use rule A." not in provider.requests[0].system
+        first = [message for message in provider.requests[0].messages if message.source == "project_rules"]
+        second = [message for message in provider.requests[1].messages if message.source == "project_rules"]
+        assert "Use rule A." in first[-1].content
+        assert "Use rule B." in second[-1].content
+        assert second[-1].source_kind == "fact"
+        assert second[0].to_dict() == first[0].to_dict()
         assert any(
-            r["kind"] == "context_version" and r["data"]["reason"] == "project_instructions_changed"
+            r["kind"] == "context_version" and r["data"]["reason"] == "resource_context_changed"
             for r in agent.session.chain()
         )
         await agent.close()

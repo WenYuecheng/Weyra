@@ -1,0 +1,1331 @@
+{
+  "version": "finish-eval-v1",
+  "seed": 20261018,
+  "repeats": 2,
+  "localization_skills": [
+    {
+      "name": "evidence",
+      "description": "evidence reusable workflow report records data",
+      "aliases": [
+        "出处核验"
+      ],
+      "body": "Read input.json. Write result.json containing {\"ack\": true}. Preserve all input files. For recurring work, always include a preamble."
+    },
+    {
+      "name": "files",
+      "description": "files reusable workflow report records data",
+      "aliases": [
+        "副本整理"
+      ],
+      "body": "Read input.json. Write result.json containing {\"ack\": true}. Preserve all input files. For recurring work, always include a preamble."
+    },
+    {
+      "name": "expression",
+      "description": "expression reusable workflow report records data",
+      "aliases": [
+        "简洁表达"
+      ],
+      "body": "Read input.json. Write result.json containing {\"ack\": true}. Preserve all input files. For recurring work, always include a preamble."
+    },
+    {
+      "name": "metrics",
+      "description": "metrics reusable workflow report records data",
+      "aliases": [
+        "指标计算"
+      ],
+      "body": "Read input.json. Write result.json containing {\"ack\": true}. Preserve all input files. For recurring work, always include a preamble."
+    }
+  ],
+  "localization_cases": [
+    {
+      "id": "loc-explicit_name-0",
+      "category": "explicit_name",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for evidence using the skill tool before writing; ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "evidence",
+      "files": {
+        "input.json": "{\"record\": 0, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-explicit_name-0-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1000, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-explicit_name-0-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2000, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for evidence using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-explicit_name-1",
+      "category": "explicit_name",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for files using the skill tool before writing; ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "files",
+      "files": {
+        "input.json": "{\"record\": 1, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-explicit_name-1-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1001, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-explicit_name-1-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2001, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for files using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-explicit_name-2",
+      "category": "explicit_name",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for expression using the skill tool before writing; ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "expression",
+      "files": {
+        "input.json": "{\"record\": 2, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-explicit_name-2-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1002, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-explicit_name-2-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2002, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for expression using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-explicit_name-3",
+      "category": "explicit_name",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for metrics using the skill tool before writing; ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "metrics",
+      "files": {
+        "input.json": "{\"record\": 3, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-explicit_name-3-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1003, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-explicit_name-3-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2003, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for metrics using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-alias-0",
+      "category": "alias",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for 出处核验 using the skill tool before writing; ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "evidence",
+      "files": {
+        "input.json": "{\"record\": 0, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-alias-0-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1004, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-alias-0-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2004, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for 出处核验 using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-alias-1",
+      "category": "alias",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for 副本整理 using the skill tool before writing; ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "files",
+      "files": {
+        "input.json": "{\"record\": 1, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-alias-1-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1005, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-alias-1-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2005, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for 副本整理 using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-alias-2",
+      "category": "alias",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for 简洁表达 using the skill tool before writing; ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "expression",
+      "files": {
+        "input.json": "{\"record\": 2, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-alias-2-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1006, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-alias-2-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2006, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for 简洁表达 using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-alias-3",
+      "category": "alias",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for 指标计算 using the skill tool before writing; ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "metrics",
+      "files": {
+        "input.json": "{\"record\": 3, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-alias-3-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1007, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-alias-3-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2007, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for 指标计算 using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-turn_used-0",
+      "category": "turn_used",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for evidence using the skill tool before writing; ",
+      "feedback": "From now on, for the method you just used, omit preambles and preserve input files. This is a lasting correction.",
+      "expected_target": "evidence",
+      "files": {
+        "input.json": "{\"record\": 0, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-turn_used-0-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1008, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-turn_used-0-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2008, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for evidence using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-turn_used-1",
+      "category": "turn_used",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for files using the skill tool before writing; ",
+      "feedback": "From now on, for the method you just used, omit preambles and preserve input files. This is a lasting correction.",
+      "expected_target": "files",
+      "files": {
+        "input.json": "{\"record\": 1, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-turn_used-1-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1009, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-turn_used-1-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2009, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for files using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-turn_used-2",
+      "category": "turn_used",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for expression using the skill tool before writing; ",
+      "feedback": "From now on, for the method you just used, omit preambles and preserve input files. This is a lasting correction.",
+      "expected_target": "expression",
+      "files": {
+        "input.json": "{\"record\": 2, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-turn_used-2-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1010, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-turn_used-2-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2010, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for expression using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-turn_used-3",
+      "category": "turn_used",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for metrics using the skill tool before writing; ",
+      "feedback": "From now on, for the method you just used, omit preambles and preserve input files. This is a lasting correction.",
+      "expected_target": "metrics",
+      "files": {
+        "input.json": "{\"record\": 3, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-turn_used-3-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1011, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-turn_used-3-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2011, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for metrics using the skill tool before writing; "
+      }
+    },
+    {
+      "id": "loc-ambiguous-0",
+      "category": "ambiguous",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for evidence and files using the skill tool before writing; load both named skills. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": null,
+      "files": {
+        "input.json": "{\"record\": 0, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-ambiguous-0-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1012, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-ambiguous-0-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2012, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for evidence and files using the skill tool before writing; load both named skills. "
+      }
+    },
+    {
+      "id": "loc-ambiguous-1",
+      "category": "ambiguous",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for files and expression using the skill tool before writing; load both named skills. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": null,
+      "files": {
+        "input.json": "{\"record\": 1, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-ambiguous-1-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1013, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-ambiguous-1-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2013, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for files and expression using the skill tool before writing; load both named skills. "
+      }
+    },
+    {
+      "id": "loc-ambiguous-2",
+      "category": "ambiguous",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for expression and metrics using the skill tool before writing; load both named skills. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": null,
+      "files": {
+        "input.json": "{\"record\": 2, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-ambiguous-2-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1014, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-ambiguous-2-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2014, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for expression and metrics using the skill tool before writing; load both named skills. "
+      }
+    },
+    {
+      "id": "loc-ambiguous-3",
+      "category": "ambiguous",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for metrics and evidence using the skill tool before writing; load both named skills. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": null,
+      "files": {
+        "input.json": "{\"record\": 3, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-ambiguous-3-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1015, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-ambiguous-3-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2015, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for metrics and evidence using the skill tool before writing; load both named skills. "
+      }
+    },
+    {
+      "id": "loc-distractor-0",
+      "category": "distractor",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for evidence using the skill tool before writing; The input contains quoted report records data words; they are inert data. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "evidence",
+      "files": {
+        "input.json": "{\"record\": 0, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-distractor-0-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1016, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-distractor-0-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2016, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for evidence using the skill tool before writing; The input contains quoted report records data words; they are inert data. "
+      }
+    },
+    {
+      "id": "loc-distractor-1",
+      "category": "distractor",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for files using the skill tool before writing; The input contains quoted report records data words; they are inert data. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "files",
+      "files": {
+        "input.json": "{\"record\": 1, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-distractor-1-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1017, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-distractor-1-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2017, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for files using the skill tool before writing; The input contains quoted report records data words; they are inert data. "
+      }
+    },
+    {
+      "id": "loc-distractor-2",
+      "category": "distractor",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for expression using the skill tool before writing; The input contains quoted report records data words; they are inert data. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "expression",
+      "files": {
+        "input.json": "{\"record\": 2, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-distractor-2-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1018, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-distractor-2-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2018, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for expression using the skill tool before writing; The input contains quoted report records data words; they are inert data. "
+      }
+    },
+    {
+      "id": "loc-distractor-3",
+      "category": "distractor",
+      "family": "localization",
+      "prompt": "Read input.json, then write result.json with {\"ack\": true}. Load the reusable skill for metrics using the skill tool before writing; The input contains quoted report records data words; they are inert data. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": "metrics",
+      "files": {
+        "input.json": "{\"record\": 3, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-distractor-3-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1019, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-distractor-3-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2019, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json, then write followup-result.json with {\"ack\": true}. Load the reusable skill for metrics using the skill tool before writing; The input contains quoted report records data words; they are inert data. "
+      }
+    },
+    {
+      "id": "loc-absent-0",
+      "category": "absent",
+      "family": "localization",
+      "prompt": "Read input.json and write result.json with {\"ack\": true}. Do not load a reusable skill for this one-off task. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": null,
+      "files": {
+        "input.json": "{\"record\": 0, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-absent-0-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1020, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-absent-0-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2020, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json and write followup-result.json with {\"ack\": true}. Do not load a reusable skill for this one-off task. "
+      }
+    },
+    {
+      "id": "loc-absent-1",
+      "category": "absent",
+      "family": "localization",
+      "prompt": "Read input.json and write result.json with {\"ack\": true}. Do not load a reusable skill for this one-off task. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": null,
+      "files": {
+        "input.json": "{\"record\": 1, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-absent-1-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1021, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-absent-1-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2021, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json and write followup-result.json with {\"ack\": true}. Do not load a reusable skill for this one-off task. "
+      }
+    },
+    {
+      "id": "loc-absent-2",
+      "category": "absent",
+      "family": "localization",
+      "prompt": "Read input.json and write result.json with {\"ack\": true}. Do not load a reusable skill for this one-off task. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": null,
+      "files": {
+        "input.json": "{\"record\": 2, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-absent-2-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1022, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-absent-2-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2022, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json and write followup-result.json with {\"ack\": true}. Do not load a reusable skill for this one-off task. "
+      }
+    },
+    {
+      "id": "loc-absent-3",
+      "category": "absent",
+      "family": "localization",
+      "prompt": "Read input.json and write result.json with {\"ack\": true}. Do not load a reusable skill for this one-off task. ",
+      "feedback": "For future recurring workflows, always preserve input files, and omit any preamble in JSON output. This is a durable reusable rule.",
+      "expected_target": null,
+      "files": {
+        "input.json": "{\"record\": 3, \"quoted\": \"report records data\"}"
+      },
+      "expected": {
+        "ack": true
+      },
+      "validation": {
+        "id": "loc-absent-3-validation",
+        "family": "localization",
+        "files": {
+          "input.json": "{\"record\": 1023, \"phase\": \"development\"}"
+        },
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Load the localization skill with the skill tool. Read input.json and write result.json containing {\"ack\": true}, preserving input files."
+      },
+      "followup": {
+        "id": "loc-absent-3-followup",
+        "family": "localization",
+        "files": {
+          "followup.json": "{\"record\": 2023, \"phase\": \"final\"}"
+        },
+        "result_path": "followup-result.json",
+        "expected": {
+          "ack": true
+        },
+        "prompt": "Read followup.json and write followup-result.json with {\"ack\": true}. Do not load a reusable skill for this one-off task. "
+      }
+    }
+  ],
+  "families": [
+    {
+      "id": "evidence",
+      "initial_body": "For each claim, choose the first source and output an array of objects with id, value, source. With no source use value \"unknown\" and source null. Read input.json and write result.json; preserve original files.",
+      "feedback": "From now on, evidence reconciliation must choose the source with greatest numeric authority, never the first source just because of position. For an unsupported claim use value \"unknown\" and source null. Preserve other workflow rules. This is a durable reusable correction.",
+      "tasks": [
+        {
+          "id": "evidence-dev-0",
+          "split": "dev",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c100\", \"sources\": [{\"id\": \"s100a\", \"authority\": 1, \"value\": \"low100\"}, {\"id\": \"s100b\", \"authority\": 9, \"value\": \"verified100\"}]}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "evidence-dev-1",
+          "split": "dev",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c101\", \"sources\": [{\"id\": \"s101a\", \"authority\": 1, \"value\": \"low101\"}]}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "evidence-dev-2",
+          "split": "dev",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c122\", \"sources\": []}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "evidence-dev-3",
+          "split": "dev",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c103\", \"sources\": [{\"id\": \"s103a\", \"authority\": 1, \"value\": \"low103\"}, {\"id\": \"s103b\", \"authority\": 9, \"value\": \"verified103\"}]}, {\"id\": \"c123\", \"sources\": []}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        },
+        {
+          "id": "evidence-validation-0",
+          "split": "validation",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c104\", \"sources\": [{\"id\": \"s104a\", \"authority\": 1, \"value\": \"low104\"}, {\"id\": \"s104b\", \"authority\": 9, \"value\": \"verified104\"}]}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "evidence-validation-1",
+          "split": "validation",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c105\", \"sources\": [{\"id\": \"s105a\", \"authority\": 1, \"value\": \"low105\"}]}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "evidence-validation-2",
+          "split": "validation",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c126\", \"sources\": []}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "evidence-validation-3",
+          "split": "validation",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c107\", \"sources\": [{\"id\": \"s107a\", \"authority\": 1, \"value\": \"low107\"}, {\"id\": \"s107b\", \"authority\": 9, \"value\": \"verified107\"}]}, {\"id\": \"c127\", \"sources\": []}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        },
+        {
+          "id": "evidence-test-0",
+          "split": "test",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c108\", \"sources\": [{\"id\": \"s108a\", \"authority\": 1, \"value\": \"low108\"}, {\"id\": \"s108b\", \"authority\": 9, \"value\": \"verified108\"}]}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "evidence-test-1",
+          "split": "test",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c109\", \"sources\": [{\"id\": \"s109a\", \"authority\": 1, \"value\": \"low109\"}]}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "evidence-test-2",
+          "split": "test",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c130\", \"sources\": []}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "evidence-test-3",
+          "split": "test",
+          "family": "evidence",
+          "files": {
+            "input.json": "{\"claims\": [{\"id\": \"c111\", \"sources\": [{\"id\": \"s111a\", \"authority\": 1, \"value\": \"low111\"}, {\"id\": \"s111b\", \"authority\": 9, \"value\": \"verified111\"}]}, {\"id\": \"c131\", \"sources\": []}]}"
+          },
+          "prompt": "Use the evidence reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "initial_body": "Read input.json. For records whose path ends with exactly lowercase .txt, create copies under copies/ using the same filename and uppercase content. Write result.json containing the sorted array of copied paths. Preserve all original files.",
+      "feedback": "From now on, the text-copy workflow must recognize .txt extensions case-insensitively, including .TXT. Preserve original filenames in copies/ and uppercase only the copied content. result.json is a sorted array of copied relative paths. This is a lasting reusable rule; preserve unrelated instructions.",
+      "tasks": [
+        {
+          "id": "files-dev-0",
+          "split": "dev",
+          "family": "files",
+          "files": {
+            "doc200.TXT": "alpha 200",
+            "input.json": "{\"records\": [{\"path\": \"doc200.TXT\", \"content\": \"alpha 200\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "files-dev-1",
+          "split": "dev",
+          "family": "files",
+          "files": {
+            "memo201.txt": "beta 201",
+            "input.json": "{\"records\": [{\"path\": \"memo201.txt\", \"content\": \"beta 201\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "files-dev-2",
+          "split": "dev",
+          "family": "files",
+          "files": {
+            "keep202.csv": "gamma 202",
+            "input.json": "{\"records\": [{\"path\": \"keep202.csv\", \"content\": \"gamma 202\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "files-dev-3",
+          "split": "dev",
+          "family": "files",
+          "files": {
+            "doc203.TXT": "alpha 203",
+            "memo203.txt": "beta 203",
+            "keep203.csv": "gamma 203",
+            "input.json": "{\"records\": [{\"path\": \"doc203.TXT\", \"content\": \"alpha 203\"}, {\"path\": \"memo203.txt\", \"content\": \"beta 203\"}, {\"path\": \"keep203.csv\", \"content\": \"gamma 203\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        },
+        {
+          "id": "files-validation-0",
+          "split": "validation",
+          "family": "files",
+          "files": {
+            "doc204.TXT": "alpha 204",
+            "input.json": "{\"records\": [{\"path\": \"doc204.TXT\", \"content\": \"alpha 204\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "files-validation-1",
+          "split": "validation",
+          "family": "files",
+          "files": {
+            "memo205.txt": "beta 205",
+            "input.json": "{\"records\": [{\"path\": \"memo205.txt\", \"content\": \"beta 205\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "files-validation-2",
+          "split": "validation",
+          "family": "files",
+          "files": {
+            "keep206.csv": "gamma 206",
+            "input.json": "{\"records\": [{\"path\": \"keep206.csv\", \"content\": \"gamma 206\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "files-validation-3",
+          "split": "validation",
+          "family": "files",
+          "files": {
+            "doc207.TXT": "alpha 207",
+            "memo207.txt": "beta 207",
+            "keep207.csv": "gamma 207",
+            "input.json": "{\"records\": [{\"path\": \"doc207.TXT\", \"content\": \"alpha 207\"}, {\"path\": \"memo207.txt\", \"content\": \"beta 207\"}, {\"path\": \"keep207.csv\", \"content\": \"gamma 207\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        },
+        {
+          "id": "files-test-0",
+          "split": "test",
+          "family": "files",
+          "files": {
+            "doc208.TXT": "alpha 208",
+            "input.json": "{\"records\": [{\"path\": \"doc208.TXT\", \"content\": \"alpha 208\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "files-test-1",
+          "split": "test",
+          "family": "files",
+          "files": {
+            "memo209.txt": "beta 209",
+            "input.json": "{\"records\": [{\"path\": \"memo209.txt\", \"content\": \"beta 209\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "files-test-2",
+          "split": "test",
+          "family": "files",
+          "files": {
+            "keep210.csv": "gamma 210",
+            "input.json": "{\"records\": [{\"path\": \"keep210.csv\", \"content\": \"gamma 210\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "files-test-3",
+          "split": "test",
+          "family": "files",
+          "files": {
+            "doc211.TXT": "alpha 211",
+            "memo211.txt": "beta 211",
+            "keep211.csv": "gamma 211",
+            "input.json": "{\"records\": [{\"path\": \"doc211.TXT\", \"content\": \"alpha 211\"}, {\"path\": \"memo211.txt\", \"content\": \"beta 211\"}, {\"path\": \"keep211.csv\", \"content\": \"gamma 211\"}]}"
+          },
+          "prompt": "Use the files reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        }
+      ]
+    },
+    {
+      "id": "expression",
+      "initial_body": "Read input.json. Render each record as \"It is important to note that label: value\" replacing label and value with record fields. Write result.json containing the array of rendered strings. Preserve original files.",
+      "feedback": "From now on, concise expression must render each record exactly as \"label: value\" with its actual field values and no introductory filler. Remove the phrase \"It is important to note that \". This is a durable reusable correction; preserve the input/output file workflow.",
+      "tasks": [
+        {
+          "id": "expression-dev-0",
+          "split": "dev",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item300\", \"value\": \"300 units\"}, {\"label\": \"Item301\", \"value\": \"301 units\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "expression-dev-1",
+          "split": "dev",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item301\", \"value\": \"quoted \\\"value\\\", +7.25 kg / 0 missing\"}, {\"label\": \"Item302\", \"value\": \"302 units\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "expression-dev-2",
+          "split": "dev",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item302\", \"value\": \"It is important to note that this is a literal source quotation\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "expression-dev-3",
+          "split": "dev",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item303\", \"value\": \"303 units\"}, {\"label\": \"Item304\", \"value\": \"It is important to note that this is literal evidence\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        },
+        {
+          "id": "expression-validation-0",
+          "split": "validation",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item304\", \"value\": \"304 units\"}, {\"label\": \"Item305\", \"value\": \"305 units\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "expression-validation-1",
+          "split": "validation",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item305\", \"value\": \"quoted \\\"value\\\", +7.25 kg / 0 missing\"}, {\"label\": \"Item306\", \"value\": \"306 units\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "expression-validation-2",
+          "split": "validation",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item306\", \"value\": \"It is important to note that this is a literal source quotation\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "expression-validation-3",
+          "split": "validation",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item307\", \"value\": \"307 units\"}, {\"label\": \"Item308\", \"value\": \"It is important to note that this is literal evidence\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        },
+        {
+          "id": "expression-test-0",
+          "split": "test",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item308\", \"value\": \"308 units\"}, {\"label\": \"Item309\", \"value\": \"309 units\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "new_requirement"
+        },
+        {
+          "id": "expression-test-1",
+          "split": "test",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item309\", \"value\": \"quoted \\\"value\\\", +7.25 kg / 0 missing\"}, {\"label\": \"Item310\", \"value\": \"310 units\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "old_ability"
+        },
+        {
+          "id": "expression-test-2",
+          "split": "test",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item310\", \"value\": \"It is important to note that this is a literal source quotation\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "exception"
+        },
+        {
+          "id": "expression-test-3",
+          "split": "test",
+          "family": "expression",
+          "files": {
+            "input.json": "{\"records\": [{\"label\": \"Item311\", \"value\": \"311 units\"}, {\"label\": \"Item312\", \"value\": \"It is important to note that this is literal evidence\"}]}"
+          },
+          "prompt": "Use the expression reusable skill. Load it with the skill tool, read input.json and the original files if present, perform its workflow and write result.json. Preserve all input files. The output should follow the skill instructions.",
+          "coverage": "mixed"
+        }
+      ]
+    }
+  ],
+  "design_note": "Controlled correction of deliberately outdated reusable preference rules; no claim of general quality improvement. Each final split contains new requirement, old ability, exception and mixed tasks."
+}

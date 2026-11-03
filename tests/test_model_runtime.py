@@ -68,6 +68,7 @@ def test_openai_pairing_reasoning_and_usage():
             provider_data={
                 "provider_id": "deepseek",
                 "model_id": "test",
+                "native_identity": provider.native_identity(request("deepseek").model),
                 "reasoning_content": "prior",
             },
         ),
@@ -104,18 +105,22 @@ def test_anthropic_preserves_signed_blocks_and_adds_cache_input():
         ),
     )
     client = Client(response)
+    provider = AnthropicProvider(client=client)
     req = request(
         "anthropic",
         [
             Message(
                 "assistant",
                 "answer",
-                provider_data={"provider_id": "anthropic", "model_id": "test", "content": blocks},
+                provider_data={
+                    "provider_id": "anthropic", "model_id": "test", "content": blocks,
+                    "native_identity": provider.native_identity(request("anthropic").model),
+                },
             ),
             Message("user", "next"),
         ],
     )
-    events = asyncio.run(collect(AnthropicProvider(client=client), req))
+    events = asyncio.run(collect(provider, req))
     assert client.calls[0]["messages"][0]["content"] == blocks
     assert events[-1].data.usage == Usage(14, 3, 5, 7)
 
@@ -453,6 +458,7 @@ def test_cancellation_closes_provider_and_charges_unknown_usage():
 
 def test_anthropic_replays_redacted_thinking_and_tool_error_status():
     client = Client(NS(content=[NS(type="text", text="done")], stop_reason="end_turn", usage=None))
+    provider = AnthropicProvider(client=client)
     blocks = [
         {"type": "redacted_thinking", "data": "opaque"},
         {"type": "tool_use", "id": "a", "name": "lookup", "input": {}},
@@ -461,11 +467,14 @@ def test_anthropic_replays_redacted_thinking_and_tool_error_status():
         Message(
             "assistant",
             tool_calls=(ToolCall("a", "lookup"),),
-            provider_data={"provider_id": "anthropic", "model_id": "test", "content": blocks},
+            provider_data={
+                "provider_id": "anthropic", "model_id": "test", "content": blocks,
+                "native_identity": provider.native_identity(request("anthropic").model),
+            },
         ),
         Message("tool", "denied", tool_call_id="a", provider_data={"tool_status": "denied"}),
     ]
-    asyncio.run(collect(AnthropicProvider(client=client), request("anthropic", messages)))
+    asyncio.run(collect(provider, request("anthropic", messages)))
     assert client.calls[0]["messages"][0]["content"] == blocks
     assert client.calls[0]["messages"][1]["content"][0]["is_error"] is True
 

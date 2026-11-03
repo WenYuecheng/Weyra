@@ -1,0 +1,3593 @@
+{
+  "policy": "Read-only, deduplicated by request and attempt. Missing usage is unknown, not zero cost. Longest workspace prefix prevents test calls being assigned to maintenance. Provider durations may overlap; they are not wall-clock duration.",
+  "root": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-eval-20261018-v3",
+  "units": {
+    "skill_test/case-evidence-7/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.822103958009393
+    },
+    "skill_test/case-evidence-7/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.08393187499314
+    },
+    "skill_test/case-evidence-7/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 239,
+      "output_tokens": 27,
+      "accounted_tokens": 266,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.74542224999459
+    },
+    "skill_test/case-evidence-7/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 239,
+      "output_tokens": 27,
+      "accounted_tokens": 266,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.548908166994806
+    },
+    "skill_test/case-evidence-8/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.98306225000124
+    },
+    "skill_test/case-evidence-8/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.817418250007904
+    },
+    "skill_test/case-evidence-8/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 240,
+      "output_tokens": 23,
+      "accounted_tokens": 263,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.614467250008602
+    },
+    "skill_test/case-evidence-8/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 240,
+      "output_tokens": 23,
+      "accounted_tokens": 263,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.558792249998078
+    },
+    "skill_test/case-evidence-9/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 11,
+      "accounted_tokens": 120,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.582718000005116
+    },
+    "skill_test/case-evidence-9/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 7,
+      "accounted_tokens": 116,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.185275083000306
+    },
+    "skill_test/case-evidence-9/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 91,
+      "output_tokens": 7,
+      "accounted_tokens": 98,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.81984879200172
+    },
+    "skill_test/case-evidence-9/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 91,
+      "output_tokens": 7,
+      "accounted_tokens": 98,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.742474167011096
+    },
+    "skill_test/case-file_workflow-7/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.533462457999121
+    },
+    "skill_test/case-file_workflow-7/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.707469790999312
+    },
+    "skill_test/case-file_workflow-7/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 36,
+      "accounted_tokens": 220,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.65900149999652
+    },
+    "skill_test/case-file_workflow-7/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 39,
+      "accounted_tokens": 223,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.15037449999363
+    },
+    "skill_test/case-file_workflow-8/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.35790558300505
+    },
+    "skill_test/case-file_workflow-8/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.336634749997756
+    },
+    "skill_test/case-file_workflow-8/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 39,
+      "accounted_tokens": 223,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.282683625002392
+    },
+    "skill_test/case-file_workflow-8/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 39,
+      "accounted_tokens": 223,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.331585249994532
+    },
+    "skill_test/case-file_workflow-9/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 25,
+      "accounted_tokens": 135,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 7.492661249998491
+    },
+    "skill_test/case-file_workflow-9/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 20,
+      "accounted_tokens": 130,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.788963625003817
+    },
+    "skill_test/case-file_workflow-9/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 92,
+      "output_tokens": 25,
+      "accounted_tokens": 117,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.5268859170028
+    },
+    "skill_test/case-file_workflow-9/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 92,
+      "output_tokens": 20,
+      "accounted_tokens": 112,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.630944207994617
+    },
+    "skill_test/case-narrative-7/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 221,
+      "output_tokens": 32,
+      "accounted_tokens": 253,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.808328625003924
+    },
+    "skill_test/case-narrative-7/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 221,
+      "output_tokens": 32,
+      "accounted_tokens": 253,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.489122999992105
+    },
+    "skill_test/case-narrative-7/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 201,
+      "output_tokens": 32,
+      "accounted_tokens": 233,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 20.38446608299273
+    },
+    "skill_test/case-narrative-7/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 201,
+      "output_tokens": 32,
+      "accounted_tokens": 233,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.58712316599849
+    },
+    "skill_test/case-narrative-8/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 219,
+      "output_tokens": 31,
+      "accounted_tokens": 250,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.040049834002275
+    },
+    "skill_test/case-narrative-8/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 219,
+      "output_tokens": 31,
+      "accounted_tokens": 250,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 23.370978165999986
+    },
+    "skill_test/case-narrative-8/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 199,
+      "output_tokens": 31,
+      "accounted_tokens": 230,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.07816254098725
+    },
+    "skill_test/case-narrative-8/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 199,
+      "output_tokens": 31,
+      "accounted_tokens": 230,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.097380999999586
+    },
+    "skill_test/case-narrative-9/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 9,
+      "accounted_tokens": 123,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.751396916995873
+    },
+    "skill_test/case-narrative-9/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 9,
+      "accounted_tokens": 123,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.39514037501067
+    },
+    "skill_test/case-narrative-9/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 9,
+      "accounted_tokens": 103,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.696317915993859
+    },
+    "skill_test/case-narrative-9/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 9,
+      "accounted_tokens": 103,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.309923790991888
+    },
+    "skill_test/case-report-7/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 28.002254166000057
+    },
+    "skill_test/case-report-7/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.1540152079978725
+    },
+    "skill_test/case-report-7/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 154,
+      "output_tokens": 23,
+      "accounted_tokens": 177,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 20.201206333003938
+    },
+    "skill_test/case-report-7/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 154,
+      "output_tokens": 23,
+      "accounted_tokens": 177,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.45784379199904
+    },
+    "skill_test/case-report-8/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 122,
+      "accounted_tokens": 294,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.022255459000007
+    },
+    "skill_test/case-report-8/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 32,
+      "accounted_tokens": 204,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.406816292001167
+    },
+    "skill_test/case-report-8/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 154,
+      "output_tokens": 23,
+      "accounted_tokens": 177,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 21.46078566700453
+    },
+    "skill_test/case-report-8/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 154,
+      "output_tokens": 21,
+      "accounted_tokens": 175,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.048568958009128
+    },
+    "skill_test/case-report-9/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.764559250004822
+    },
+    "skill_test/case-report-9/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 6,
+      "accounted_tokens": 100,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.862485709003522
+    },
+    "skill_test/case-report-9/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 76,
+      "output_tokens": 6,
+      "accounted_tokens": 82,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 24.28962887500529
+    },
+    "skill_test/case-report-9/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 76,
+      "output_tokens": 5,
+      "accounted_tokens": 81,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.615011208996293
+    },
+    "skill_test/case-structured-7/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 160,
+      "output_tokens": 21,
+      "accounted_tokens": 181,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.74047991700354
+    },
+    "skill_test/case-structured-7/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 160,
+      "output_tokens": 21,
+      "accounted_tokens": 181,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.885990791997756
+    },
+    "skill_test/case-structured-7/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 141,
+      "output_tokens": 21,
+      "accounted_tokens": 162,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.469420499997796
+    },
+    "skill_test/case-structured-7/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 141,
+      "output_tokens": 21,
+      "accounted_tokens": 162,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.087989916995866
+    },
+    "skill_test/case-structured-8/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 161,
+      "output_tokens": 37,
+      "accounted_tokens": 198,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.79977883399988
+    },
+    "skill_test/case-structured-8/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 161,
+      "output_tokens": 23,
+      "accounted_tokens": 184,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.477287000001525
+    },
+    "skill_test/case-structured-8/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 142,
+      "output_tokens": 23,
+      "accounted_tokens": 165,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.332851041006506
+    },
+    "skill_test/case-structured-8/no_skill/1": {
+      "usage_records": 2,
+      "input_tokens": 142,
+      "output_tokens": 23,
+      "accounted_tokens": 1806,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 31.594761040993035
+    },
+    "skill_test/case-structured-9/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 107,
+      "output_tokens": 14,
+      "accounted_tokens": 121,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 7.110857916995883
+    },
+    "skill_test/case-structured-9/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 107,
+      "output_tokens": 14,
+      "accounted_tokens": 121,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.303592958007357
+    },
+    "skill_test/case-structured-9/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 88,
+      "output_tokens": 14,
+      "accounted_tokens": 102,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.04227424999408
+    },
+    "skill_test/case-structured-9/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 88,
+      "output_tokens": 14,
+      "accounted_tokens": 102,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.786780666006962
+    },
+    "skill_test/case-technical-7/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.024007749991142
+    },
+    "skill_test/case-technical-7/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.714167041005567
+    },
+    "skill_test/case-technical-7/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 207,
+      "output_tokens": 33,
+      "accounted_tokens": 240,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.635583707990008
+    },
+    "skill_test/case-technical-7/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 207,
+      "output_tokens": 33,
+      "accounted_tokens": 240,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.494466499992996
+    },
+    "skill_test/case-technical-8/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 35,
+      "accounted_tokens": 259,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.184015457998612
+    },
+    "skill_test/case-technical-8/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 35,
+      "accounted_tokens": 259,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 23.212241333007114
+    },
+    "skill_test/case-technical-8/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 204,
+      "output_tokens": 34,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.535441416999674
+    },
+    "skill_test/case-technical-8/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 204,
+      "output_tokens": 34,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.558384040996316
+    },
+    "skill_test/case-technical-9/frozen_old/0": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.785217333002947
+    },
+    "skill_test/case-technical-9/frozen_old/1": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.214818749998813
+    },
+    "skill_test/case-technical-9/no_skill/0": {
+      "usage_records": 1,
+      "input_tokens": 117,
+      "output_tokens": 13,
+      "accounted_tokens": 130,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.829743208989385
+    },
+    "skill_test/case-technical-9/no_skill/1": {
+      "usage_records": 1,
+      "input_tokens": 117,
+      "output_tokens": 13,
+      "accounted_tokens": 130,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.368893250008114
+    },
+    "maintenance/evidence/experience_bounded/0": {
+      "usage_records": 16,
+      "input_tokens": 7229,
+      "output_tokens": 775,
+      "accounted_tokens": 8004,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 99.30489604403556
+    },
+    "skill_test/case-evidence-7/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.964610832990729
+    },
+    "skill_test/case-evidence-8/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.881816791006713
+    },
+    "skill_test/case-evidence-9/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 11,
+      "accounted_tokens": 120,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.104906374996062
+    },
+    "maintenance/evidence/experience_bounded/1": {
+      "usage_records": 8,
+      "input_tokens": 4836,
+      "output_tokens": 259,
+      "accounted_tokens": 5095,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 173.64194454201788
+    },
+    "skill_test/case-evidence-7/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 25.47747333299776
+    },
+    "skill_test/case-evidence-8/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.970808958998532
+    },
+    "skill_test/case-evidence-9/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 11,
+      "accounted_tokens": 120,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.31577745899267
+    },
+    "skill_test/case-evidence-7/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.908080292007071
+    },
+    "skill_test/case-evidence-8/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.721337750001112
+    },
+    "skill_test/case-evidence-9/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 11,
+      "accounted_tokens": 120,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.537071832994116
+    },
+    "maintenance/evidence/experience_bounded/2": {
+      "usage_records": 2,
+      "input_tokens": 268,
+      "output_tokens": 27,
+      "accounted_tokens": 2260,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 21.288177124995855
+    },
+    "maintenance/evidence/experience_full/0": {
+      "usage_records": 16,
+      "input_tokens": 6660,
+      "output_tokens": 541,
+      "accounted_tokens": 7201,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 122.98047870902519
+    },
+    "skill_test/case-evidence-7/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.105924208997749
+    },
+    "skill_test/case-evidence-8/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.70106137500261
+    },
+    "skill_test/case-evidence-9/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 7,
+      "accounted_tokens": 116,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.133931250005844
+    },
+    "maintenance/evidence/experience_full/1": {
+      "usage_records": 16,
+      "input_tokens": 7100,
+      "output_tokens": 760,
+      "accounted_tokens": 7860,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 237.00451029097894
+    },
+    "skill_test/case-evidence-7/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.584183166996809
+    },
+    "skill_test/case-evidence-8/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.907591084003798
+    },
+    "skill_test/case-evidence-9/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 11,
+      "accounted_tokens": 120,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.581866499996977
+    },
+    "maintenance/evidence/experience_full/2": {
+      "usage_records": 11,
+      "input_tokens": 3784,
+      "output_tokens": 347,
+      "accounted_tokens": 6745,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 182.68773695600976
+    },
+    "maintenance/evidence/no_experience_bounded/0": {
+      "usage_records": 10,
+      "input_tokens": 4388,
+      "output_tokens": 434,
+      "accounted_tokens": 4822,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 150.55932154298353
+    },
+    "skill_test/case-evidence-7/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.336726082998211
+    },
+    "skill_test/case-evidence-8/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.98779920800007
+    },
+    "skill_test/case-evidence-9/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 11,
+      "accounted_tokens": 120,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.899095333996229
+    },
+    "maintenance/evidence/no_experience_bounded/1": {
+      "usage_records": 14,
+      "input_tokens": 5520,
+      "output_tokens": 643,
+      "accounted_tokens": 6163,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 231.8034714999667
+    },
+    "skill_test/case-evidence-7/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.760923458001344
+    },
+    "skill_test/case-evidence-8/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.235910041999887
+    },
+    "skill_test/case-evidence-9/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 11,
+      "accounted_tokens": 120,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.332109541996033
+    },
+    "maintenance/evidence/no_experience_bounded/2": {
+      "usage_records": 14,
+      "input_tokens": 5512,
+      "output_tokens": 661,
+      "accounted_tokens": 6173,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 189.9985464149504
+    },
+    "skill_test/case-evidence-7/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.77705295800115
+    },
+    "skill_test/case-evidence-8/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.050583042000653
+    },
+    "skill_test/case-evidence-9/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 11,
+      "accounted_tokens": 120,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.319202708007651
+    },
+    "maintenance/evidence/no_experience_full/0": {
+      "usage_records": 8,
+      "input_tokens": 2448,
+      "output_tokens": 212,
+      "accounted_tokens": 4625,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 46.60722125000029
+    },
+    "skill_test/case-evidence-7/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.181780167011311
+    },
+    "skill_test/case-evidence-8/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.575145958006033
+    },
+    "skill_test/case-evidence-9/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 7,
+      "accounted_tokens": 116,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.269277791012428
+    },
+    "maintenance/evidence/no_experience_full/1": {
+      "usage_records": 14,
+      "input_tokens": 4954,
+      "output_tokens": 453,
+      "accounted_tokens": 5407,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 191.35443933097122
+    },
+    "skill_test/case-evidence-7/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.02480395899329
+    },
+    "skill_test/case-evidence-8/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.227720750001026
+    },
+    "skill_test/case-evidence-9/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 7,
+      "accounted_tokens": 116,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.332140334008727
+    },
+    "maintenance/evidence/no_experience_full/2": {
+      "usage_records": 15,
+      "input_tokens": 5196,
+      "output_tokens": 574,
+      "accounted_tokens": 8251,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 217.056934334978
+    },
+    "skill_test/case-evidence-7/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 257,
+      "output_tokens": 27,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.145671916005085
+    },
+    "skill_test/case-evidence-8/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 258,
+      "output_tokens": 23,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.329805415996816
+    },
+    "skill_test/case-evidence-9/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 109,
+      "output_tokens": 7,
+      "accounted_tokens": 116,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.105816249997588
+    },
+    "maintenance/file_workflow/experience_bounded/0": {
+      "usage_records": 16,
+      "input_tokens": 6361,
+      "output_tokens": 866,
+      "accounted_tokens": 7227,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 310.4190441650135
+    },
+    "skill_test/case-file_workflow-7/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 7.922133750005742
+    },
+    "skill_test/case-file_workflow-8/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.185883333993843
+    },
+    "skill_test/case-file_workflow-9/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 25,
+      "accounted_tokens": 135,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 23.31345891598903
+    },
+    "maintenance/file_workflow/experience_bounded/1": {
+      "usage_records": 16,
+      "input_tokens": 6453,
+      "output_tokens": 869,
+      "accounted_tokens": 7322,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 241.05528475000756
+    },
+    "skill_test/case-file_workflow-7/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 21.613977582994266
+    },
+    "skill_test/case-file_workflow-8/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.4553300000116
+    },
+    "skill_test/case-file_workflow-9/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 20,
+      "accounted_tokens": 130,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.241944332999992
+    },
+    "maintenance/file_workflow/experience_full/0": {
+      "usage_records": 16,
+      "input_tokens": 5984,
+      "output_tokens": 757,
+      "accounted_tokens": 6741,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 253.6509170409845
+    },
+    "skill_test/case-file_workflow-7/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 39,
+      "accounted_tokens": 241,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.703028125004494
+    },
+    "skill_test/case-file_workflow-8/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.702054374996806
+    },
+    "skill_test/case-file_workflow-9/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 20,
+      "accounted_tokens": 130,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.419483916004538
+    },
+    "maintenance/file_workflow/experience_full/1": {
+      "usage_records": 10,
+      "input_tokens": 3348,
+      "output_tokens": 462,
+      "accounted_tokens": 3810,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 149.06475804200454
+    },
+    "skill_test/case-file_workflow-7/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.150635749989306
+    },
+    "skill_test/case-file_workflow-8/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.58825883299869
+    },
+    "skill_test/case-file_workflow-9/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 24,
+      "accounted_tokens": 134,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.494304457999533
+    },
+    "maintenance/file_workflow/no_experience_bounded/0": {
+      "usage_records": 14,
+      "input_tokens": 4766,
+      "output_tokens": 758,
+      "accounted_tokens": 5524,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 207.07048770597612
+    },
+    "skill_test/case-file_workflow-7/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.542572874997859
+    },
+    "skill_test/case-file_workflow-8/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.729140333001851
+    },
+    "skill_test/case-file_workflow-9/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 25,
+      "accounted_tokens": 135,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.273408958004438
+    },
+    "maintenance/file_workflow/no_experience_bounded/1": {
+      "usage_records": 16,
+      "input_tokens": 4832,
+      "output_tokens": 759,
+      "accounted_tokens": 12191,
+      "unknown_usage_records": 2,
+      "provider_duration_seconds": 221.7582542529999
+    },
+    "skill_test/case-file_workflow-7/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.262656541992328
+    },
+    "skill_test/case-file_workflow-8/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.672238874991308
+    },
+    "skill_test/case-file_workflow-9/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 20,
+      "accounted_tokens": 130,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.75291162499343
+    },
+    "maintenance/file_workflow/no_experience_full/0": {
+      "usage_records": 14,
+      "input_tokens": 4696,
+      "output_tokens": 810,
+      "accounted_tokens": 5506,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 186.84784599998966
+    },
+    "skill_test/case-file_workflow-7/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.402945750000072
+    },
+    "skill_test/case-file_workflow-8/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.498767791999853
+    },
+    "skill_test/case-file_workflow-9/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 20,
+      "accounted_tokens": 130,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.532785667004646
+    },
+    "maintenance/file_workflow/no_experience_full/1": {
+      "usage_records": 14,
+      "input_tokens": 4258,
+      "output_tokens": 591,
+      "accounted_tokens": 4849,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 218.5069109990145
+    },
+    "skill_test/case-file_workflow-7/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.47854750000988
+    },
+    "skill_test/case-file_workflow-8/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 202,
+      "output_tokens": 36,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.402959083003225
+    },
+    "skill_test/case-file_workflow-9/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 110,
+      "output_tokens": 25,
+      "accounted_tokens": 135,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.065625125003862
+    },
+    "compression/history-early_constraint-1/dsh_checkpoint/0": {
+      "usage_records": 5,
+      "input_tokens": 14061,
+      "output_tokens": 4646,
+      "accounted_tokens": 18707,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 46.26483908400405
+    },
+    "compression/history-early_constraint-1/dsh_no_prune/0": {
+      "usage_records": 5,
+      "input_tokens": 13582,
+      "output_tokens": 4167,
+      "accounted_tokens": 17749,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 42.082423334999476
+    },
+    "compression/history-early_constraint-1/none/0": {
+      "usage_records": 1,
+      "input_tokens": 7703,
+      "output_tokens": 16,
+      "accounted_tokens": 7719,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.292983458988601
+    },
+    "compression/history-early_constraint-1/single_json/0": {
+      "usage_records": 5,
+      "input_tokens": 31368,
+      "output_tokens": 9689,
+      "accounted_tokens": 41057,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 57.60846087601385
+    },
+    "compression/history-early_constraint-1/three_parallel/0": {
+      "usage_records": 19,
+      "input_tokens": 103628,
+      "output_tokens": 24177,
+      "accounted_tokens": 127805,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 197.73150983199594
+    },
+    "compression/history-early_constraint-2/dsh_checkpoint/0": {
+      "usage_records": 7,
+      "input_tokens": 11208,
+      "output_tokens": 4058,
+      "accounted_tokens": 31736,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 59.63180166702659
+    },
+    "compression/history-early_constraint-2/dsh_no_prune/0": {
+      "usage_records": 40,
+      "input_tokens": 137513,
+      "output_tokens": 93976,
+      "accounted_tokens": 248016,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 887.9188867509511
+    },
+    "compression/history-early_constraint-2/none/0": {
+      "usage_records": 1,
+      "input_tokens": 25883,
+      "output_tokens": 16,
+      "accounted_tokens": 25899,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.975657083006809
+    },
+    "compression/history-early_constraint-2/single_json/0": {
+      "usage_records": 41,
+      "input_tokens": 174551,
+      "output_tokens": 100319,
+      "accounted_tokens": 292595,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 890.1354823740112
+    },
+    "compression/history-early_constraint-2/three_parallel/0": {
+      "usage_records": 129,
+      "input_tokens": 568898,
+      "output_tokens": 180317,
+      "accounted_tokens": 928131,
+      "unknown_usage_records": 14,
+      "provider_duration_seconds": 2417.1123222990136
+    },
+    "compression/history-fact_update-1/dsh_checkpoint/0": {
+      "usage_records": 13,
+      "input_tokens": 45220,
+      "output_tokens": 14270,
+      "accounted_tokens": 59490,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 239.87037933302054
+    },
+    "compression/history-fact_update-1/dsh_no_prune/0": {
+      "usage_records": 13,
+      "input_tokens": 43342,
+      "output_tokens": 12393,
+      "accounted_tokens": 55735,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 245.43890745798126
+    },
+    "compression/history-fact_update-1/none/0": {
+      "usage_records": 1,
+      "input_tokens": 25878,
+      "output_tokens": 7,
+      "accounted_tokens": 25885,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.81394895799167
+    },
+    "compression/history-fact_update-1/single_json/0": {
+      "usage_records": 3,
+      "input_tokens": 39836,
+      "output_tokens": 3142,
+      "accounted_tokens": 42978,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 46.414971916994546
+    },
+    "compression/history-fact_update-1/three_parallel/0": {
+      "usage_records": 25,
+      "input_tokens": 191091,
+      "output_tokens": 46238,
+      "accounted_tokens": 237329,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 558.9324369180395
+    },
+    "compression/history-fact_update-2/dsh_checkpoint/0": {
+      "usage_records": 7,
+      "input_tokens": 14871,
+      "output_tokens": 4560,
+      "accounted_tokens": 19431,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 123.48398562600778
+    },
+    "compression/history-fact_update-2/dsh_no_prune/0": {
+      "usage_records": 7,
+      "input_tokens": 14420,
+      "output_tokens": 4108,
+      "accounted_tokens": 18528,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 117.14061295898864
+    },
+    "compression/history-fact_update-2/none/0": {
+      "usage_records": 1,
+      "input_tokens": 7698,
+      "output_tokens": 7,
+      "accounted_tokens": 7705,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.154207500003395
+    },
+    "compression/history-fact_update-2/single_json/0": {
+      "usage_records": 11,
+      "input_tokens": 41383,
+      "output_tokens": 17713,
+      "accounted_tokens": 59096,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 186.4505912099994
+    },
+    "compression/history-fact_update-2/three_parallel/0": {
+      "usage_records": 144,
+      "input_tokens": 611761,
+      "output_tokens": 235738,
+      "accounted_tokens": 1057345,
+      "unknown_usage_records": 13,
+      "provider_duration_seconds": 2443.0608787899982
+    },
+    "compression/history-failure_path-1/dsh_checkpoint/0": {
+      "usage_records": 4,
+      "input_tokens": 15918,
+      "output_tokens": 2606,
+      "accounted_tokens": 18524,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 52.2625209169928
+    },
+    "compression/history-failure_path-1/dsh_no_prune/0": {
+      "usage_records": 6,
+      "input_tokens": 21766,
+      "output_tokens": 3856,
+      "accounted_tokens": 25622,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 97.16487150003377
+    },
+    "compression/history-failure_path-1/none/0": {
+      "usage_records": 1,
+      "input_tokens": 15801,
+      "output_tokens": 37,
+      "accounted_tokens": 15838,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.413135583003168
+    },
+    "compression/history-failure_path-1/single_json/0": {
+      "usage_records": 4,
+      "input_tokens": 22434,
+      "output_tokens": 3183,
+      "accounted_tokens": 25617,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 69.82522875000723
+    },
+    "compression/history-failure_path-1/three_parallel/0": {
+      "usage_records": 13,
+      "input_tokens": 81127,
+      "output_tokens": 17290,
+      "accounted_tokens": 98417,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 223.56494329000998
+    },
+    "compression/history-failure_path-2/dsh_checkpoint/0": {
+      "usage_records": 29,
+      "input_tokens": 83953,
+      "output_tokens": 41218,
+      "accounted_tokens": 125171,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 499.21226516598836
+    },
+    "compression/history-failure_path-2/dsh_no_prune/0": {
+      "usage_records": 29,
+      "input_tokens": 83748,
+      "output_tokens": 37293,
+      "accounted_tokens": 121041,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 494.1094330799824
+    },
+    "compression/history-failure_path-2/none/0": {
+      "usage_records": 1,
+      "input_tokens": 34231,
+      "output_tokens": 29,
+      "accounted_tokens": 34260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.40785741599393
+    },
+    "compression/history-failure_path-2/single_json/0": {
+      "usage_records": 43,
+      "input_tokens": 195416,
+      "output_tokens": 99521,
+      "accounted_tokens": 294937,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 874.0599812099972
+    },
+    "compression/history-failure_path-2/three_parallel/0": {
+      "usage_records": 81,
+      "input_tokens": 327025,
+      "output_tokens": 92468,
+      "accounted_tokens": 465299,
+      "unknown_usage_records": 3,
+      "provider_duration_seconds": 1484.476997952952
+    },
+    "compression/history-file_evidence-1/dsh_checkpoint/0": {
+      "usage_records": 13,
+      "input_tokens": 48033,
+      "output_tokens": 12491,
+      "accounted_tokens": 60524,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 220.75381029298296
+    },
+    "compression/history-file_evidence-1/dsh_no_prune/0": {
+      "usage_records": 12,
+      "input_tokens": 41292,
+      "output_tokens": 10013,
+      "accounted_tokens": 51305,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 218.66961550000997
+    },
+    "compression/history-file_evidence-1/none/0": {
+      "usage_records": 1,
+      "input_tokens": 34217,
+      "output_tokens": 17,
+      "accounted_tokens": 34234,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.35791187499126
+    },
+    "compression/history-file_evidence-1/single_json/0": {
+      "usage_records": 10,
+      "input_tokens": 87022,
+      "output_tokens": 23357,
+      "accounted_tokens": 110379,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 219.10104337595112
+    },
+    "compression/history-file_evidence-1/three_parallel/0": {
+      "usage_records": 25,
+      "input_tokens": 185706,
+      "output_tokens": 45592,
+      "accounted_tokens": 231298,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 426.6665122069535
+    },
+    "compression/history-file_evidence-2/dsh_checkpoint/0": {
+      "usage_records": 6,
+      "input_tokens": 19313,
+      "output_tokens": 5024,
+      "accounted_tokens": 24337,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 80.9262589179998
+    },
+    "compression/history-file_evidence-2/dsh_no_prune/0": {
+      "usage_records": 8,
+      "input_tokens": 25767,
+      "output_tokens": 6902,
+      "accounted_tokens": 32669,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 143.08327758303494
+    },
+    "compression/history-file_evidence-2/none/0": {
+      "usage_records": 1,
+      "input_tokens": 15787,
+      "output_tokens": 17,
+      "accounted_tokens": 15804,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.748644625011366
+    },
+    "compression/history-file_evidence-2/three_parallel/0": {
+      "usage_records": 24,
+      "input_tokens": 103169,
+      "output_tokens": 23329,
+      "accounted_tokens": 162733,
+      "unknown_usage_records": 2,
+      "provider_duration_seconds": 424.63781779498095
+    },
+    "compression/history-multi_compression-1/dsh_checkpoint/0": {
+      "usage_records": 8,
+      "input_tokens": 24734,
+      "output_tokens": 5222,
+      "accounted_tokens": 46504,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 146.5083722519921
+    },
+    "compression/history-multi_compression-1/none/0": {
+      "usage_records": 1,
+      "input_tokens": 34257,
+      "output_tokens": 14,
+      "accounted_tokens": 34271,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 20.651193792000413
+    },
+    "compression/history-multi_compression-1/single_json/0": {
+      "usage_records": 7,
+      "input_tokens": 61340,
+      "output_tokens": 13053,
+      "accounted_tokens": 74393,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 146.43468812700303
+    },
+    "compression/history-multi_compression-1/three_parallel/0": {
+      "usage_records": 15,
+      "input_tokens": 77772,
+      "output_tokens": 20580,
+      "accounted_tokens": 142049,
+      "unknown_usage_records": 3,
+      "provider_duration_seconds": 287.24229033304437
+    },
+    "compression/history-todo-1/dsh_checkpoint/0": {
+      "usage_records": 5,
+      "input_tokens": 12836,
+      "output_tokens": 3574,
+      "accounted_tokens": 16410,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 74.46095400000922
+    },
+    "compression/history-todo-1/dsh_no_prune/0": {
+      "usage_records": 5,
+      "input_tokens": 11841,
+      "output_tokens": 2631,
+      "accounted_tokens": 14472,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 67.66027966700494
+    },
+    "compression/history-todo-1/none/0": {
+      "usage_records": 1,
+      "input_tokens": 7727,
+      "output_tokens": 57,
+      "accounted_tokens": 7784,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.787724708992755
+    },
+    "compression/history-todo-1/single_json/0": {
+      "usage_records": 6,
+      "input_tokens": 27312,
+      "output_tokens": 9183,
+      "accounted_tokens": 52260,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 112.76017591699201
+    },
+    "compression/history-todo-1/three_parallel/0": {
+      "usage_records": 8,
+      "input_tokens": 49631,
+      "output_tokens": 7233,
+      "accounted_tokens": 74265,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 151.71806808198744
+    },
+    "compression/history-todo-2/dsh_checkpoint/0": {
+      "usage_records": 30,
+      "input_tokens": 74746,
+      "output_tokens": 37147,
+      "accounted_tokens": 125641,
+      "unknown_usage_records": 2,
+      "provider_duration_seconds": 517.785074792977
+    },
+    "compression/history-todo-2/dsh_no_prune/0": {
+      "usage_records": 28,
+      "input_tokens": 67968,
+      "output_tokens": 30375,
+      "accounted_tokens": 98343,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 481.4990730040008
+    },
+    "compression/history-todo-2/none/0": {
+      "usage_records": 1,
+      "input_tokens": 25907,
+      "output_tokens": 54,
+      "accounted_tokens": 25961,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.989715792005882
+    },
+    "compression/history-todo-2/single_json/0": {
+      "usage_records": 35,
+      "input_tokens": 178462,
+      "output_tokens": 94111,
+      "accounted_tokens": 322663,
+      "unknown_usage_records": 3,
+      "provider_duration_seconds": 723.9373703750025
+    },
+    "compression/history-todo-2/three_parallel/0": {
+      "usage_records": 116,
+      "input_tokens": 458287,
+      "output_tokens": 141761,
+      "accounted_tokens": 670262,
+      "unknown_usage_records": 6,
+      "provider_duration_seconds": 2025.475182450973
+    },
+    "maintenance/narrative/experience_bounded/0": {
+      "usage_records": 13,
+      "input_tokens": 5504,
+      "output_tokens": 581,
+      "accounted_tokens": 11143,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 82.47587708399806
+    },
+    "skill_test/case-narrative-7/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 236,
+      "output_tokens": 32,
+      "accounted_tokens": 268,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.254260166999302
+    },
+    "skill_test/case-narrative-8/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 234,
+      "output_tokens": 31,
+      "accounted_tokens": 265,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.580433750001248
+    },
+    "skill_test/case-narrative-9/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 129,
+      "output_tokens": 9,
+      "accounted_tokens": 138,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.206033750000643
+    },
+    "maintenance/narrative/experience_bounded/1": {
+      "usage_records": 4,
+      "input_tokens": 2119,
+      "output_tokens": 261,
+      "accounted_tokens": 2380,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 70.70148720801808
+    },
+    "skill_test/case-narrative-7/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 221,
+      "output_tokens": 32,
+      "accounted_tokens": 253,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.554693041995051
+    },
+    "skill_test/case-narrative-8/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 219,
+      "output_tokens": 31,
+      "accounted_tokens": 250,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.271284457994625
+    },
+    "skill_test/case-narrative-9/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 9,
+      "accounted_tokens": 123,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.467110417012009
+    },
+    "maintenance/narrative/experience_bounded/2": {
+      "usage_records": 16,
+      "input_tokens": 6356,
+      "output_tokens": 849,
+      "accounted_tokens": 7205,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 250.18952195699967
+    },
+    "skill_test/case-narrative-7/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 221,
+      "output_tokens": 32,
+      "accounted_tokens": 253,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 29.333706874997006
+    },
+    "skill_test/case-narrative-8/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 219,
+      "output_tokens": 31,
+      "accounted_tokens": 250,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 24.308532499999274
+    },
+    "skill_test/case-narrative-9/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "accounted_tokens": 1592,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 4.068390707994695
+    },
+    "maintenance/narrative/experience_full/0": {
+      "usage_records": 16,
+      "input_tokens": 5950,
+      "output_tokens": 560,
+      "accounted_tokens": 6510,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 122.60221545600507
+    },
+    "skill_test/case-narrative-7/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 264,
+      "output_tokens": 32,
+      "accounted_tokens": 296,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.59997475000273
+    },
+    "skill_test/case-narrative-8/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 262,
+      "output_tokens": 31,
+      "accounted_tokens": 293,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.597211916989181
+    },
+    "skill_test/case-narrative-9/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 157,
+      "output_tokens": 9,
+      "accounted_tokens": 166,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 7.161844875008683
+    },
+    "maintenance/narrative/experience_full/1": {
+      "usage_records": 16,
+      "input_tokens": 5811,
+      "output_tokens": 609,
+      "accounted_tokens": 6420,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 228.1368434180331
+    },
+    "skill_test/case-narrative-7/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 221,
+      "output_tokens": 32,
+      "accounted_tokens": 253,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.049458124995
+    },
+    "skill_test/case-narrative-8/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 219,
+      "output_tokens": 31,
+      "accounted_tokens": 250,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.417419584002346
+    },
+    "skill_test/case-narrative-9/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 9,
+      "accounted_tokens": 123,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.735341125007835
+    },
+    "maintenance/narrative/no_experience_bounded/0": {
+      "usage_records": 10,
+      "input_tokens": 3933,
+      "output_tokens": 503,
+      "accounted_tokens": 4436,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 146.19410595999216
+    },
+    "skill_test/case-narrative-7/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 240,
+      "output_tokens": 32,
+      "accounted_tokens": 272,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.427632792008808
+    },
+    "skill_test/case-narrative-8/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 238,
+      "output_tokens": 31,
+      "accounted_tokens": 269,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.377056790995994
+    },
+    "skill_test/case-narrative-9/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 133,
+      "output_tokens": 9,
+      "accounted_tokens": 142,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.191034792005667
+    },
+    "maintenance/narrative/no_experience_bounded/1": {
+      "usage_records": 10,
+      "input_tokens": 3916,
+      "output_tokens": 452,
+      "accounted_tokens": 4368,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 125.06196216400713
+    },
+    "skill_test/case-narrative-7/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 239,
+      "output_tokens": 32,
+      "accounted_tokens": 271,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 7.968482708005467
+    },
+    "skill_test/case-narrative-8/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 237,
+      "output_tokens": 31,
+      "accounted_tokens": 268,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.241702167011681
+    },
+    "skill_test/case-narrative-9/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 132,
+      "output_tokens": 9,
+      "accounted_tokens": 141,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.856965999992099
+    },
+    "maintenance/narrative/no_experience_bounded/2": {
+      "usage_records": 10,
+      "input_tokens": 3910,
+      "output_tokens": 447,
+      "accounted_tokens": 4357,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 126.83745549999003
+    },
+    "skill_test/case-narrative-7/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 236,
+      "output_tokens": 32,
+      "accounted_tokens": 268,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.43190016700828
+    },
+    "skill_test/case-narrative-8/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 234,
+      "output_tokens": 31,
+      "accounted_tokens": 265,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.958125958000892
+    },
+    "skill_test/case-narrative-9/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 129,
+      "output_tokens": 9,
+      "accounted_tokens": 138,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.822731207998004
+    },
+    "maintenance/narrative/no_experience_full/0": {
+      "usage_records": 8,
+      "input_tokens": 2158,
+      "output_tokens": 274,
+      "accounted_tokens": 4279,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 50.73355195802287
+    },
+    "skill_test/case-narrative-7/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 221,
+      "output_tokens": 32,
+      "accounted_tokens": 253,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.690230624997639
+    },
+    "skill_test/case-narrative-8/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 219,
+      "output_tokens": 31,
+      "accounted_tokens": 250,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.780987874997663
+    },
+    "skill_test/case-narrative-9/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 9,
+      "accounted_tokens": 123,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.330840791997616
+    },
+    "maintenance/narrative/no_experience_full/1": {
+      "usage_records": 14,
+      "input_tokens": 4738,
+      "output_tokens": 887,
+      "accounted_tokens": 5625,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 243.71970387501642
+    },
+    "skill_test/case-narrative-7/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 432,
+      "output_tokens": 32,
+      "accounted_tokens": 464,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.818623624989414
+    },
+    "skill_test/case-narrative-8/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 430,
+      "output_tokens": 31,
+      "accounted_tokens": 461,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.334040165995248
+    },
+    "skill_test/case-narrative-9/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 325,
+      "output_tokens": 9,
+      "accounted_tokens": 334,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.341129416003241
+    },
+    "public/public-hle-66e939c176b5b4f3e8a369b8/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 78,
+      "output_tokens": 10,
+      "accounted_tokens": 88,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.8905813329911325
+    },
+    "public/public-hle-66e939c176b5b4f3e8a369b8/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 78,
+      "output_tokens": 132,
+      "accounted_tokens": 210,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.057740874995943
+    },
+    "public/public-hle-66e939c176b5b4f3e8a369b8/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 78,
+      "output_tokens": 150,
+      "accounted_tokens": 228,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.597626249989844
+    },
+    "public/public-hle-66e939c176b5b4f3e8a369b8/none/0": {
+      "usage_records": 1,
+      "input_tokens": 78,
+      "output_tokens": 278,
+      "accounted_tokens": 356,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.043350874999305
+    },
+    "public/public-hle-66e939c176b5b4f3e8a369b8/none/1": {
+      "usage_records": 1,
+      "input_tokens": 78,
+      "output_tokens": 7,
+      "accounted_tokens": 85,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.342109417004394
+    },
+    "public/public-hle-66e939c176b5b4f3e8a369b8/none/2": {
+      "usage_records": 1,
+      "input_tokens": 78,
+      "output_tokens": 7,
+      "accounted_tokens": 85,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.3537804170046
+    },
+    "public/public-hle-66ec11b230ba0debf40b1fec/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 4096,
+      "accounted_tokens": 4280,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 26.690340124987415
+    },
+    "public/public-hle-66ec11b230ba0debf40b1fec/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 4096,
+      "accounted_tokens": 4280,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 30.50908629100013
+    },
+    "public/public-hle-66ec11b230ba0debf40b1fec/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 3001,
+      "accounted_tokens": 3185,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 29.835588792004273
+    },
+    "public/public-hle-66ec11b230ba0debf40b1fec/none/0": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 5,
+      "accounted_tokens": 189,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 3.617021083991858
+    },
+    "public/public-hle-66ec11b230ba0debf40b1fec/none/1": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 10,
+      "accounted_tokens": 194,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.000878165999893
+    },
+    "public/public-hle-66ec11b230ba0debf40b1fec/none/2": {
+      "usage_records": 1,
+      "input_tokens": 184,
+      "output_tokens": 4096,
+      "accounted_tokens": 4280,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 34.83758799999487
+    },
+    "public/public-hle-66ef20a50312bf74c8ff43a0/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 169,
+      "output_tokens": 4096,
+      "accounted_tokens": 4265,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 29.29428166699654
+    },
+    "public/public-hle-66ef20a50312bf74c8ff43a0/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 169,
+      "output_tokens": 4096,
+      "accounted_tokens": 4265,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 29.10302979100379
+    },
+    "public/public-hle-66ef20a50312bf74c8ff43a0/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 169,
+      "output_tokens": 4096,
+      "accounted_tokens": 4265,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 34.27776341700519
+    },
+    "public/public-hle-66ef20a50312bf74c8ff43a0/none/0": {
+      "usage_records": 1,
+      "input_tokens": 169,
+      "output_tokens": 4096,
+      "accounted_tokens": 4265,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 29.351895458996296
+    },
+    "public/public-hle-66ef20a50312bf74c8ff43a0/none/1": {
+      "usage_records": 1,
+      "input_tokens": 169,
+      "output_tokens": 4096,
+      "accounted_tokens": 4265,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 32.25444750000315
+    },
+    "public/public-hle-66ef20a50312bf74c8ff43a0/none/2": {
+      "usage_records": 1,
+      "input_tokens": 169,
+      "output_tokens": 3318,
+      "accounted_tokens": 3487,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 29.7769104159961
+    },
+    "public/public-hle-66fc82b2bb24336da864daef/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 65,
+      "output_tokens": 136,
+      "accounted_tokens": 201,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.164016958005959
+    },
+    "public/public-hle-66fc82b2bb24336da864daef/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 65,
+      "output_tokens": 130,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 23.591160749987466
+    },
+    "public/public-hle-66fc82b2bb24336da864daef/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 65,
+      "output_tokens": 145,
+      "accounted_tokens": 210,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 21.81220499999472
+    },
+    "public/public-hle-66fc82b2bb24336da864daef/none/0": {
+      "usage_records": 1,
+      "input_tokens": 65,
+      "output_tokens": 119,
+      "accounted_tokens": 184,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.609442542001489
+    },
+    "public/public-hle-66fc82b2bb24336da864daef/none/1": {
+      "usage_records": 1,
+      "input_tokens": 65,
+      "output_tokens": 135,
+      "accounted_tokens": 200,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 20.508970041002613
+    },
+    "public/public-hle-66fc82b2bb24336da864daef/none/2": {
+      "usage_records": 1,
+      "input_tokens": 65,
+      "output_tokens": 105,
+      "accounted_tokens": 170,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.911194250002154
+    },
+    "public/public-hle-6712c2616313b64cf8499927/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 420,
+      "output_tokens": 4096,
+      "accounted_tokens": 4516,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 22.600722624993068
+    },
+    "public/public-hle-6712c2616313b64cf8499927/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 420,
+      "output_tokens": 4096,
+      "accounted_tokens": 4516,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.537704250004026
+    },
+    "public/public-hle-6712c2616313b64cf8499927/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 420,
+      "output_tokens": 4096,
+      "accounted_tokens": 4516,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 35.444729333990836
+    },
+    "public/public-hle-6712c2616313b64cf8499927/none/0": {
+      "usage_records": 1,
+      "input_tokens": 420,
+      "output_tokens": 4096,
+      "accounted_tokens": 4516,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 21.41486120800255
+    },
+    "public/public-hle-6712c2616313b64cf8499927/none/1": {
+      "usage_records": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "accounted_tokens": 4958,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 5.924488916003611
+    },
+    "public/public-hle-6712c2616313b64cf8499927/none/2": {
+      "usage_records": 1,
+      "input_tokens": 420,
+      "output_tokens": 4096,
+      "accounted_tokens": 4516,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 33.33330616699823
+    },
+    "public/public-hle-6717eb4518d92aa466b94d70/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 103,
+      "output_tokens": 447,
+      "accounted_tokens": 550,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.285876167006791
+    },
+    "public/public-hle-6717eb4518d92aa466b94d70/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 103,
+      "output_tokens": 5,
+      "accounted_tokens": 108,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.5831135000044
+    },
+    "public/public-hle-6717eb4518d92aa466b94d70/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 103,
+      "output_tokens": 4096,
+      "accounted_tokens": 4199,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 34.78440779200173
+    },
+    "public/public-hle-6717eb4518d92aa466b94d70/none/0": {
+      "usage_records": 1,
+      "input_tokens": 103,
+      "output_tokens": 4096,
+      "accounted_tokens": 4199,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 25.883169958004146
+    },
+    "public/public-hle-6717eb4518d92aa466b94d70/none/1": {
+      "usage_records": 1,
+      "input_tokens": 103,
+      "output_tokens": 4096,
+      "accounted_tokens": 4199,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 46.233566458002315
+    },
+    "public/public-hle-6717eb4518d92aa466b94d70/none/2": {
+      "usage_records": 1,
+      "input_tokens": 103,
+      "output_tokens": 4096,
+      "accounted_tokens": 4199,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 26.78319050000573
+    },
+    "public/public-hle-671abf7f136758472327f840/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 133,
+      "output_tokens": 5,
+      "accounted_tokens": 138,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.791079292001086
+    },
+    "public/public-hle-671abf7f136758472327f840/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 133,
+      "output_tokens": 5,
+      "accounted_tokens": 138,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.43764133300283
+    },
+    "public/public-hle-671abf7f136758472327f840/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 133,
+      "output_tokens": 5,
+      "accounted_tokens": 138,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 20.03250320799998
+    },
+    "public/public-hle-671abf7f136758472327f840/none/0": {
+      "usage_records": 1,
+      "input_tokens": 133,
+      "output_tokens": 21,
+      "accounted_tokens": 154,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.001532250011223
+    },
+    "public/public-hle-671abf7f136758472327f840/none/1": {
+      "usage_records": 1,
+      "input_tokens": 133,
+      "output_tokens": 5,
+      "accounted_tokens": 138,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.086732499999925
+    },
+    "public/public-hle-671abf7f136758472327f840/none/2": {
+      "usage_records": 1,
+      "input_tokens": 133,
+      "output_tokens": 5,
+      "accounted_tokens": 138,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.377811415994074
+    },
+    "public/public-hle-671c1099414cc58c0f2db443/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 104,
+      "output_tokens": 78,
+      "accounted_tokens": 182,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.793712874990888
+    },
+    "public/public-hle-671c1099414cc58c0f2db443/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 104,
+      "output_tokens": 73,
+      "accounted_tokens": 177,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.003326833000756
+    },
+    "public/public-hle-671c1099414cc58c0f2db443/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 104,
+      "output_tokens": 73,
+      "accounted_tokens": 177,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.43004820799979
+    },
+    "public/public-hle-671c1099414cc58c0f2db443/none/0": {
+      "usage_records": 1,
+      "input_tokens": 104,
+      "output_tokens": 47,
+      "accounted_tokens": 151,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.050550083004055
+    },
+    "public/public-hle-671c1099414cc58c0f2db443/none/1": {
+      "usage_records": 1,
+      "input_tokens": 104,
+      "output_tokens": 5,
+      "accounted_tokens": 109,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.574243916009436
+    },
+    "public/public-hle-671c1099414cc58c0f2db443/none/2": {
+      "usage_records": 1,
+      "input_tokens": 104,
+      "output_tokens": 87,
+      "accounted_tokens": 191,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.330659208993893
+    },
+    "public/public-hle-672d2195841ae6e83ce51e18/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 146,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.979287916998146
+    },
+    "public/public-hle-672d2195841ae6e83ce51e18/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 4096,
+      "accounted_tokens": 4210,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 33.09235720899596
+    },
+    "public/public-hle-672d2195841ae6e83ce51e18/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 380,
+      "accounted_tokens": 494,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.067476832991815
+    },
+    "public/public-hle-672d2195841ae6e83ce51e18/none/0": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 128,
+      "accounted_tokens": 242,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.982854250003584
+    },
+    "public/public-hle-672d2195841ae6e83ce51e18/none/1": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 7,
+      "accounted_tokens": 121,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.546807540988084
+    },
+    "public/public-hle-672d2195841ae6e83ce51e18/none/2": {
+      "usage_records": 1,
+      "input_tokens": 114,
+      "output_tokens": 353,
+      "accounted_tokens": 467,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.918901666998863
+    },
+    "public/public-hle-672f74159150f3ac08f0c9f5/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 66,
+      "output_tokens": 8,
+      "accounted_tokens": 74,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.852535500001977
+    },
+    "public/public-hle-672f74159150f3ac08f0c9f5/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 66,
+      "output_tokens": 5,
+      "accounted_tokens": 71,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.175568999999086
+    },
+    "public/public-hle-672f74159150f3ac08f0c9f5/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 66,
+      "output_tokens": 52,
+      "accounted_tokens": 118,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.14934433400049
+    },
+    "public/public-hle-672f74159150f3ac08f0c9f5/none/0": {
+      "usage_records": 1,
+      "input_tokens": 66,
+      "output_tokens": 5,
+      "accounted_tokens": 71,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.169913624995388
+    },
+    "public/public-hle-672f74159150f3ac08f0c9f5/none/1": {
+      "usage_records": 1,
+      "input_tokens": 66,
+      "output_tokens": 16,
+      "accounted_tokens": 82,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.576916207995964
+    },
+    "public/public-hle-672f74159150f3ac08f0c9f5/none/2": {
+      "usage_records": 1,
+      "input_tokens": 66,
+      "output_tokens": 11,
+      "accounted_tokens": 77,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.98387133399956
+    },
+    "public/public-hle-673531cae26d0576765bd963/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 160,
+      "output_tokens": 5,
+      "accounted_tokens": 165,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.551012541996897
+    },
+    "public/public-hle-673531cae26d0576765bd963/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 160,
+      "output_tokens": 3050,
+      "accounted_tokens": 3210,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 26.64997250000306
+    },
+    "public/public-hle-673531cae26d0576765bd963/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 160,
+      "output_tokens": 5,
+      "accounted_tokens": 165,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.78644541700487
+    },
+    "public/public-hle-673531cae26d0576765bd963/none/0": {
+      "usage_records": 1,
+      "input_tokens": 160,
+      "output_tokens": 5,
+      "accounted_tokens": 165,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.227110457999515
+    },
+    "public/public-hle-673531cae26d0576765bd963/none/1": {
+      "usage_records": 1,
+      "input_tokens": 160,
+      "output_tokens": 4096,
+      "accounted_tokens": 4256,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 32.95568324999476
+    },
+    "public/public-hle-673531cae26d0576765bd963/none/2": {
+      "usage_records": 1,
+      "input_tokens": 160,
+      "output_tokens": 4096,
+      "accounted_tokens": 4256,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 35.601788583007874
+    },
+    "public/public-hle-673b50769ff1dae6f5b8b65d/dsh_configured/0": {
+      "usage_records": 1,
+      "input_tokens": 233,
+      "output_tokens": 5,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.341848666997976
+    },
+    "public/public-hle-673b50769ff1dae6f5b8b65d/dsh_configured/1": {
+      "usage_records": 1,
+      "input_tokens": 233,
+      "output_tokens": 191,
+      "accounted_tokens": 424,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.459512292
+    },
+    "public/public-hle-673b50769ff1dae6f5b8b65d/dsh_configured/2": {
+      "usage_records": 1,
+      "input_tokens": 233,
+      "output_tokens": 113,
+      "accounted_tokens": 346,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.770288916988648
+    },
+    "public/public-hle-673b50769ff1dae6f5b8b65d/none/0": {
+      "usage_records": 1,
+      "input_tokens": 233,
+      "output_tokens": 5,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.834690500007127
+    },
+    "public/public-hle-673b50769ff1dae6f5b8b65d/none/1": {
+      "usage_records": 1,
+      "input_tokens": 233,
+      "output_tokens": 5,
+      "accounted_tokens": 238,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 20.911944958992535
+    },
+    "public/public-hle-673b50769ff1dae6f5b8b65d/none/2": {
+      "usage_records": 1,
+      "input_tokens": 233,
+      "output_tokens": 252,
+      "accounted_tokens": 485,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.67029850000108
+    },
+    "maintenance/report/experience_bounded/0": {
+      "usage_records": 12,
+      "input_tokens": 4318,
+      "output_tokens": 459,
+      "accounted_tokens": 6604,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 58.84495858203445
+    },
+    "skill_test/case-report-7/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.521152291999897
+    },
+    "skill_test/case-report-8/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.379930249997415
+    },
+    "skill_test/case-report-9/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.118441790997167
+    },
+    "maintenance/report/experience_bounded/1": {
+      "usage_records": 16,
+      "input_tokens": 5339,
+      "output_tokens": 640,
+      "accounted_tokens": 5979,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 193.30843024796923
+    },
+    "skill_test/case-report-7/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.16960370799643
+    },
+    "skill_test/case-report-8/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 63,
+      "accounted_tokens": 235,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.682006792005268
+    },
+    "skill_test/case-report-9/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.47660175000783
+    },
+    "maintenance/report/experience_bounded/2": {
+      "usage_records": 12,
+      "input_tokens": 4510,
+      "output_tokens": 435,
+      "accounted_tokens": 4945,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 165.34243033202074
+    },
+    "skill_test/case-report-7/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.454444125003647
+    },
+    "skill_test/case-report-8/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 54,
+      "accounted_tokens": 226,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.479447417004849
+    },
+    "skill_test/case-report-9/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.185900042008143
+    },
+    "maintenance/report/experience_full/0": {
+      "usage_records": 16,
+      "input_tokens": 4931,
+      "output_tokens": 527,
+      "accounted_tokens": 5458,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 230.65190991503187
+    },
+    "skill_test/case-report-7/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.444878667010926
+    },
+    "skill_test/case-report-8/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 31,
+      "accounted_tokens": 203,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.2658383329981
+    },
+    "skill_test/case-report-9/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.869947957995464
+    },
+    "maintenance/report/experience_full/1": {
+      "usage_records": 16,
+      "input_tokens": 4945,
+      "output_tokens": 537,
+      "accounted_tokens": 5482,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 215.8874270009983
+    },
+    "skill_test/case-report-7/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.566983584008995
+    },
+    "skill_test/case-report-8/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 54,
+      "accounted_tokens": 226,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.004803000003449
+    },
+    "skill_test/case-report-9/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.206817708996823
+    },
+    "maintenance/report/no_experience_bounded/0": {
+      "usage_records": 14,
+      "input_tokens": 4034,
+      "output_tokens": 589,
+      "accounted_tokens": 4623,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 101.49700046000362
+    },
+    "skill_test/case-report-7/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.078751749999356
+    },
+    "skill_test/case-report-8/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 25,
+      "accounted_tokens": 197,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.835569041999406
+    },
+    "skill_test/case-report-9/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.5227304580039345
+    },
+    "maintenance/report/no_experience_bounded/1": {
+      "usage_records": 14,
+      "input_tokens": 4068,
+      "output_tokens": 548,
+      "accounted_tokens": 4616,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 221.83928120901692
+    },
+    "skill_test/case-report-7/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 21.76308504201006
+    },
+    "skill_test/case-report-8/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 32,
+      "accounted_tokens": 204,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.024477167011355
+    },
+    "skill_test/case-report-9/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.87012008400052
+    },
+    "maintenance/report/no_experience_bounded/2": {
+      "usage_records": 14,
+      "input_tokens": 4036,
+      "output_tokens": 583,
+      "accounted_tokens": 4619,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 196.69067616699613
+    },
+    "skill_test/case-report-7/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.521749207997345
+    },
+    "skill_test/case-report-8/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 54,
+      "accounted_tokens": 226,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.248561334010446
+    },
+    "skill_test/case-report-9/no_experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.442933333004476
+    },
+    "maintenance/report/no_experience_full/0": {
+      "usage_records": 14,
+      "input_tokens": 3436,
+      "output_tokens": 357,
+      "accounted_tokens": 3793,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 89.18551220998052
+    },
+    "skill_test/case-report-7/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 4.042906167000183
+    },
+    "skill_test/case-report-8/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.309392165989266
+    },
+    "skill_test/case-report-9/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.520284166006604
+    },
+    "maintenance/report/no_experience_full/1": {
+      "usage_records": 14,
+      "input_tokens": 3394,
+      "output_tokens": 336,
+      "accounted_tokens": 3730,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 236.60762620696914
+    },
+    "skill_test/case-report-7/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.486699458007934
+    },
+    "skill_test/case-report-8/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 25,
+      "accounted_tokens": 197,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.964525500006857
+    },
+    "skill_test/case-report-9/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 94,
+      "output_tokens": 5,
+      "accounted_tokens": 99,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.909467791003408
+    },
+    "maintenance/report/no_experience_full/2": {
+      "usage_records": 14,
+      "input_tokens": 3464,
+      "output_tokens": 371,
+      "accounted_tokens": 3835,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 231.24557762601762
+    },
+    "skill_test/case-report-7/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 23,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 23.318419291987084
+    },
+    "skill_test/case-report-8/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 172,
+      "output_tokens": 54,
+      "accounted_tokens": 226,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.3202276660013
+    },
+    "skill_test/case-report-9/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "accounted_tokens": 1535,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 0.06313949999457691
+    },
+    "maintenance/structured/experience_bounded/0": {
+      "usage_records": 16,
+      "input_tokens": 5784,
+      "output_tokens": 920,
+      "accounted_tokens": 6704,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 197.35736520803766
+    },
+    "skill_test/case-structured-7/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 175,
+      "output_tokens": 21,
+      "accounted_tokens": 196,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.517896624995046
+    },
+    "skill_test/case-structured-8/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 176,
+      "output_tokens": 23,
+      "accounted_tokens": 199,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 11.287278624993633
+    },
+    "skill_test/case-structured-9/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 122,
+      "output_tokens": 14,
+      "accounted_tokens": 136,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.16233566700248
+    },
+    "maintenance/structured/experience_bounded/1": {
+      "usage_records": 12,
+      "input_tokens": 4676,
+      "output_tokens": 547,
+      "accounted_tokens": 5223,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 198.92144295999606
+    },
+    "skill_test/case-structured-7/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 192,
+      "output_tokens": 21,
+      "accounted_tokens": 213,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 22.836246957987896
+    },
+    "skill_test/case-structured-8/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 193,
+      "output_tokens": 23,
+      "accounted_tokens": 216,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.91496058300254
+    },
+    "skill_test/case-structured-9/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 139,
+      "output_tokens": 14,
+      "accounted_tokens": 153,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 20.281059874992934
+    },
+    "maintenance/structured/experience_full/0": {
+      "usage_records": 16,
+      "input_tokens": 4680,
+      "output_tokens": 474,
+      "accounted_tokens": 5154,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 248.30106629102374
+    },
+    "skill_test/case-structured-7/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 185,
+      "output_tokens": 21,
+      "accounted_tokens": 206,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.891015708999475
+    },
+    "skill_test/case-structured-8/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 186,
+      "output_tokens": 23,
+      "accounted_tokens": 209,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.956229707997409
+    },
+    "skill_test/case-structured-9/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 132,
+      "output_tokens": 14,
+      "accounted_tokens": 146,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.302569332998246
+    },
+    "maintenance/structured/experience_full/1": {
+      "usage_records": 12,
+      "input_tokens": 4124,
+      "output_tokens": 525,
+      "accounted_tokens": 4649,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 177.10989871002675
+    },
+    "skill_test/case-structured-7/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 230,
+      "output_tokens": 21,
+      "accounted_tokens": 251,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.895441207991098
+    },
+    "skill_test/case-structured-8/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 231,
+      "output_tokens": 23,
+      "accounted_tokens": 254,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.976003334013512
+    },
+    "skill_test/case-structured-9/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 177,
+      "output_tokens": 14,
+      "accounted_tokens": 191,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.641183207990252
+    },
+    "maintenance/structured/no_experience_bounded/0": {
+      "usage_records": 10,
+      "input_tokens": 3231,
+      "output_tokens": 494,
+      "accounted_tokens": 3725,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 201.58664395898813
+    },
+    "skill_test/case-structured-7/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 174,
+      "output_tokens": 21,
+      "accounted_tokens": 195,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.67305708299682
+    },
+    "skill_test/case-structured-8/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 175,
+      "output_tokens": 23,
+      "accounted_tokens": 198,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.03132499998901
+    },
+    "skill_test/case-structured-9/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 121,
+      "output_tokens": 14,
+      "accounted_tokens": 135,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.102727666002465
+    },
+    "maintenance/structured/no_experience_bounded/1": {
+      "usage_records": 10,
+      "input_tokens": 3224,
+      "output_tokens": 419,
+      "accounted_tokens": 3643,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 147.48119779302215
+    },
+    "skill_test/case-structured-7/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 182,
+      "output_tokens": 21,
+      "accounted_tokens": 203,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.919431542002712
+    },
+    "skill_test/case-structured-8/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 183,
+      "output_tokens": 23,
+      "accounted_tokens": 206,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.204368666993105
+    },
+    "skill_test/case-structured-9/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 129,
+      "output_tokens": 14,
+      "accounted_tokens": 143,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 19.120456333999755
+    },
+    "maintenance/structured/no_experience_full/0": {
+      "usage_records": 14,
+      "input_tokens": 4237,
+      "output_tokens": 598,
+      "accounted_tokens": 4835,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 204.42421870704857
+    },
+    "skill_test/case-structured-7/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 260,
+      "output_tokens": 21,
+      "accounted_tokens": 281,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.877033334007137
+    },
+    "skill_test/case-structured-8/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 261,
+      "output_tokens": 23,
+      "accounted_tokens": 284,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.663061750005
+    },
+    "skill_test/case-structured-9/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 207,
+      "output_tokens": 14,
+      "accounted_tokens": 221,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.265603000007104
+    },
+    "maintenance/structured/no_experience_full/1": {
+      "usage_records": 16,
+      "input_tokens": 3865,
+      "output_tokens": 468,
+      "accounted_tokens": 9777,
+      "unknown_usage_records": 2,
+      "provider_duration_seconds": 224.31858862300578
+    },
+    "skill_test/case-structured-7/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 230,
+      "output_tokens": 25,
+      "accounted_tokens": 255,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.022701082998537
+    },
+    "skill_test/case-structured-8/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 231,
+      "output_tokens": 25,
+      "accounted_tokens": 256,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.177615959008108
+    },
+    "skill_test/case-structured-9/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 177,
+      "output_tokens": 14,
+      "accounted_tokens": 191,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 23.12551362499653
+    },
+    "maintenance/technical/experience_bounded/0": {
+      "usage_records": 8,
+      "input_tokens": 4735,
+      "output_tokens": 446,
+      "accounted_tokens": 5181,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 46.78674083200167
+    },
+    "skill_test/case-technical-7/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.060932041000342
+    },
+    "skill_test/case-technical-8/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 34,
+      "accounted_tokens": 258,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 8.023381374994642
+    },
+    "skill_test/case-technical-9/experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 6.505683957992005
+    },
+    "maintenance/technical/experience_bounded/1": {
+      "usage_records": 8,
+      "input_tokens": 4734,
+      "output_tokens": 302,
+      "accounted_tokens": 5036,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 112.37343679298647
+    },
+    "skill_test/case-technical-7/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.35264595798799
+    },
+    "skill_test/case-technical-8/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 35,
+      "accounted_tokens": 259,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.523943041000166
+    },
+    "skill_test/case-technical-9/experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.35864787499304
+    },
+    "maintenance/technical/experience_bounded/2": {
+      "usage_records": 8,
+      "input_tokens": 5102,
+      "output_tokens": 483,
+      "accounted_tokens": 5585,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 120.97290137501841
+    },
+    "skill_test/case-technical-7/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 20.869115166002302
+    },
+    "skill_test/case-technical-8/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 35,
+      "accounted_tokens": 259,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 21.98665949999122
+    },
+    "skill_test/case-technical-9/experience_bounded/2": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 28.58210508299817
+    },
+    "maintenance/technical/experience_full/0": {
+      "usage_records": 16,
+      "input_tokens": 6258,
+      "output_tokens": 561,
+      "accounted_tokens": 6819,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 117.45377287603333
+    },
+    "skill_test/case-technical-7/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.639210875000572
+    },
+    "skill_test/case-technical-8/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "accounted_tokens": 1837,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 4.4593261670088395
+    },
+    "skill_test/case-technical-9/experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 7.454138750006678
+    },
+    "maintenance/technical/experience_full/1": {
+      "usage_records": 16,
+      "input_tokens": 8070,
+      "output_tokens": 1122,
+      "accounted_tokens": 9192,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 276.8472995410266
+    },
+    "skill_test/case-technical-7/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 445,
+      "output_tokens": 33,
+      "accounted_tokens": 478,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.964808958000503
+    },
+    "skill_test/case-technical-8/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 442,
+      "output_tokens": 35,
+      "accounted_tokens": 477,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.82699312499608
+    },
+    "skill_test/case-technical-9/experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 355,
+      "output_tokens": 13,
+      "accounted_tokens": 368,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 17.392820458000642
+    },
+    "maintenance/technical/experience_full/2": {
+      "usage_records": 2,
+      "input_tokens": 248,
+      "output_tokens": 33,
+      "accounted_tokens": 2184,
+      "unknown_usage_records": 1,
+      "provider_duration_seconds": 30.684669791982742
+    },
+    "maintenance/technical/no_experience_bounded/0": {
+      "usage_records": 10,
+      "input_tokens": 4236,
+      "output_tokens": 488,
+      "accounted_tokens": 4724,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 161.60446612500527
+    },
+    "skill_test/case-technical-7/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.256790333995013
+    },
+    "skill_test/case-technical-8/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 35,
+      "accounted_tokens": 259,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 15.633999291996588
+    },
+    "skill_test/case-technical-9/no_experience_bounded/0": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 16.738045167003293
+    },
+    "maintenance/technical/no_experience_bounded/1": {
+      "usage_records": 5,
+      "input_tokens": 2073,
+      "output_tokens": 207,
+      "accounted_tokens": 2280,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 78.81060587499815
+    },
+    "skill_test/case-technical-7/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 7.575514291005675
+    },
+    "skill_test/case-technical-8/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 77,
+      "accounted_tokens": 301,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 9.988475292004296
+    },
+    "skill_test/case-technical-9/no_experience_bounded/1": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.072814917002688
+    },
+    "maintenance/technical/no_experience_full/0": {
+      "usage_records": 14,
+      "input_tokens": 5193,
+      "output_tokens": 780,
+      "accounted_tokens": 5973,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 86.15664200097672
+    },
+    "skill_test/case-technical-7/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 305,
+      "output_tokens": 33,
+      "accounted_tokens": 338,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 3.812678375004907
+    },
+    "skill_test/case-technical-8/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 302,
+      "output_tokens": 35,
+      "accounted_tokens": 337,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 5.3958614580042195
+    },
+    "skill_test/case-technical-9/no_experience_full/0": {
+      "usage_records": 1,
+      "input_tokens": 215,
+      "output_tokens": 13,
+      "accounted_tokens": 228,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 10.477174833999015
+    },
+    "maintenance/technical/no_experience_full/1": {
+      "usage_records": 14,
+      "input_tokens": 4878,
+      "output_tokens": 623,
+      "accounted_tokens": 5501,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 194.86811621001107
+    },
+    "skill_test/case-technical-7/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.459150541006238
+    },
+    "skill_test/case-technical-8/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 34,
+      "accounted_tokens": 258,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.911609957998735
+    },
+    "skill_test/case-technical-9/no_experience_full/1": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 12.098567416003789
+    },
+    "maintenance/technical/no_experience_full/2": {
+      "usage_records": 14,
+      "input_tokens": 4964,
+      "output_tokens": 666,
+      "accounted_tokens": 5630,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 190.344071293046
+    },
+    "skill_test/case-technical-7/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 227,
+      "output_tokens": 33,
+      "accounted_tokens": 260,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 14.673586459000944
+    },
+    "skill_test/case-technical-8/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 224,
+      "output_tokens": 34,
+      "accounted_tokens": 258,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 18.222635458005243
+    },
+    "skill_test/case-technical-9/no_experience_full/2": {
+      "usage_records": 1,
+      "input_tokens": 137,
+      "output_tokens": 13,
+      "accounted_tokens": 150,
+      "unknown_usage_records": 0,
+      "provider_duration_seconds": 13.569410875003086
+    }
+  },
+  "groups": {
+    "skill_test/frozen_old": {
+      "usage_records": 36.0,
+      "input_tokens": 6292.0,
+      "output_tokens": 954.0,
+      "accounted_tokens": 7246.0,
+      "unknown_usage_records": 0.0,
+      "provider_duration_seconds": 533.2114649570431
+    },
+    "skill_test/no_skill": {
+      "usage_records": 37.0,
+      "input_tokens": 5614.0,
+      "output_tokens": 833.0,
+      "accounted_tokens": 8088.0,
+      "unknown_usage_records": 1.0,
+      "provider_duration_seconds": 549.5743967469461
+    },
+    "maintenance/experience_bounded": {
+      "usage_records": 183.0,
+      "input_tokens": 78324.0,
+      "output_tokens": 8719.0,
+      "accounted_tokens": 95893.0,
+      "unknown_usage_records": 3.0,
+      "provider_duration_seconds": 2342.983939205151
+    },
+    "skill_test/experience_bounded": {
+      "usage_records": 48.0,
+      "input_tokens": 8568.0,
+      "output_tokens": 1161.0,
+      "accounted_tokens": 11321.0,
+      "unknown_usage_records": 1.0,
+      "provider_duration_seconds": 672.3894777049281
+    },
+    "maintenance/experience_full": {
+      "usage_records": 195.0,
+      "input_tokens": 71893.0,
+      "output_tokens": 7815.0,
+      "accounted_tokens": 84225.0,
+      "unknown_usage_records": 2.0,
+      "provider_duration_seconds": 2593.0635040391644
+    },
+    "skill_test/experience_full": {
+      "usage_records": 36.0,
+      "input_tokens": 7136.0,
+      "output_tokens": 837.0,
+      "accounted_tokens": 9810.0,
+      "unknown_usage_records": 1.0,
+      "provider_duration_seconds": 405.39258350202
+    },
+    "maintenance/no_experience_bounded": {
+      "usage_records": 175.0,
+      "input_tokens": 61679.0,
+      "output_tokens": 7985.0,
+      "accounted_tokens": 76264.0,
+      "unknown_usage_records": 2.0,
+      "provider_duration_seconds": 2508.7934766288963
+    },
+    "skill_test/no_experience_bounded": {
+      "usage_records": 45.0,
+      "input_tokens": 8172.0,
+      "output_tokens": 1103.0,
+      "accounted_tokens": 9275.0,
+      "unknown_usage_records": 0.0,
+      "provider_duration_seconds": 645.8329471690377
+    },
+    "maintenance/no_experience_full": {
+      "usage_records": 201.0,
+      "input_tokens": 61879.0,
+      "output_tokens": 8000.0,
+      "accounted_tokens": 81616.0,
+      "unknown_usage_records": 5.0,
+      "provider_duration_seconds": 2611.9769606250484
+    },
+    "skill_test/no_experience_full": {
+      "usage_records": 45.0,
+      "input_tokens": 9225.0,
+      "output_tokens": 1048.0,
+      "accounted_tokens": 11808.0,
+      "unknown_usage_records": 1.0,
+      "provider_duration_seconds": 570.5569117880805
+    },
+    "compression/dsh_checkpoint": {
+      "usage_records": 127.0,
+      "input_tokens": 364893.0,
+      "output_tokens": 134816.0,
+      "accounted_tokens": 546475.0,
+      "unknown_usage_records": 4.0,
+      "provider_duration_seconds": 2061.160262049001
+    },
+    "compression/dsh_no_prune": {
+      "usage_records": 153.0,
+      "input_tokens": 461239.0,
+      "output_tokens": 205714.0,
+      "accounted_tokens": 683480.0,
+      "unknown_usage_records": 1.0,
+      "provider_duration_seconds": 2794.7673808369873
+    },
+    "compression/none": {
+      "usage_records": 11.0,
+      "input_tokens": 235089.0,
+      "output_tokens": 271.0,
+      "accounted_tokens": 235360.0,
+      "unknown_usage_records": 0.0,
+      "provider_duration_seconds": 150.59298079198925
+    },
+    "compression/single_json": {
+      "usage_records": 165.0,
+      "input_tokens": 859124.0,
+      "output_tokens": 373271.0,
+      "accounted_tokens": 1315975.0,
+      "unknown_usage_records": 5.0,
+      "provider_duration_seconds": 3326.727994131972
+    },
+    "compression/three_parallel": {
+      "usage_records": 599.0,
+      "input_tokens": 2758095.0,
+      "output_tokens": 834723.0,
+      "accounted_tokens": 4194933.0,
+      "unknown_usage_records": 42.0,
+      "provider_duration_seconds": 10640.618959949948
+    },
+    "public/dsh_configured": {
+      "usage_records": 36.0,
+      "input_tokens": 5487.0,
+      "output_tokens": 49315.0,
+      "accounted_tokens": 54802.0,
+      "unknown_usage_records": 0.0,
+      "provider_duration_seconds": 649.4239377939375
+    },
+    "public/none": {
+      "usage_records": 36.0,
+      "input_tokens": 5067.0,
+      "output_tokens": 45901.0,
+      "accounted_tokens": 55926.0,
+      "unknown_usage_records": 1.0,
+      "provider_duration_seconds": 640.9824816230102
+    }
+  },
+  "unassigned": []
+}

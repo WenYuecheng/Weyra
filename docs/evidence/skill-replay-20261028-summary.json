@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-28",
+  "status": "blocked_http_402",
+  "quality_conclusion": null,
+  "reason": "All three initial development requests were rejected by the configured model service with HTTP 402. Transport guard stopped further requests. Billing/account cause is unconfirmed.",
+  "protocol": "skill-replay-20261028-protocol.json",
+  "planned_final_tasks": 72,
+  "completed_final_tasks": 0,
+  "recorded_final_tasks": 1,
+  "heldout_statuses": {
+    "budget_stopped": 1,
+    "not_run": 71
+  },
+  "actual_updated_families": 0,
+  "not_adapted_families": 3,
+  "physical_requests": 3,
+  "cost_limit_cny": "50",
+  "conservative_accounted_cost_cny": "0.2248370485248",
+  "provider_invoice_cost_cny": null,
+  "accounted_tokens": 8807,
+  "reported_usage_tokens": null,
+  "accounting_note": "No successful response or provider usage. Reserved upper bounds remain accounted; these are not measured tokens or an invoice. The legacy budget_stopped field reflects the transport guard, not exhaustion of CNY50.",
+  "transport_failures": [
+    {
+      "consecutive_failures": 1,
+      "kind": "invalid",
+      "status": 402,
+      "stopped": false
+    },
+    {
+      "consecutive_failures": 2,
+      "kind": "invalid",
+      "status": 402,
+      "stopped": false
+    },
+    {
+      "consecutive_failures": 3,
+      "kind": "invalid",
+      "status": 402,
+      "stopped": true
+    }
+  ],
+  "maintenance": {
+    "evidence": {
+      "status": "error",
+      "reason": "ModelError",
+      "actual_updated": false,
+      "effective_skill_hash": "c51b15fe954149850cd2ab4a32b3a41fc29093d2a547641675937ce6393e2c27",
+      "elapsed_seconds": 1.6654064999893308,
+      "accounted_tokens": 2949,
+      "reported_usage_tokens": null,
+      "conservative_cost_cny": "0.0749456828416",
+      "physical_requests": 1,
+      "development_samples": 0,
+      "validation_samples": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "cache_note": "Gate not reached; no replay or cache measurement."
+    },
+    "multi_file": {
+      "status": "error",
+      "reason": "ModelError",
+      "actual_updated": false,
+      "effective_skill_hash": "9171155e83341d349548ab653222e7cb4bb2fc6c46318e7e224f871372811fb3",
+      "elapsed_seconds": 1.2532657090050634,
+      "accounted_tokens": 2915,
+      "reported_usage_tokens": null,
+      "conservative_cost_cny": "0.0749456828416",
+      "physical_requests": 1,
+      "development_samples": 0,
+      "validation_samples": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "cache_note": "Gate not reached; no replay or cache measurement."
+    },
+    "expression": {
+      "status": "error",
+      "reason": "ModelError",
+      "actual_updated": false,
+      "effective_skill_hash": "9522d8c2e561c881866fad4074a1109da8c306c8996c7bff4c71a357b5e6a6c4",
+      "elapsed_seconds": 1.2001762500149198,
+      "accounted_tokens": 2943,
+      "reported_usage_tokens": null,
+      "conservative_cost_cny": "0.0749456828416",
+      "physical_requests": 1,
+      "development_samples": 0,
+      "validation_samples": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "cache_note": "Gate not reached; no replay or cache measurement."
+    }
+  },
+  "local_verification": {
+    "pytest_passed": 738,
+    "pytest_skipped": 3,
+    "subtests_passed": 5,
+    "ruff": "passed",
+    "ci_workflow": "Ubuntu / Python 3.11 configured; remote run not performed"
+  },
+  "raw_artifacts": [
+    {
+      "path": ".weyra/benchmarks/skill-replay-20261028-v1/summary.json",
+      "sha256": "7336c2f1aa519b13883723e22ff0836254e367b4b931afe229e5dd461fc5c8ec"
+    },
+    {
+      "path": ".weyra/benchmarks/skill-replay-20261028-v1/replay-protocol.json",
+      "sha256": "3964ba5c5570ca9205959b470ad560fce51c846fe1b3b0851d98e7df7d5bb71c"
+    },
+    {
+      "path": ".weyra/benchmarks/skill-replay-20261028-v1/results.json",
+      "sha256": "4ff9516cd146166edb1343a081595b5df1d727158d4d145946cfd511c9a4b1ba"
+    }
+  ],
+  "historical_results": "Unchanged; this blocked run is not a new success-rate measurement."
+}

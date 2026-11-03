@@ -5,6 +5,8 @@ development/validation replay. The 2+2 window is a Weyra engineering default.
 """
 from __future__ import annotations
 
+from weyra.llm.providers import rendered_message_content
+
 from dataclasses import dataclass
 import hashlib
 import json
@@ -39,7 +41,8 @@ class ReplayCapture:
         self.reason = ""
         self.size = 0
         self.system_instructions = system_instructions
-        self.context = [{"role": m.role, "content": m.content}
+        self.context = [{"role": m.role, "content": rendered_message_content(m),
+                         "source": m.source, "source_kind": m.source_kind}
                         for m in messages if m.role in {"user", "assistant"}
                         and isinstance(m.content, str) and not getattr(m, "tool_calls", ())]
         if len(self.context) > 8 or sum(len(m["content"]) for m in self.context) > MAX_CONTEXT_CHARS:

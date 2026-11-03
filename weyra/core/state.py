@@ -443,7 +443,7 @@ class Goal:
         objective: 目标文字描述。
         revision: 目标修订版本号。
         todos: 结构化待办清单列表。
-        state: 状态机状态（"active", "stopped", "completed"）。
+        state: 持久化目标状态（"active", "paused", "blocked", "completed"）。
         continuations: 已连续自主继续推进的轮数计数（上限 3 轮）。
         stagnant_rounds: 连续停滞无实质产物推进的轮数计数（连续 2 轮无进展即熔断）。
         progress: 阶段性工具产物或变更哈希摘要，用于检测是否发生停滞。
@@ -455,41 +455,61 @@ class Goal:
     continuations: int = 0
     stagnant_rounds: int = 0
     progress: str = ""
+    goal_id: str = ""
+    blocker_code: str = ""
+    blocker_reason: str = ""
+
+    def __post_init__(self):
+        self.state = {"complete": "completed", "stopped": "blocked"}.get(self.state, self.state)
+        self.armed = self.state == "active"
+
+    @classmethod
+    def restore(cls, data):
+        """Restore durable intent without authorizing fresh autonomous work."""
+        goal = cls(**{key: value for key, value in data.items() if key in cls.__dataclass_fields__})
+        goal.armed = False
+        return goal
 
     def revise(self, objective: str):
-        """更新修正当前目标并重置自主演进计数器 (Revise Goal & Reset Stagnation Counters)。
-
-        Args:
-            objective: 新的目标文本描述。
-        """
         self.objective = objective
+        self.restart()
+
+    def resume(self):
+        if self.state == 'completed':
+            raise ValueError('invalid_goal_transition')
+        if self.continuations >= 3:
+            raise ValueError('goal_limit_reached')
         self.revision += 1
-        self.continuations = 0
-        self.stagnant_rounds = 0
-        self.state = "active"
+        self.state, self.armed = 'active', True
 
-    def should_continue(self, progress: str) -> bool:
-        """评估当前智能体是否应当自动启动下一轮自主推理 (Evaluate Autonomous Continuation Eligibility)。
+    def restart(self):
+        self.revision += 1
+        self.continuations = self.stagnant_rounds = 0
+        self.progress = ''
+        self.state, self.armed = 'active', True
 
-        【死循环防御与熔断判定】
-        1. 终态检查：若当前状态非 "active"，或所有待办事项已完成 (`done=True`)，立即返回 False；
-        2. 停滞检测：对比当前 progress 与上次记录，若完全一致则递增 `stagnant_rounds`，反之清零；
-        3. 熔断判断：若自主轮数超过 3 轮 (`continuations >= 3`)，或连续 2 轮无实质产物变更 (`stagnant_rounds >= 2`)，
-           将状态置为 "stopped" 并返回 False，将控制权交还给用户；
-        4. 推进许可：递增 `continuations` 计数并返回 True。
+    def pause(self):
+        self.state, self.armed = "paused", False
+        self.revision += 1
 
-        Args:
-            progress: 当前轮次执行后汇总的产物指纹或变更哈希。
+    def complete(self):
+        self.state, self.armed = "completed", False
+        self.revision += 1
 
-        Returns:
-            bool: 若允许继续执行下一轮自主迭代返回 True，否则返回 False。
-        """
-        if self.state != "active" or not any(not item.get("done") for item in self.todos):
+    def should_continue(self, progress: str, *, max_continuations=3, max_stagnant_rounds=2) -> bool:
+        if self.state != "active" or not self.armed:
+            return False
+        if self.todos and all(item.get("done") for item in self.todos):
+            self.complete()
+            return False
+        if not self.todos:
             return False
         self.stagnant_rounds = self.stagnant_rounds + 1 if progress == self.progress else 0
         self.progress = progress
-        if self.continuations >= 3 or self.stagnant_rounds >= 2:
-            self.state = "stopped"
+        if self.continuations >= max_continuations or self.stagnant_rounds >= max_stagnant_rounds:
+            self.blocker_code = 'round-limit' if self.continuations >= max_continuations else 'no-progress'
+            self.blocker_reason = 'Automatic continuation policy stopped this goal'
+            self.state, self.armed = "blocked", False
             return False
         self.continuations += 1
         return True

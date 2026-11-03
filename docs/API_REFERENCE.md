@@ -1,5 +1,13 @@
 # Weyra Python SDK 编程式开发与 API 参考手册 (Python API Reference)
 
+当前步骤、工具准入、独立投影及目标 CAS 语义见 [DSH 架构改造说明](DSH_STEP_ARCHITECTURE.md)。数据库为 v2；/goal resume 保留进度，/goal restart 显式重置。
+
+
+## 当前执行语义（2026-11-03）
+
+模型切换准入、步骤工具集合以及 P1 恢复/生命周期/协议来源/可选 patch 已实现。完整接口、迁移、默认值及失败语义统一见 [P1 运行说明](P1_RUNTIME_GUIDE.md)。下文分层与算法说明沿用；涉及上下文更新时，项目规则、记忆和技能目录采用版本化事实消息，目标恢复默认不自动继续，数据库使用明确版本迁移。
+
+
 > **API 参考手册**：Weyra 提供了极简且强大的分层 Python API，涵盖面向任务执行的领域智能体门面 `CodingAgent`、面向企业级应用集成的统一服务门面 `WeyraAppService`、5 大全生命周期 Hook 插件体系以及 `SessionStore` 事件溯源底层接口。
 
 ---

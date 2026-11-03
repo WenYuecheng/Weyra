@@ -26,7 +26,7 @@ from weyra.contracts import Message, ToolResult
 from .hooks import ToolResultHook
 
 
-async def run_tool_step(agent, response, ctx):
+async def run_tool_step(agent, response, ctx, *, prepared_step=None):
     """协调单批次工具调用执行、Hook 结果改写与原子化会话落地。
 
     【执行流程】
@@ -59,7 +59,10 @@ async def run_tool_step(agent, response, ctx):
         for result in results:
             agent.session.append("tool_result", asdict(result), True)
     else:
-        results = await agent.tools.execute_batch(response.tool_calls, ctx)
+        if prepared_step is None:
+            results = await agent.tools.execute_batch(response.tool_calls, ctx)
+        else:
+            results = await prepared_step.execute_tools(response.tool_calls, ctx)
     views = {}
     for result in results:
         intervention = await agent.hooks.emit(ToolResultHook(result.call_id, result.name, result.content, result.status != "success"))

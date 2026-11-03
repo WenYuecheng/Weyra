@@ -106,7 +106,8 @@ def test_expansion_uses_remaining_physical_attempt_budget(tmp_path):
     asyncio.run(run())
 
 
-@pytest.mark.parametrize("limits, calls", [({"call_limit": 1}, 1), ({"token_limit": 7000}, 1),
+# Sourced summary envelopes are included in reservation; 7000 now refuses before I/O.
+@pytest.mark.parametrize("limits, calls", [({"call_limit": 1}, 1), ({"token_limit": 7000}, 0),
                                           ({"cost_limit_cny": "1"}, 0)])
 def test_budget_refusal_preserves_history(tmp_path, limits, calls):
     async def run():

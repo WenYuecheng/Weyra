@@ -33,7 +33,7 @@ class AdditionalTests(unittest.TestCase):
                 agent.set_goal("inspect remaining work")
                 await agent.run_once("work on established goal")
                 self.assertLessEqual(len(provider.requests), 4)
-                self.assertEqual(agent.goal.state, "stopped")
+                self.assertEqual(agent.goal.state, "blocked")
                 await agent.close()
 
         asyncio.run(run())

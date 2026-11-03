@@ -63,6 +63,7 @@ class LoopHost:
     finish_step: Callable
     accept_result: Callable
     has_steering: Callable
+    step_factory: Callable | None = None
 
 
 async def run_agent_loop(agent: LoopHost, ctx):
@@ -92,36 +93,39 @@ async def run_agent_loop(agent: LoopHost, ctx):
     for step in range(agent.max_steps):
         ctx.check_cancelled()
         await agent.before_step(ctx)
-        response = await agent.prepare_response(ctx)
-        if response.stop_reason not in {"stop", "tool_calls", "length", "max_tokens"}:
-            raise ModelError("invalid", "Model response was refused or incomplete")
-        if response.tool_calls and not agent.context_manager.model.supports_tools:
-            raise ModelError("invalid", "Selected model does not support tool calls")
-        seen_calls = {
-            call.id for message in agent.session.project() for call in message.tool_calls
-        }
-        for call in response.tool_calls:
-            if not isinstance(call.id, str) or not call.id or call.id in seen_calls:
-                raise ModelError("invalid", "Duplicate or invalid tool call identifier")
-            if (
-                not isinstance(call.name, str)
-                or not call.name
-                or not isinstance(call.arguments, dict)
-            ):
-                raise ModelError("invalid", "Invalid tool invocation")
-            seen_calls.add(call.id)
-        agent.session.add_message(
-            Message(
-                "assistant",
-                response.content,
-                source="model",
-                tool_calls=tuple(response.tool_calls),
-                provider_data=response.provider_data,
+        from .step import LegacyStepAdapter
+        lifecycle = agent.step_factory(ctx) if agent.step_factory is not None else LegacyStepAdapter(agent, ctx)
+        async with lifecycle as prepared:
+            response = await prepared.model_response()
+            if response.stop_reason not in {"stop", "tool_calls", "length", "max_tokens"}:
+                raise ModelError("invalid", "Model response was refused or incomplete")
+            if response.tool_calls and not prepared.model.supports_tools:
+                raise ModelError("invalid", "Selected model does not support tool calls")
+            seen_calls = {
+                call.id for message in agent.session.project() for call in message.tool_calls
+            }
+            for call in response.tool_calls:
+                if not isinstance(call.id, str) or not call.id or call.id in seen_calls:
+                    raise ModelError("invalid", "Duplicate or invalid tool call identifier")
+                if (
+                    not isinstance(call.name, str)
+                    or not call.name
+                    or not isinstance(call.arguments, dict)
+                ):
+                    raise ModelError("invalid", "Invalid tool invocation")
+                seen_calls.add(call.id)
+            agent.session.add_message(
+                Message(
+                    "assistant",
+                    response.content,
+                    source="model",
+                    tool_calls=tuple(response.tool_calls),
+                    provider_data=response.provider_data,
+                )
             )
-        )
-        if response.tool_calls:
-            await run_tool_step(agent, response, ctx)
-            continue
+            if response.tool_calls:
+                await run_tool_step(agent, response, ctx, prepared_step=prepared)
+                continue
         final = response.content
         if agent.has_steering():
             continue

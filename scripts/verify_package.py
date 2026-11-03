@@ -1,4 +1,4 @@
-"""Verify the core runtime wheel and source archive offline; temporary installs self-clean."""
+"""Verify runtime wheels and source-only benchmarks offline; temporary installs self-clean."""
 from __future__ import annotations
 
 import json
@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def package_environment():
-    """Keep clean installs independent of the developer's Python paths."""
+    """Do not let a developer's Python paths satisfy missing package dependencies."""
     env = dict(os.environ)
     for key in ('PYTHONPATH', 'PYTHONHOME', 'VIRTUAL_ENV'):
         env.pop(key, None)
@@ -31,7 +31,8 @@ def verify():
         assert not any(e.filename.startswith(('benchmarks/', 'agents/')) for e in entries)
         assert not any('/data/' in e.filename and Path(e.filename).name.startswith(('core-', 'finish-', 'final-')) for e in entries)
         assert any(e.filename.endswith('theme.tcss') for e in entries)
-        assert not any(e.filename == 'weyra/_benchmark_compat.py' for e in entries)
+        assert all(contents.getinfo('weyra/' + name + '.py').file_size < 1000 for name in
+                   ('core_evaluation', 'finish_evaluation', 'final_delivery_eval'))
         unpacked = sum(e.file_size for e in entries)
     env = package_environment()
     with tempfile.TemporaryDirectory(prefix='weyra-package-check-') as folder:
@@ -65,6 +66,8 @@ def verify():
         for scenario in ('analysis', 'writing'):
             run(scenario + '_demo', [cli, 'demo', '--offline', '--scenario', scenario, '--project', work / scenario])
         run('offline_evaluation', [cli, 'eval', '--offline', '--project', work / 'evaluation'])
+        result = run('historical_guidance', [python, '-m', 'weyra.final_delivery_eval', '--help'], expected=1)
+        assert 'require the Weyra source' in result.stderr and 'Traceback' not in result.stderr
         run('sdist_install', [python, '-m', 'pip', 'install', '--force-reinstall', archive])
         run('sdist_dependencies', [python, '-m', 'pip', 'check'])
         run('sdist_cli_help', [cli, '--help'])
@@ -74,10 +77,17 @@ def verify():
             source.extractall(source_root, filter='data')
         extracted = next(source_root.iterdir())
         source_env = {**env, 'PYTHONPATH': str(extracted)}
-        run('source_resources', [python, '-c',
-            "from pathlib import Path; import weyra; from weyra.evaluation import load_cases; "
-            "assert Path(weyra.__file__).resolve().is_relative_to(Path.cwd()); "
-            "assert len(load_cases()) == 20"], cwd=extracted, environment=source_env)
+        run('source_load_and_report', [python, '-c',
+            "from pathlib import Path; import json; import benchmarks.core_corpus as c; "
+            "from benchmarks.final_skill_eval import load_manifest; "
+            "from benchmarks.finish_evaluation import load_manifest as finish; "
+            "from benchmarks.final_campaign_report import paired; "
+            "assert Path(c.__file__).resolve().is_relative_to(Path.cwd()); "
+            "assert c.load_core_manifest(); assert load_manifest(); assert finish(); "
+            "Path('offline-report.json').write_text(json.dumps(paired([], 'old', 'new'))); "
+            "assert Path('offline-report.json').is_file()"], cwd=extracted, environment=source_env)
+        for module in ('benchmarks.final_delivery_eval', 'weyra.final_delivery_eval'):
+            run(module + '_help', [python, '-m', module, '--help'], cwd=extracted, environment=source_env)
     assert not work.exists()
     return {'passed': True, 'version': wheel.name.split('-')[1], 'wheel': str(wheel),
             'compressed_bytes': wheel.stat().st_size, 'uncompressed_bytes': unpacked,

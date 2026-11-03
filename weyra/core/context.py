@@ -31,6 +31,7 @@ from weyra.output import prune_tool_result
 from .compaction_prompt import COMPACTION_INSTRUCTION, CHECKPOINT_PREAMBLE, SUMMARY_OPEN_TAG, SUMMARY_CLOSE_TAG
 
 from weyra.contracts import Message, PreparedRequest, canonical, digest
+from weyra.llm.providers import rendered_message_content, SOURCE_RENDERING_VERSION
 
 
 class ContextOverflow(RuntimeError):
@@ -609,7 +610,11 @@ class ContextManager:
             "purpose": purpose,
             "parameters": parameters,
         }
-        heuristic = estimate_tokens({"system": self.system, "tools": tools, "messages": view})
+        rendered_view = [
+            {**message.to_dict(), "content": rendered_message_content(message)}
+            for message in messages
+        ]
+        heuristic = estimate_tokens({"system": self.system, "tools": tools, "messages": rendered_view})
         result = {
             "estimated_input_tokens": heuristic,
             "heuristic_input_tokens": heuristic,
@@ -656,6 +661,14 @@ class ContextManager:
             if canonical(anchor_envelope) != canonical(envelope):
                 continue
             anchor_view = anchor.get("messages", [])
+            anchor_messages = [Message.from_dict(message) for message in anchor_view]
+            if (
+                anchor.get("source_rendering_version") != SOURCE_RENDERING_VERSION
+                and any(message.role == "user" and message.source_kind == "fact" for message in anchor_messages)
+            ):
+                # Old usage measured unwrapped synthetic user text. It cannot
+                # calibrate a new projection containing provenance envelopes.
+                continue
             historical = [
                 m.to_dict()
                 for m in self._visible_messages(self.session.project(recorded["parent"]))
@@ -666,7 +679,10 @@ class ContextManager:
                 {
                     "system": anchor["system"],
                     "tools": anchor.get("tools", ()),
-                    "messages": anchor_view,
+                    "messages": [
+                        {**message.to_dict(), "content": rendered_message_content(message)}
+                        for message in anchor_messages
+                    ],
                 }
             )
             delta = heuristic - anchor_heuristic

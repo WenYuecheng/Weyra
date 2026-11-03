@@ -1,0 +1,322 @@
+{
+  "version": "0.1.3",
+  "generated_at": "2026-10-20T16:34:16.552438+08:00",
+  "passed": true,
+  "test_count": 509,
+  "subtests_passed": 5,
+  "tests_output": "........................................................................ [ 14%]\n........................................................................ [ 28%]\n........................................................................ [ 42%]\n................................................................... [ 55%]\n........................................................................ [ 69%]\n........................................................................ [ 83%]\n........................................................................ [ 98%]\n..........                                                               [100%]\n509 passed, 5 subtests passed in 22.58s\n",
+  "lint": "ruff check weyra benchmarks tests scripts examples: passed",
+  "package": {
+    "passed": true,
+    "version": "0.1.3",
+    "wheel": "/Users/wenyuecheng/code/python/Weyra/dist/weyra-0.1.3-py3-none-any.whl",
+    "compressed_bytes": 175603,
+    "uncompressed_bytes": 656599,
+    "temporary_environment_removed": true,
+    "checks": [
+      {
+        "name": "isolated_environment",
+        "exit_code": 0,
+        "passed": true,
+        "output": ""
+      },
+      {
+        "name": "wheel_install",
+        "exit_code": 0,
+        "passed": true,
+        "output": "Processing /Users/wenyuecheng/code/python/Weyra/dist/weyra-0.1.3-py3-none-any.whl\nInstalling collected packages: weyra\n  Attempting uninstall: weyra\n    Found existing installation: weyra 0.1.3\n    Not uninstalling weyra at /Users/wenyuecheng/code/python/Weyra/.venv/lib/python3.11/site-packages, outside environment /private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/env\n    Can't uninstall 'weyra'. No files were found to uninstall.\nSuccessfully installed weyra-0.1.3\n\n[notice] A new release of pip is available: 24.0 -> 26.2.1\n[notice] To update, run: /private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/env/bin/python -m pip install --upgrade pip\n"
+      },
+      {
+        "name": "wheel_resources",
+        "exit_code": 0,
+        "passed": true,
+        "output": ""
+      },
+      {
+        "name": "cli_help",
+        "exit_code": 0,
+        "passed": true,
+        "output": "usage: weyra [-h] [--project PROJECT] [--provider PROVIDER]\n             [--protocol {openai,anthropic}] [--model MODEL]\n             [--context-window CONTEXT_WINDOW]\n             [--max-output-tokens MAX_OUTPUT_TOKENS] [--base-url BASE_URL]\n             [--api-key-env API_KEY_ENV] [--resume [RESUME]]\n             [--permission-mode {default,plan,acceptEdits,dontAsk,bypassPermissions}]\n             [--max-tokens MAX_TOKENS] [--max-calls MAX_CALLS]\n             [--max-steps MAX_STEPS] [--task-token-limit TASK_TOKEN_LIMIT]\n             [--no-evolution] [--no-memory] [--demo] [--ui {auto,tui,plain}]\n             [--no-icons]\n             [prompt]\n\nWeyra project agent\n\npositional arguments:\n  prompt\n\noptions:\n  -h, --help            show this help message and exit\n  --project PROJECT\n  --provider PROVIDER\n  --protocol {openai,anthropic}\n  --model MODEL\n  --context-window CONTEXT_WINDOW\n  --max-output-tokens MAX_OUTPUT_TOKENS\n  --base-url BASE_URL\n  --api-key-env API_KEY_ENV\n  --resume [RESUME]\n  --permission-mode {default,plan,acceptEdits,dontAsk,bypassPermissions}\n  --max-tokens MAX_TOKENS\n  --max-calls MAX_CALLS\n  --max-steps MAX_STEPS\n  --task-token-limit TASK_TOKEN_LIMIT\n  --no-evolution\n  --no-memory\n  --demo                Run a local scripted demonstration without credentials\n                        or network\n  --ui {auto,tui,plain}\n                        UI mode: 'tui' for rich Textual interface, 'plain' for\n                        classic streaming CLI, 'auto' detects TTY and\n                        dependencies\n  --no-icons            Use ASCII text indicators instead of Unicode icons\n"
+      },
+      {
+        "name": "check_config",
+        "exit_code": 0,
+        "passed": true,
+        "output": "{\n  \"providers\": {\n    \"deepseek\": {\n      \"protocol\": \"openai\",\n      \"api_key_env\": \"DEEPSEEK_API_KEY\",\n      \"base_url\": \"https://api.deepseek.com\"\n    }\n  },\n  \"routes\": {\n    \"main\": {\n      \"provider_id\": \"deepseek\",\n      \"model_id\": \"deepseek-chat\",\n      \"context_window\": 131072,\n      \"max_output_tokens\": 8192,\n      \"supports_tools\": true,\n      \"supports_reasoning\": false,\n      \"supports_cache\": false,\n      \"input_price_per_million\": null,\n      \"output_price_per_million\": null,\n      \"reasoning_format\": null\n    },\n    \"compression\": {\n      \"provider_id\": \"deepseek\",\n      \"model_id\": \"deepseek-chat\",\n      \"context_window\": 131072,\n      \"max_output_tokens\": 8192,\n      \"supports_tools\": true,\n      \"supports_reasoning\": false,\n      \"supports_cache\": false,\n      \"input_price_per_million\": null,\n      \"output_price_per_million\": null,\n      \"reasoning_format\": null\n    },\n    \"memory\": {\n      \"provider_id\": \"deepseek\",\n      \"model_id\": \"deepseek-chat\",\n      \"context_window\": 131072,\n      \"max_output_tokens\": 8192,\n      \"supports_tools\": true,\n      \"supports_reasoning\": false,\n      \"supports_cache\": false,\n      \"input_price_per_million\": null,\n      \"output_price_per_million\": null,\n      \"reasoning_format\": null\n    },\n    \"evolution\": {\n      \"provider_id\": \"deepseek\",\n      \"model_id\": \"deepseek-chat\",\n      \"context_window\": 131072,\n      \"max_output_tokens\": 8192,\n      \"supports_tools\": true,\n      \"supports_reasoning\": false,\n      \"supports_cache\": false,\n      \"input_price_per_million\": null,\n      \"output_price_per_million\": null,\n      \"reasoning_format\": null\n    }\n  },\n  \"fallbacks\": {},\n  \"context_policy\": {\n    \"threshold_ratio\": 0.8,\n    \"headroom_tokens\": 4096,\n    \"retain_ratio\": 0.16,\n    \"retain_tokens\": null,\n    \"max_tokens\": 1024,\n    \"compaction_retries\": 1,\n    \"max_overflow_retries\": 1,\n    \"summary_mode\": \"dsh_checkpoint\",\n    \"summarization_provider\": \"\",\n    \"summarization_model\": \"\",\n    \"auto\": true,\n    \"model_policies\": []\n  },\n  \"pricing\": {},\n  \"route_parameters\": {\n    \"main\": {}\n  },\n  \"skill_evolution\": {\n    \"enabled\": false,\n    \"judge_route\": \"skill_judge\"\n  }\n}\n"
+      },
+      {
+        "name": "analysis_demo",
+        "exit_code": 0,
+        "passed": true,
+        "output": "{\n  \"answer\": \"已结合 README.md 和子任务结果完成入口分析。\",\n  \"child_state\": \"completed\",\n  \"actual_tool_results\": 3,\n  \"scenario\": \"analysis\",\n  \"mode\": \"offline\",\n  \"provider\": \"offline\",\n  \"accounted_tokens\": 96,\n  \"model_calls\": 6,\n  \"paid_model_calls\": 0,\n  \"model\": \"scripted proposals; no quality claim\",\n  \"session_id\": \"024825cca71a42498c154ecc129007df\",\n  \"fixture_project\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/analysis/.weyra/demos/analysis-3f3_gn5a\",\n  \"budget\": {\n    \"id\": null,\n    \"calls\": 6,\n    \"tokens\": 96,\n    \"accounted_cost_cny\": \"0\",\n    \"unknown_calls\": 0\n  }\n}\n"
+      },
+      {
+        "name": "writing_demo",
+        "exit_code": 0,
+        "passed": true,
+        "output": "{\n  \"skill_name\": \"report-writing\",\n  \"updated_version\": \"1.0.1\",\n  \"updated_body\": \"正式汇报先给结论；故事遵循叙事需要。\",\n  \"boundary_experience\": [\n    {\n      \"event_id\": \"4831901983fe41c88613736b0ae29703\",\n      \"kind\": \"boundary\",\n      \"text\": \"用户明确纠正：故事不套用汇报结构。\",\n      \"time\": \"2026-10-20T08:33:47.845430+00:00\",\n      \"skill_version\": \"1.0.1\"\n    }\n  ],\n  \"rollback_version\": \"1.0.2\",\n  \"evolution_events\": [\n    {\n      \"event_id\": \"ebf0a9622e0c4ee381ea0b80539e1f07\",\n      \"failure_kind\": \"failure_to_apply\",\n      \"reason\": \"Related skill exists; creation requires a new method\",\n      \"status\": \"rejected\",\n      \"task_quality\": null\n    },\n    {\n      \"auxiliary_errors\": [],\n      \"base_hash\": \"b06012161db615815a7e68e97f74c536276a582e875ec95458a16f6505fb8255\",\n      \"base_snapshot_path\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/writing/.weyra/demos/writing-u9pk2k_k/.weyra/skill-evolution/9ecd1c8fe132d0cb3374441e81088afb17839cb4bedd58fb688fe5f64f8aaf13/1.0.0.md\",\n      \"content_hash\": \"de52baeb7c4e52af9a6fa8b57cf6bfbba406886407bf58b22150a2532e98a327\",\n      \"event_id\": \"4831901983fe41c88613736b0ae29703\",\n      \"knowledge_note\": {\n        \"kind\": \"boundary\",\n        \"text\": \"用户明确纠正：故事不套用汇报结构。\"\n      },\n      \"name\": \"report-writing\",\n      \"reason\": \"用户指出叙事例外\",\n      \"skill_path\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/writing/.weyra/demos/writing-u9pk2k_k/.weyra/skills/report-writing/SKILL.md\",\n      \"snapshot_hash\": \"de52baeb7c4e52af9a6fa8b57cf6bfbba406886407bf58b22150a2532e98a327\",\n      \"snapshot_path\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/writing/.weyra/demos/writing-u9pk2k_k/.weyra/skill-evolution/9ecd1c8fe132d0cb3374441e81088afb17839cb4bedd58fb688fe5f64f8aaf13/1.0.1.md\",\n      \"status\": \"updated\",\n      \"validation\": \"validated\",\n      \"version\": \"1.0.1\"\n    }\n  ],\n  \"scenario\": \"writing\",\n  \"mode\": \"offline\",\n  \"provider\": \"offline\",\n  \"accounted_tokens\": 112,\n  \"model_calls\": 7,\n  \"paid_model_calls\": 0,\n  \"model\": \"scripted proposals; no quality claim\",\n  \"session_id\": \"521b0abc7e9d4f60b2aca6785cbc1e96\",\n  \"fixture_project\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/writing/.weyra/demos/writing-u9pk2k_k\",\n  \"budget\": {\n    \"id\": null,\n    \"calls\": 7,\n    \"tokens\": 112,\n    \"accounted_cost_cny\": \"0\",\n    \"unknown_calls\": 0\n  }\n}\n"
+      },
+      {
+        "name": "offline_evaluation",
+        "exit_code": 0,
+        "passed": true,
+        "output": "n/.weyra/evaluation-fixtures/9fe3a543ff841f46f5ec/baseline/standard/W05-e612cb1a9f\",\n        \"metrics\": {\n          \"branch\": \"baseline/standard\",\n          \"input_tokens\": 60,\n          \"output_tokens\": 24,\n          \"cache_read_tokens\": null,\n          \"cache_write_tokens\": null,\n          \"usage_samples\": 3,\n          \"cost_known\": true,\n          \"usage_by_purpose\": {\n            \"main\": {\n              \"calls\": 3,\n              \"input_tokens\": 60,\n              \"output_tokens\": 24,\n              \"cache_read_tokens\": null,\n              \"cache_write_tokens\": null\n            }\n          },\n          \"first_token_seconds\": null,\n          \"request_latencies\": [],\n          \"parent_context_chars\": 1991\n        },\n        \"answer\": \"Evidence: source.json\",\n        \"session_id\": \"ddd7bc115e14438fbff6e2d2b4ca9950\",\n        \"model_calls\": 3,\n        \"accounted_tokens\": 84,\n        \"cost_cny\": \"0\",\n        \"elapsed_seconds\": 0.0407\n      },\n      {\n        \"id\": \"W06\",\n        \"group\": \"baseline\",\n        \"variant\": \"standard\",\n        \"status\": \"pass\",\n        \"checks\": {\n          \"artifact_json\": true,\n          \"source_evidence_read\": true,\n          \"protected_file_unchanged\": true\n        },\n        \"fixture_project\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/evaluation/.weyra/evaluation-fixtures/9fe3a543ff841f46f5ec/baseline/standard/W06-2a3486f520\",\n        \"metrics\": {\n          \"branch\": \"baseline/standard\",\n          \"input_tokens\": 60,\n          \"output_tokens\": 24,\n          \"cache_read_tokens\": null,\n          \"cache_write_tokens\": null,\n          \"usage_samples\": 3,\n          \"cost_known\": true,\n          \"usage_by_purpose\": {\n            \"main\": {\n              \"calls\": 3,\n              \"input_tokens\": 60,\n              \"output_tokens\": 24,\n              \"cache_read_tokens\": null,\n              \"cache_write_tokens\": null\n            }\n          },\n          \"first_token_seconds\": null,\n          \"request_latencies\": [],\n          \"parent_context_chars\": 1989\n        },\n        \"answer\": \"Evidence: source.json\",\n        \"session_id\": \"dc12cd31bdc147e9a74eebacff0bf24b\",\n        \"model_calls\": 3,\n        \"accounted_tokens\": 84,\n        \"cost_cny\": \"0\",\n        \"elapsed_seconds\": 0.0405\n      },\n      {\n        \"id\": \"W07\",\n        \"group\": \"baseline\",\n        \"variant\": \"standard\",\n        \"status\": \"pass\",\n        \"checks\": {\n          \"artifact_json\": true,\n          \"source_evidence_read\": true,\n          \"protected_file_unchanged\": true\n        },\n        \"fixture_project\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/evaluation/.weyra/evaluation-fixtures/9fe3a543ff841f46f5ec/baseline/standard/W07-011062477f\",\n        \"metrics\": {\n          \"branch\": \"baseline/standard\",\n          \"input_tokens\": 60,\n          \"output_tokens\": 24,\n          \"cache_read_tokens\": null,\n          \"cache_write_tokens\": null,\n          \"usage_samples\": 3,\n          \"cost_known\": true,\n          \"usage_by_purpose\": {\n            \"main\": {\n              \"calls\": 3,\n              \"input_tokens\": 60,\n              \"output_tokens\": 24,\n              \"cache_read_tokens\": null,\n              \"cache_write_tokens\": null\n            }\n          },\n          \"first_token_seconds\": null,\n          \"request_latencies\": [],\n          \"parent_context_chars\": 1933\n        },\n        \"answer\": \"Evidence: source.json\",\n        \"session_id\": \"b5c6fb60874147b5a92a5b648dfa159f\",\n        \"model_calls\": 3,\n        \"accounted_tokens\": 84,\n        \"cost_cny\": \"0\",\n        \"elapsed_seconds\": 0.1024\n      },\n      {\n        \"id\": \"W08\",\n        \"group\": \"baseline\",\n        \"variant\": \"standard\",\n        \"status\": \"pass\",\n        \"checks\": {\n          \"artifact_json\": true,\n          \"source_evidence_read\": true,\n          \"protected_file_unchanged\": true\n        },\n        \"fixture_project\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/evaluation/.weyra/evaluation-fixtures/9fe3a543ff841f46f5ec/baseline/standard/W08-6adf4f2379\",\n        \"metrics\": {\n          \"branch\": \"baseline/standard\",\n          \"input_tokens\": 60,\n          \"output_tokens\": 24,\n          \"cache_read_tokens\": null,\n          \"cache_write_tokens\": null,\n          \"usage_samples\": 3,\n          \"cost_known\": true,\n          \"usage_by_purpose\": {\n            \"main\": {\n              \"calls\": 3,\n              \"input_tokens\": 60,\n              \"output_tokens\": 24,\n              \"cache_read_tokens\": null,\n              \"cache_write_tokens\": null\n            }\n          },\n          \"first_token_seconds\": null,\n          \"request_latencies\": [],\n          \"parent_context_chars\": 1937\n        },\n        \"answer\": \"Evidence: source.json\",\n        \"session_id\": \"4cccf22327f949cabbdb10c58ec5ba99\",\n        \"model_calls\": 3,\n        \"accounted_tokens\": 84,\n        \"cost_cny\": \"0\",\n        \"elapsed_seconds\": 0.0561\n      },\n      {\n        \"id\": \"W09\",\n        \"group\": \"baseline\",\n        \"variant\": \"standard\",\n        \"status\": \"pass\",\n        \"checks\": {\n          \"artifact_json\": true,\n          \"source_evidence_read\": true,\n          \"protected_file_unchanged\": true\n        },\n        \"fixture_project\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/evaluation/.weyra/evaluation-fixtures/9fe3a543ff841f46f5ec/baseline/standard/W09-cc5f69f843\",\n        \"metrics\": {\n          \"branch\": \"baseline/standard\",\n          \"input_tokens\": 60,\n          \"output_tokens\": 24,\n          \"cache_read_tokens\": null,\n          \"cache_write_tokens\": null,\n          \"usage_samples\": 3,\n          \"cost_known\": true,\n          \"usage_by_purpose\": {\n            \"main\": {\n              \"calls\": 3,\n              \"input_tokens\": 60,\n              \"output_tokens\": 24,\n              \"cache_read_tokens\": null,\n              \"cache_write_tokens\": null\n            }\n          },\n          \"first_token_seconds\": null,\n          \"request_latencies\": [],\n          \"parent_context_chars\": 1974\n        },\n        \"answer\": \"Evidence: source.json\",\n        \"session_id\": \"797867f8903c414886afc07149da3534\",\n        \"model_calls\": 3,\n        \"accounted_tokens\": 84,\n        \"cost_cny\": \"0\",\n        \"elapsed_seconds\": 0.0427\n      },\n      {\n        \"id\": \"W10\",\n        \"group\": \"baseline\",\n        \"variant\": \"standard\",\n        \"status\": \"pass\",\n        \"checks\": {\n          \"artifact_json\": true,\n          \"source_evidence_read\": true,\n          \"protected_file_unchanged\": true\n        },\n        \"fixture_project\": \"/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-check-ypq887pg/evaluation/.weyra/evaluation-fixtures/9fe3a543ff841f46f5ec/baseline/standard/W10-4231394cf3\",\n        \"metrics\": {\n          \"branch\": \"baseline/standard\",\n          \"input_tokens\": 60,\n          \"output_tokens\": 24,\n          \"cache_read_tokens\": null,\n          \"cache_write_tokens\": null,\n          \"usage_samples\": 3,\n          \"cost_known\": true,\n          \"usage_by_purpose\": {\n            \"main\": {\n              \"calls\": 3,\n              \"input_tokens\": 60,\n              \"output_tokens\": 24,\n              \"cache_read_tokens\": null,\n              \"cache_write_tokens\": null\n            }\n          },\n          \"first_token_seconds\": null,\n          \"request_latencies\": [],\n          \"parent_context_chars\": 1981\n        },\n        \"answer\": \"Evidence: source.json\",\n        \"session_id\": \"cbf581c344f84bce901133028a5e536c\",\n        \"model_calls\": 3,\n        \"accounted_tokens\": 84,\n        \"cost_cny\": \"0\",\n        \"elapsed_seconds\": 0.0425\n      }\n    ],\n    \"cost_cny\": \"0\"\n  },\n  \"complete\": true,\n  \"identity\": \"9fe3a543ff841f46f5ecd17b0668f2a3c9989e85652aefbb0d0614386486bdef\",\n  \"new_model_calls\": 203,\n  \"total_tokens\": 5684,\n  \"total_cost_cny\": \"0\",\n  \"budget_stopped\": false,\n  \"budget\": {\n    \"id\": null,\n    \"calls\": 203,\n    \"tokens\": 5684,\n    \"accounted_cost_cny\": \"0\",\n    \"unknown_calls\": 0\n  }\n}\n"
+      },
+      {
+        "name": "historical_guidance",
+        "exit_code": 1,
+        "passed": true,
+        "output": "Historical benchmarks require the Weyra source repository or source archive. Extract the source, install it with pip install -e '.[dev]', then run python -m benchmarks.<module>. Daily evaluation: weyra eval --offline\n"
+      },
+      {
+        "name": "source_load_and_report",
+        "exit_code": 0,
+        "passed": true,
+        "output": ""
+      },
+      {
+        "name": "benchmarks.final_delivery_eval_help",
+        "exit_code": 0,
+        "passed": true,
+        "output": "usage: final_delivery_eval.py [-h] [--project PROJECT] --ledger-root\n                              LEDGER_ROOT --output OUTPUT\n                              [--stage {prepare,pilot,run,report}]\n\nOne bounded final campaign: independent skill review and frozen legacy\ncompletion. No API calls are made by --stage prepare or --stage report. All\npaid stages share the existing finish-live-cny100 ledger; their manifests and\nresults are append-only.\n\noptions:\n  -h, --help            show this help message and exit\n  --project PROJECT\n  --ledger-root LEDGER_ROOT\n  --output OUTPUT\n  --stage {prepare,pilot,run,report}\n"
+      },
+      {
+        "name": "weyra.final_delivery_eval_help",
+        "exit_code": 0,
+        "passed": true,
+        "output": "usage: final_delivery_eval.py [-h] [--project PROJECT] --ledger-root\n                              LEDGER_ROOT --output OUTPUT\n                              [--stage {prepare,pilot,run,report}]\n\nOne bounded final campaign: independent skill review and frozen legacy\ncompletion. No API calls are made by --stage prepare or --stage report. All\npaid stages share the existing finish-live-cny100 ledger; their manifests and\nresults are append-only.\n\noptions:\n  -h, --help            show this help message and exit\n  --project PROJECT\n  --ledger-root LEDGER_ROOT\n  --output OUTPUT\n  --stage {prepare,pilot,run,report}\n"
+      }
+    ]
+  },
+  "cleanup": {
+    "before_kib": 1090212,
+    "after_kib": 1013220,
+    "removed": [
+      {
+        "path": ".weyra/verification/package-env",
+        "size_kib": 29600,
+        "classification": "rebuildable verification virtualenv"
+      },
+      {
+        "path": ".weyra/core-package-check-20261018T053321Z/venv",
+        "size_kib": 15888,
+        "classification": "rebuildable verification virtualenv"
+      },
+      {
+        "path": ".weyra/core-package-check-current-20261018T111601Z/venv",
+        "size_kib": 15824,
+        "classification": "rebuildable verification virtualenv"
+      },
+      {
+        "path": ".weyra/core-package-check-current-20261018T112957Z/venv",
+        "size_kib": 15828,
+        "classification": "rebuildable verification virtualenv"
+      },
+      {
+        "path": ".weyra/build-before-namespace-20261020",
+        "size_kib": 488,
+        "classification": "prior build output"
+      }
+    ],
+    "protected_files": 3323,
+    "protected_hashes_unchanged": true
+  },
+  "protected_hashes_unchanged": 3323,
+  "source_sha256": {
+    "benchmarks/__init__.py": "a66fc917a0ee136d563b2c07e51784e4c4cd97f863cd4d73816d2e8ab1ae2f2f",
+    "benchmarks/_sources.py": "33a8248044a68f2688d4e9c6704486d1825caba376c5a985bf7d795be1a38105",
+    "benchmarks/core_context.py": "42277b63e5cbf6d448ec61506b44579c3928c2bd68fe8d94ee9a5bddbe60a64c",
+    "benchmarks/core_corpus.py": "e0b38c49b6746a6144da06df852f772114986de6a7993172f5584f911573fb5c",
+    "benchmarks/core_evaluation.py": "8b19afc107e2875d6ded8c9a22a22e1763e0550f4c838aaa29e86047658cd590",
+    "benchmarks/core_scoring.py": "bc66c4c94813bb43a6953a71e23143c4d6e17acb8383671146d93767d75f436d",
+    "benchmarks/data/core-eval-v1.json": "af4edac56a3c439ca93b0b5842eaf75b32e563443a05f3d92bdf69725a5eb9f1",
+    "benchmarks/data/core-localization-v2.json": "c21e01cb0b05637d83c25c33d2489852011af3cccba011e22aa215ea9fc7afd3",
+    "benchmarks/data/core-public-audit-v1.json": "bcbaf921d61766afb20564e21ca3732374737cf8e5a72e2e56565345e2f5adf2",
+    "benchmarks/data/final-skill-v1.json": "cbea608954c0971be22a05277db800b23b20fbc8d02d7d701fa88efe1e14bb02",
+    "benchmarks/data/finish-context-v1.json": "a7dc9f312a86291b983385fe88c87cd9a5b236a1255a681d24787d3a5240db31",
+    "benchmarks/data/finish-eval-v1.json": "631dd0ed438943771b164cdc1c8f3ee7f733f0425d49618e4cde07701d8936c1",
+    "benchmarks/final_campaign_report.py": "71a7a0034fc996f17d960d9dd884e5d0c1a0ff326403d233ec84139f91bae4ec",
+    "benchmarks/final_delivery_eval.py": "c26e212734d947f9952910b53a0a16e71add14757a242ef324db7b4ad7794d2d",
+    "benchmarks/final_legacy_eval.py": "fad6ded9d1313e77c2a2fead0e03354a45b24c0bd080a65d2688aaf38e7bb1b6",
+    "benchmarks/final_skill_eval.py": "d0bbe993b841257c654729c21910367a779a7816a6101ed68655940c0e9462af",
+    "benchmarks/finish_context_eval.py": "c991f12fc4f818d3637c187ae80fbbc39636436e833f109569c83200f54223c7",
+    "benchmarks/finish_evaluation.py": "16a5143173d21db41b143b2de0a3afa1310e5912de4d2a81a586d9c7b1e454a4",
+    "data/fixtures/mcp_server.py": "3ff3080e5fcab77cc6e20267b38d929cef3cc919b1caa9e887e9522e1ef021f9",
+    "data/scenarios.json": "931de8505b5481c5192e3786852771d8d1191ba4e2484c07bd3e14b01421b742",
+    "data/upstream/dsh-checkpoint-preamble.txt": "306ffa304ad5eee1b9a19a5744b7bf665eac77c4fd154ad3eed572987a534da1",
+    "data/upstream/dsh-compaction-instruction.txt": "3b7aa71f525b9a82afc2f1747c4434ceb7b3bc1fadf8b64c37c4e97db70d074b",
+    "data/upstream/dsh-prompts.json": "317fd4ab95abf01be84daf76ec1aa966602a7f43edd058431954f8afffad6069",
+    "weyra/__init__.py": "b4fcd23bf9899da7bd092b13582350efe261c1c2b3be5647316f3378b7c8abe4",
+    "weyra/__main__.py": "130acafaef8483625c857235eb995dace14121a5ba10eec2c7464c9f045153a7",
+    "weyra/_benchmark_compat.py": "96ca088498c5cf7acaeb9e0d7befac793bc0c2d9c7277f45409be269a905ffe9",
+    "weyra/agent.py": "95c8ebcee3ea08a461330dcd6022ae593f3564a65eaee52922ad3ac8b39da186",
+    "weyra/agent_loop.py": "23b7761e547dd57ebed432474c5235f34e2361d897cc9f4d504f58cb61e2d0d4",
+    "weyra/commands.py": "08f447919059cf5afb7ac2e6f0a4843f9357e99791e854290f3cd3a4ab311a68",
+    "weyra/config.py": "f024e2dc5a1a035033f3c8d51f7ee853909a5a2b61f36e191bdcc2f5ef301b68",
+    "weyra/context.py": "1de9bca7c5b7de2150cd69c872de05e4c19e30c288101d72aad9883310532821",
+    "weyra/contracts.py": "95fdafb6fd96c94507906bcab53594da66fe50766a5ba4c1cb605057f6943815",
+    "weyra/core_context.py": "2da88186d561f2b57fcb7b53303f0fb9a9f387f9da29665447c3a1e2ab926976",
+    "weyra/core_corpus.py": "6d6cc7bd2e46986e8e4f656e4a362d13f6c8e8d3467dfd0d12196c5c06dee7a4",
+    "weyra/core_evaluation.py": "9d2db4286deb534024d2fb11aee277d2829404d6e9b7eaa1a6199269522e3f38",
+    "weyra/core_scoring.py": "9f2575f8a70f841fdc562a9685e34133ed0cc6b3763b36848bc2d204430f8a24",
+    "weyra/demos.py": "d4ca1af86454420d0af9e0e8e9febcfce163fadf5c4b71978b39ea5b588ac32f",
+    "weyra/evaluation.py": "ad7125a030963f75020aae2ab001940d4e2cd83af8f1c6411f912518b482ffe4",
+    "weyra/events.py": "7ad6247b45249c20603894e345a576bf2e8c5d4321230884d473cbb2aada521e",
+    "weyra/final_campaign_report.py": "25eb798b2abd632972f2709553db50b1ee776938550a9d8c6a6280760e6ad030",
+    "weyra/final_delivery_eval.py": "26cd57adb42ad5cc09b2561ab7f618c0ecc3205275e2f653d4289633d3b08836",
+    "weyra/final_legacy_eval.py": "a1433740fa09628e49815bdcdddb2cec287800c2fb150ed67b78eb7a9a9213d2",
+    "weyra/final_skill_eval.py": "b42a6a56bbce66cd5adde2195df96bede60450bf034839f70724d96c9206eb36",
+    "weyra/finish_context_eval.py": "1069d4bd9c5976234659b96ea790f7b5702125510a5de78198ac57530c04735e",
+    "weyra/finish_evaluation.py": "fa944bfd449130073bedce0bba75fb80223e0f6358233546c2f4a5929251fd82",
+    "weyra/frontmatter.py": "6a2077a1aa09f3d129a94f23d8d6275a95a33dfe3d60f3b1eb24d842438f2791",
+    "weyra/jobs.py": "df1c465035a8d525cb9f0d57acf41684269901cdbdf7ac601c93ab26ee329a95",
+    "weyra/knowledge.py": "9d1450716811c723e29cdca1c8c1a7de94a36708d8f1d62d0b50d8752c2d31a7",
+    "weyra/main.py": "e73e51b066dec5c9b39f66f49a51c6300270e74efb866b907cd570048158d11f",
+    "weyra/mcp_client.py": "8b6ecf26df63a91c0a5d40686ac8089c896e5b2c5ac8f0ac94bcc7bbce185b3a",
+    "weyra/memory.py": "39ce132ee0914f1bbad38b8fa2dca0535f505d7c0d0a74830d68c19b02188afd",
+    "weyra/model_catalog.py": "62f2350c6ef2f69d73189191f8ce4e5b54c48c07521de533c6836289a24d03ce",
+    "weyra/model_runtime.py": "7bdef87bc7d7a753898229ed1c2afd3077edf0e9230252c147bfd24dca744cd7",
+    "weyra/online_skill_evolution.py": "5b947733954bad0476a3c069828916f12cc79e1170837b7695341e5f417e2c1f",
+    "weyra/output.py": "6a979fad4a148aa7fa6a8a7c992e3df433d1aa0750f20ad73c232d63b7f0e7af",
+    "weyra/presentation.py": "46264dcd84ac9e087bfc89eaea1018fa1c6e5cf79b6d1991f8595593df856ed0",
+    "weyra/pricing.py": "ac2d3254d4bb013e6f76689480f9fdeb96bbf60c6e52fceff00d7d23eac8d6d6",
+    "weyra/prompt.py": "c21a682e8f193c7037877b5dd4037e354db5b3d15005bca8f3b250bca98fd385",
+    "weyra/runtime_state.py": "13f8e712842774c1abbbaf72ee9eb272f0f3f64cff86d3159a352231cb58dbff",
+    "weyra/service.py": "7c5dcab2ba9f95bcd6c91b4c18af1e59c04b9561c8d0ef48a628b5c05809049c",
+    "weyra/session.py": "df4833195adef0d343f27119e9bbb2f8b77c0d4267ee59eb3c8f090ba09d38da",
+    "weyra/session_commands.py": "4417c7bd80276139b73cdfd19ad6136c0fb740bdfb2257804ce10d705a741df4",
+    "weyra/skill_evolution.py": "22ca529d963e60bb7cb0c9a18231a9c6f96bfc34fb6f2a1b01dd30c02ee3b92c",
+    "weyra/skill_judge.py": "31af44ec0c9486303ef8339aa6f1085a104e08a17c5183aea5e78f6064520b1d",
+    "weyra/skills.py": "87f6a89638bf6633941b54524a30f23bd1bbc08fdeba8c8c0ed61f8205d52de8",
+    "weyra/subagent.py": "d08ca1de655e45844de294d339eb1b489a0ab369a3b86fd1ce25675f5ff449df",
+    "weyra/tool_runtime.py": "bdf94d6f32e5a75fbed4643f4b987ddff9a00ecad8a9a6e07280cc0ed7a126d0",
+    "weyra/tools.py": "2f09db2b210c3bf1040a903bd762478af5e7113113f7920b1f83acfa98c20146",
+    "weyra/tui/__init__.py": "fcf7eea4883dacec1fcce56cccb48b1ac2353ad7498e206da673b8e2904a49f5",
+    "weyra/tui/app.py": "bf70202a8e2e772aa315c8d8929634674e646905e4dd8fd096129da73d9a5c49",
+    "weyra/tui/commands.py": "f94d21dc48e3fa8e1b34547a5fbe8def1a07e85c8ef9c68e2688891e52d590e3",
+    "weyra/tui/modals/__init__.py": "fa928e64011c7df9e508c9086254cf5527e99c5d58b1cba35674bfb5770f0f1b",
+    "weyra/tui/modals/approval.py": "fac81d61ee79b2369d3812270deda39b8264aeadcf0ccbac6db61745700f846f",
+    "weyra/tui/modals/help.py": "d4632aa6896bfafc857dd5bb1311c9af16a45b523dd985039ffc999299beb16d",
+    "weyra/tui/modals/model_picker.py": "9bfe63b4f5503cb0136c6a60f2d7c6eb41ed7d977cb91a1691e1ddaabaf27195",
+    "weyra/tui/modals/output_viewer.py": "deadecaf018890720cc2d98ed15131dc55f9808582f67249adb4b2a9ffb73ec0",
+    "weyra/tui/modals/session_picker.py": "485e33fc8e2d95e73163803723c28e8c94d5064e224f147d48bd9f9e6981d429",
+    "weyra/tui/modals/skill_viewer.py": "f223bd5f75da24c934a6121498fe614fda3f14cea81cbae9349c56318278b071",
+    "weyra/tui/state.py": "c4bced0d2d5c2398354142e2ecd02d98cf60786b590611f55009385df2219c33",
+    "weyra/tui/theme.tcss": "836e9398dc6fcea5700570d456557e8bbbdeab6d433e913682e906e635d750c3",
+    "weyra/tui/widgets/__init__.py": "30fc0750862df9adc630365fdf8dace8a88e7ef296fbc64dbe5771553eff779f",
+    "weyra/tui/widgets/chat_view.py": "ed85d412b357487c3c604345904ea554d779a8cdb6a9f7de27bf6cdfbc50c8e9",
+    "weyra/tui/widgets/editor.py": "1ee64513a533c6fa61fc5a483bedd0b281048f7d35787d698d3241870d77b4bb",
+    "weyra/tui/widgets/footer.py": "144f104e4918d1bc0e3b6bddac6bf302dd222d9442897fc6ff274dfc7118430f",
+    "weyra/tui/widgets/message.py": "b7f73bbf6ec8e794c95f24fff12320525ab2e733b44dd1e6e06faf2a07f286fe",
+    "weyra/tui/widgets/status_bar.py": "9fc87fbecafc97c87fe7f4d19a0cf9580c92975c5fa9e312281fa5b6e5711063",
+    "weyra/tui/widgets/thinking_card.py": "1f8bdc1537c045ac1e00286151f15a54e8b11bc864d7f1884e205a13a57f2895",
+    "weyra/tui/widgets/tool_card.py": "19926da91706ddcace55b6e0ec54585ba87e7a9324d3690c0fb4eb76bd5a93f3",
+    "weyra/ui.py": "d71f23b6e9d4ed8a07a7990acad99393e7ccc76445e922bd1ce7d1966c3be934"
+  },
+  "artifacts_sha256": {
+    "dist/weyra-0.1.3-py3-none-any.whl": "116807951b786de0fc9af677111bd6eaa68a75c5ce9c4db2fc0a3c1d1ac26d54",
+    "dist/weyra-0.1.3.tar.gz": "68d3f4cc68aac8ec478324a850662c1e55405fd4332725df162f1d48d0cbf835"
+  },
+  "changes": {
+    "historical_modules": [
+      {
+        "from": "weyra/core_context.py",
+        "to": "benchmarks/core_context.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/core_corpus.py",
+        "to": "benchmarks/core_corpus.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/core_evaluation.py",
+        "to": "benchmarks/core_evaluation.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/core_scoring.py",
+        "to": "benchmarks/core_scoring.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/final_campaign_report.py",
+        "to": "benchmarks/final_campaign_report.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/final_delivery_eval.py",
+        "to": "benchmarks/final_delivery_eval.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/final_legacy_eval.py",
+        "to": "benchmarks/final_legacy_eval.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/final_skill_eval.py",
+        "to": "benchmarks/final_skill_eval.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/finish_context_eval.py",
+        "to": "benchmarks/finish_context_eval.py",
+        "compatibility": "source alias remains"
+      },
+      {
+        "from": "weyra/finish_evaluation.py",
+        "to": "benchmarks/finish_evaluation.py",
+        "compatibility": "source alias remains"
+      }
+    ],
+    "data_moves": [
+      {
+        "from": "data/core-eval-v1.json",
+        "to": "benchmarks/data/core-eval-v1.json"
+      },
+      {
+        "from": "data/core-localization-v2.json",
+        "to": "benchmarks/data/core-localization-v2.json"
+      },
+      {
+        "from": "data/core-public-audit-v1.json",
+        "to": "benchmarks/data/core-public-audit-v1.json"
+      },
+      {
+        "from": "data/final-skill-v1.json",
+        "to": "benchmarks/data/final-skill-v1.json"
+      },
+      {
+        "from": "data/finish-context-v1.json",
+        "to": "benchmarks/data/finish-context-v1.json"
+      },
+      {
+        "from": "data/finish-eval-v1.json",
+        "to": "benchmarks/data/finish-eval-v1.json"
+      }
+    ],
+    "report_tools": [
+      "scripts/reports/core_localization_supplement.py",
+      "scripts/reports/core_report.py",
+      "scripts/reports/core_resources.py",
+      "scripts/reports/finish_report.py",
+      "scripts/reports/public_review.py"
+    ],
+    "maintained_files": [
+      "pyproject.toml",
+      "requirements.txt",
+      "MANIFEST.in",
+      ".gitignore",
+      "examples/verify.py",
+      "scripts/verify_package.py",
+      "scripts/run_finish.py",
+      "weyra/_benchmark_compat.py",
+      "tests/test_architecture_governance.py"
+    ],
+    "new_results_directory": ".benchmarks/results/"
+  },
+  "git_committed": false,
+  "git_pushed": false,
+  "paid_model_calls": 0
+}

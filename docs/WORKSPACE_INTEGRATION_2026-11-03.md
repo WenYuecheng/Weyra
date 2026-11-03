@@ -1,0 +1,34 @@
+# 工作区与 GitHub 后端整合验收
+
+本记录对应步骤所有权、工具治理、领域投影、目标 CAS 及此前 P0/P1 后端更新的工作区整合。功能与限制见 [当前架构](DSH_STEP_ARCHITECTURE.md)；此前 866 项通过记录保留为历史验收。
+
+## 整合依据
+
+- GitHub：`WenYuecheng/Weyra`，核验的 `main` 为 `69ca7799ac9366ec9b768c98db9cc75b16f231cf`。
+- 本地历史：`ab0ccdc`。两侧没有共同祖先；整合提交保留两侧历史，以已逐文件比较并验证的工作区作为结果树。
+- 提交分支：`codex/weyra-completion`。不强制推送、不直接覆盖远端 `main`。
+- 远端技能回放窗口限制、维护预算、验证缓存及 CI 保留；来源治理相关差异由相应回归覆盖。
+
+## 新旧代码治理
+
+| 范围 | 当前职责 |
+| --- | --- |
+| `weyra/core`、`weyra/llm`、`weyra/coding` | 执行、模型协议与领域装配的唯一运行实现 |
+| `weyra/agent.py`、`model_runtime.py`、`tool_runtime.py` 等 | 公开导入兼容转发；不维护第二套执行代码 |
+| `benchmarks` | 源码环境中的评测实现和固定数据；不进入运行 wheel |
+| `weyra/core_*`、`finish_*`、`final_*` | 历史评测路径的薄兼容入口；内部评测脚本改用 `benchmarks` |
+| `docs` | 当前架构、升级和验收说明 |
+| `wiki/history_archive` | 历史结果溯源；不作为当前功能说明，不删除历史实验 |
+
+聚合投影兼容入口已委托领域 `UNITS`，消除两套 reducer。新增回归先复现 `child_result_ack` 在旧入口丢失交付确认，再验证其与领域投影一致。打包清单保留贡献指南。个人配置、凭据、数据库、构建目录及本地实验输出继续排除在提交之外。
+
+## 验证
+
+- 完整 pytest：867 passed、3 skipped、5 subtests passed；跳过项为已有 Docker 条件场景。
+- 全仓 Ruff、相对 GitHub 基线的代码与当前文档空白检查通过；历史归档原始空白不改写。
+- wheel/sdist 构建、16 项隔离安装与离线命令检查通过。
+- 最新 wheel 与工作区全部运行 Python 文件逐字一致。
+- 待提交文件扫描未发现常见格式的明文 API token 或私钥；此扫描不替代完整安全审计。
+- 独立只读复核：相关离线回归 48 passed，未发现阻断提交问题。
+
+付费模型评测保持暂停。本次离线验证不构成在线性能或成功率结论；GitHub Actions 状态须以推送后远端实际执行为准。

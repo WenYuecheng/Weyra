@@ -1,0 +1,8 @@
+{
+  "version": "core-localization-v2-freeze",
+  "manifest": "data/core-localization-v2.json",
+  "sha256": "c21e01cb0b05637d83c25c33d2489852011af3cccba011e22aa215ea9fc7afd3",
+  "cases": 60,
+  "unique_inputs": 60,
+  "expected_labels_frozen_before_execution": true
+}

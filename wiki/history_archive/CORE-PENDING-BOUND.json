@@ -1,0 +1,21 @@
+{
+  "snapshot_calls": 2468,
+  "already_absorbed_pending_request_ids": [
+    "001373a8dd2947509ecfb8db9d7aba52",
+    "3d8ffa24330f44c3ba5a68a06da3da9f",
+    "5d77ac3ec1b04441ad167e981d4aee21",
+    "61a6ddade09f4b2a8e677481a8e62f75",
+    "81ab8cccf24146c59ccef35d86fc9b7c",
+    "84877e02cb2547a7a95bf6eb57b6e51e",
+    "8c6b43f68c90448b951e053afc587602",
+    "8f2f34aae73b4fc69f337767486e2987",
+    "b2a576a467314376ad0bd65551a8bcef",
+    "c42ef70eac7c4b74a4a9bd87707ab2a1",
+    "fcabc4ca58fb4a9f8fc91b2f33fde773",
+    "feb644b4fb5b430aafdb072210cb9ca5"
+  ],
+  "pending_count": 0,
+  "unsettled_request_candidates": [],
+  "all_candidate_upper_cny": "0",
+  "method": "Sum all model_request records without model_usage across three cohort directories, including ambiguous/orphan requests. Candidate count is not a new physical request count. Future semaphore-waiting requests have durable model_request before provider entry and are included."
+}

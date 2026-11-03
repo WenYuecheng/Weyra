@@ -67,10 +67,14 @@ Weyra 从原问题、原回答和下一轮明确反馈中维护技能。原问�
 /skill-rollback <name> <version>
 ```
 
-本地离线流程：`weyra demo --scenario writing --offline --project /tmp/weyra-writing`。固定清单的完整评测可显式调用 `ConfiguredSkillGate.__call__`；在线更新仍只使用冻结的 2+2 窗口。纯文本、文件修改、缓存失效、数据分离及实际发布版本由本仓库回归测试覆盖。
+本地离线流程：`weyra demo --scenario writing --offline --project /tmp/weyra-writing`。真实评测复用原有 24 题，旧技能、直接反馈、实际发布技能各执行一次，共 72 次计划执行。新增脚本独立账本上限 50 元，维护和裁判也计入，未更新技能单列：
 
-2026-10-28：真实模型效果评测已按用户要求暂停。后续最小接口测试没有获得可靠的结构化输出，不能据此报告技能适应性或泛化收益。旧技能、直接反馈、实际发布技能三组共 72 次计划执行留待后续，本轮没有新的真实任务成绩。
+```bash
+python -m scripts.run_skill_replay --output /tmp/weyra-replay-new --prepare
+python -m scripts.run_skill_replay --output /tmp/weyra-replay-new
+python -m scripts.run_skill_replay --output /tmp/weyra-replay-new --report
+```
 
-本地研究脚本及其暂停标记保存在未发布的研究工作区；本次运行时发布延续仓库对历史评测代码的清理，不恢复旧的 benchmark 兼容入口，也不发布凭据、会话或私有运行日志。真实效果试验恢复前，应重新确认有效接口、计价和剩余预算，并把结果作为新的证据记录，保留既有历史成绩。工程测试及离线示例可在此期间继续运行。
+准备和报告模式不调用模型；使用新的输出目录，保留原有成绩。协议冻结后改变实现须新建实验目录。小验证窗口提供发布证据，不能据此宣称全面满足用户需求；留出题结果另见[工程评测](BENCHMARKS.md)。
 
-本轮后端发布在远端最新源码上验证：457 项测试、5 个子测试通过，静态检查与 wheel/sdist 构建通过，13 项独立环境安装和离线命令检查通过。CI 使用单个 Ubuntu/Python 3.11 环境。以上是工程验证，不代表真实模型效果或泛化收益。
+2026-10-28：用户已暂停本地付费评测。项目中的 `.weyra/benchmarks/evaluation-paused.json` 是有界评测入口的暂停标记：即使指定新的输出目录，入口也会在加载模型凭据前返回 `paused_by_user`，不创建付费运行时。`--prepare`、`--report`、离线示例与工程测试仍可使用。标记不自动清除；恢复须由用户明确要求，届时再检查接口响应、费率、剩余额度及冻结协议。暂停期间不通过新建实验目录重新获得一份 50 元预算。

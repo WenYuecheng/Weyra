@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-28",
+  "status": "paused_by_user",
+  "automatic_resume": false,
+  "reason": "Final gpt-6.1-sol minimal test returned HTTP 200 but failed exact JSON instruction compliance and contained promotional text. User requested pausing paid evaluation and continuing offline work.",
+  "last_test": {
+    "model": "gpt-6.1-sol",
+    "http_status": 200,
+    "instruction_check_passed": false,
+    "max_tokens": 128,
+    "reported_usage_tokens": 127
+  },
+  "formal_evaluation": {
+    "planned_executions": 72,
+    "completed_executions": 0,
+    "quality_conclusion": null,
+    "not_adapted_families": 3
+  },
+  "checks": [
+    {
+      "label": "DeepSeek",
+      "model": "DeepSeek-V4.1-Flash",
+      "status": "failed",
+      "http_status": 402,
+      "elapsed_seconds": 0.412,
+      "error_code": "activity_wallet_activation_required",
+      "accounted_cost_cny": "0.059865133824"
+    },
+    {
+      "label": "Luna",
+      "model": "gpt-5.6-luna",
+      "status": "failed",
+      "http_status": 402,
+      "elapsed_seconds": 0.372,
+      "error_code": "activity_wallet_activation_required",
+      "accounted_cost_cny": "0.2793344"
+    },
+    {
+      "label": "DeepSeek",
+      "model": "DeepSeek-V4.1-Flash",
+      "status": "failed",
+      "http_status": 402,
+      "elapsed_seconds": 1.029,
+      "accounted_cost_cny": "0.0598651338240"
+    },
+    {
+      "label": "Luna",
+      "model": "gpt-5.6-luna",
+      "status": "failed",
+      "http_status": 402,
+      "elapsed_seconds": 0.231,
+      "accounted_cost_cny": "0.2793344000000"
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "status": "failed",
+      "http_status": 404,
+      "elapsed_seconds": 1.999,
+      "max_tokens": 128,
+      "error_code": "model_not_found"
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "status": "reachable",
+      "http_status": 200,
+      "elapsed_seconds": 1.814,
+      "max_tokens": 128,
+      "usage": {
+        "prompt_tokens": 5,
+        "completion_tokens": 127,
+        "total_tokens": 132
+      }
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "status": "unreliable_response",
+      "http_status": 200,
+      "elapsed_seconds": 0.785,
+      "max_tokens": 128,
+      "instruction_check_passed": false,
+      "usage": {
+        "prompt_tokens": 18,
+        "completion_tokens": 109,
+        "total_tokens": 127
+      }
+    }
+  ],
+  "accounting": {
+    "cun_conservative_ledger_cny": "0.9032361161728",
+    "tryai_cost_cny": null,
+    "provider_invoice_cny": null,
+    "note": "Initial experiment and CUN connectivity retries share one ledger. CUN amounts are conservative accounting, not invoices. TryAI rates were not provided and were not replaced with CUN tariffs."
+  },
+  "offline_work": [
+    "Bounded replay pause checked before runtime configuration, including fresh output directories.",
+    "Offline prepare/report, regression tests and package verification remain available.",
+    "No credentials persisted in project configuration."
+  ],
+  "raw_artifacts": [
+    {
+      "path": ".weyra/benchmarks/skill-replay-20261028-v1/availability-curl-20261028T052250Z.json",
+      "sha256": "acbd57e2070acf88c2bbaa198b9a7c68d720fc3c5c88823311d1c4ef7805ce85"
+    },
+    {
+      "path": ".weyra/benchmarks/skill-replay-20261028-v1/availability-retry-20261028T051800Z.json",
+      "sha256": "e1b8fb353eed495102cd54c866d7f8f37568636c88b559c85c150b1fada90663"
+    },
+    {
+      "path": ".weyra/benchmarks/skill-replay-20261028-v1/availability-tryai-20261028T055217Z.json",
+      "sha256": "d180b60f7cb44f2cafbd8af7d8ff7908215e03dd2481166146b7d5e4ab3a18ee"
+    },
+    {
+      "path": ".weyra/benchmarks/skill-replay-20261028-v1/availability-tryai-listed-20261028T055251Z.json",
+      "sha256": "3f25d67758abb6a182f4ede88f998eb865c77d0f09d29331995ced48fc828bd3"
+    },
+    {
+      "path": ".weyra/benchmarks/skill-replay-20261028-v1/availability-tryai-sol-20261028T055821Z.json",
+      "sha256": "af89b93130a682094c73e81a7490f71af8ba18cebaab39a563176803299506f2"
+    }
+  ],
+  "historical_results": "Original protocol, experiment summary and historical results remain unchanged.",
+  "offline_verification": {
+    "date": "2026-10-28",
+    "pytest_passed": 740,
+    "pytest_skipped": 3,
+    "subtests_passed": 5,
+    "ruff": "passed",
+    "build": "wheel and sdist passed",
+    "clean_package_checks": 16,
+    "package_version": "0.1.4",
+    "model_requests_after_pause": 0,
+    "ci": "Single Ubuntu/Python 3.11 workflow configured; remote CI not run."
+  }
+}

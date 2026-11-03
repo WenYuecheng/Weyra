@@ -44,6 +44,9 @@ from dataclasses import asdict, is_dataclass
 from pathlib import Path
 
 from .contracts import Message, canonical, digest, new_id
+from .event_schema import OWNED, validate_event
+from .projections import UNITS
+from .storage_version import SCHEMA_VERSION
 
 
 class SessionError(RuntimeError):
@@ -115,6 +118,9 @@ class SessionStore:
             self.path, isolation_level=None, check_same_thread=False, timeout=30
         )
         try:
+            if self._db.execute("PRAGMA user_version").fetchone()[0] > SCHEMA_VERSION:
+                raise SessionError("Unsupported future database version")
+            self._projection_cache = None
             self._db.execute("PRAGMA journal_mode=WAL")
             self._db.execute("PRAGMA foreign_keys=ON")
             self._db.execute("PRAGMA synchronous=FULL")
@@ -241,8 +247,7 @@ class SessionStore:
         5. imports: 遗留历史会话导入审计账本，记录导入源 SHA-256，防止同一历史被重复导入；
         6. child_inbox: 子智能体异步通信收件箱，支持两阶段确认（Two-Phase ACK）保证消息至少投递一次。
         """
-        self._db.executescript(
-            """
+        schema = """
             CREATE TABLE IF NOT EXISTS sessions (
                 session_id TEXT PRIMARY KEY, project TEXT NOT NULL, leaf TEXT,
                 created TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
@@ -269,7 +274,36 @@ class SessionStore:
                 PRIMARY KEY(session_id,task_id)
             );
         """
-        )
+        existing = {row[0] for row in self._db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        expected = {'sessions': {'session_id', 'project', 'leaf', 'created', 'updated'},
+                    'events': {'seq', 'session_id', 'id', 'parent', 'kind', 'data', 'request_id', 'task_id', 'turn_id'},
+                    'blobs': {'hash', 'data'}, 'aliases': {'path', 'session_id'},
+                    'imports': {'source_hash', 'session_id', 'source_path'},
+                    'child_inbox': {'session_id', 'task_id', 'result', 'acknowledged'}}
+        if existing and not set(expected) <= existing:
+            raise SessionError("Unrecognized legacy database schema")
+        optional_tables = {'event_metadata': {'session_id', 'event_id', 'version', 'ignorable'},
+                           'projection_checkpoints': {'session_id', 'version', 'leaf', 'state', 'checksum'},
+                           'projection_units': {'session_id', 'unit', 'version', 'leaf', 'watermark', 'state', 'checksum'}}
+        expected.update({name: columns for name, columns in optional_tables.items() if name in existing})
+        for table, columns in expected.items():
+            if table in existing:
+                actual = {r[1] for r in self._db.execute('PRAGMA table_info(' + table + ')')}
+                if not columns <= actual:
+                    raise SessionError("Invalid legacy schema: " + table)
+        self._db.execute('BEGIN IMMEDIATE')
+        try:
+            for statement in schema.split(';'):
+                if statement.strip():
+                    self._db.execute(statement)
+            self._db.execute('CREATE TABLE IF NOT EXISTS event_metadata (session_id TEXT, event_id TEXT, version INTEGER NOT NULL, ignorable INTEGER NOT NULL, PRIMARY KEY(session_id,event_id))')
+            self._db.execute('CREATE TABLE IF NOT EXISTS projection_checkpoints (session_id TEXT PRIMARY KEY, version INTEGER, leaf TEXT, state TEXT, checksum TEXT)')
+            self._db.execute('CREATE TABLE IF NOT EXISTS projection_units (session_id TEXT, unit TEXT, version INTEGER, leaf TEXT, watermark INTEGER, state TEXT, checksum TEXT, PRIMARY KEY(session_id,unit))')
+            self._db.execute('PRAGMA user_version=2')
+            self._db.execute('COMMIT')
+        except BaseException:
+            self._db.execute('ROLLBACK')
+            raise
 
     @classmethod
     def list_sessions(cls, project):
@@ -382,6 +416,16 @@ class SessionStore:
         self.leaf = self._db.execute(
             "SELECT leaf FROM sessions WHERE session_id=?", (self.session_id,)
         ).fetchone()[0]
+        self._projection_cache = None
+        rows = self._db.execute('SELECT event_id,version,ignorable FROM event_metadata WHERE session_id=?', (self.session_id,)).fetchall()
+        if any(row[2] not in (0, 1) for row in rows):
+            raise SessionError('Invalid event requiredness declaration')
+        metadata = {r[0]: (r[1], bool(r[2])) for r in rows}
+        for record in self._records:
+            try:
+                validate_event(record['kind'], record['data'], *metadata.get(record['id'], (1, True)))
+            except ValueError as error:
+                raise SessionError(str(error)) from error
 
     @contextmanager
     def transaction(self):
@@ -461,7 +505,7 @@ class SessionStore:
         self._by_id[record["id"]] = record
         self.leaf = record["id"]
 
-    def append(self, kind: str, data: dict, checkpoint: bool = False) -> dict:
+    def append(self, kind: str, data: dict, checkpoint: bool = False, *, schema_version=1, ignorable=None) -> dict:
         """向会话提交追加一条全新的不可变持久化事件记录 (Append Immutable Event)。
 
         【Pi Agent 会话树生长与 DSH 大对象抽取机制】
@@ -484,6 +528,11 @@ class SessionStore:
         Raises:
             SessionError: 当数据库连接已关闭、事务被标记为仅回滚或写入冲突时抛出。
         """
+        optional = kind not in OWNED if ignorable is None else ignorable
+        try:
+            admitted = validate_event(kind, data, schema_version, optional)
+        except ValueError as error:
+            raise SessionError(str(error)) from error
         with self.transaction():
             data = json.loads(canonical(data))
             if kind == "model_request":
@@ -492,6 +541,13 @@ class SessionStore:
                         data[key + "_ref"] = self.put_blob(data.pop(key))
             record = {"id": new_id(), "parent": self.leaf, "kind": kind, "data": data}
             self._insert(record)
+            self._db.execute("INSERT INTO event_metadata VALUES(?,?,?,?)", (self.session_id, record['id'], schema_version, int(optional)))
+            for key, cache in (self._projection_cache or {}).items():
+                if cache['leaf'] == record['parent']:
+                    projected = record if admitted or kind not in OWNED else {**record, '_projectable': False}
+                    cache['state'] = UNITS[key].apply(cache['state'], projected)
+                    cache['leaf'] = record['id']
+                    cache['watermark'] += 1
             return json.loads(canonical(record))
 
     def append_many(self, entries):
@@ -747,9 +803,24 @@ class SessionStore:
                 self.append("child_result_ack", {"task_id": task_id})
             return bool(changed)
 
+    def business_chain(self):
+        """Return supported events for recovery while preserving raw history."""
+        supported = []
+        for record in self.chain():
+            metadata = self._db.execute('SELECT version,ignorable FROM event_metadata WHERE session_id=? AND event_id=?', (self.session_id, record['id'])).fetchone()
+            try:
+                if metadata and metadata[1] not in (0, 1):
+                    raise ValueError('Invalid event requiredness declaration')
+                admitted = validate_event(record['kind'], record['data'], *((metadata[0], bool(metadata[1])) if metadata else (1, True)))
+            except ValueError as error:
+                raise SessionError(str(error)) from error
+            if admitted or metadata is None:
+                supported.append(record)
+        return supported
+
     def _restore_inbox(self):
         """在系统从外部导入历史时，从事件链条回放恢复 child_inbox 事实表的状态。"""
-        for record in self.chain():
+        for record in self.business_chain():
             data = record["data"]
             if record["kind"] == "child_result":
                 self._db.execute(
@@ -806,13 +877,79 @@ class SessionStore:
         Returns:
             list[Message]: 可直接传递给下游大模型接口的结构化 Message 实体列表。
         """
-        messages = []
-        for record in self.chain(leaf):
-            if record["kind"] == "message":
-                messages.append(Message.from_dict(record["data"]))
-            elif record["kind"] in {"compaction", "seed"}:
-                messages = [Message.from_dict(item) for item in record["data"]["messages"]]
-        return messages
+        return [Message.from_dict(item) for item in self.messages_state(leaf)]
+
+    def _unit_state(self, key, leaf=None):
+        from copy import deepcopy
+        unit = UNITS[key]
+        with self._lock:
+            target = self.leaf if leaf is None else leaf
+            if self._projection_cache is None:
+                self._projection_cache = {}
+            cached = self._projection_cache.get(key)
+            if cached and cached['leaf'] == target and cached['version'] == unit.state_version:
+                return deepcopy(cached['state'])
+            records, cursor = [], target
+            seen = set()
+            while cursor:
+                if cursor in seen or cursor not in self._by_id:
+                    raise SessionError('Invalid session ancestry')
+                seen.add(cursor)
+                record = self._by_id[cursor]
+                records.append(record)
+                cursor = record['parent']
+            records.reverse()
+            state, offset = unit.init(), 0
+            saved = self._db.execute('SELECT version,leaf,watermark,state,checksum FROM projection_units WHERE session_id=? AND unit=?', (self.session_id,key)).fetchone()
+            if saved and saved[0] == unit.state_version:
+                try:
+                    restored = json.loads(saved[3])
+                    if (type(saved[2]) is int and 0 < saved[2] <= len(records)
+                            and records[saved[2]-1]['id'] == saved[1]
+                            and digest(restored) == saved[4] and unit.validate(restored)):
+                        state, offset = restored, saved[2]
+                except (ValueError, TypeError):
+                    pass  # Invalid disposable state is rebuilt from events.
+            metadata = {r[0]: (r[1],r[2]) for r in self._db.execute('SELECT event_id,version,ignorable FROM event_metadata WHERE session_id=?', (self.session_id,))}
+            for record in records[offset:]:
+                declaration = metadata.get(record['id'])
+                try:
+                    if declaration and declaration[1] not in (0,1):
+                        raise ValueError('Invalid event requiredness declaration')
+                    admitted = validate_event(record['kind'], record['data'], *((declaration[0],bool(declaration[1])) if declaration else (1,True)))
+                except ValueError as error:
+                    raise SessionError(str(error)) from error
+                if admitted or declaration is None or (key == 'latest' and record['kind'] not in OWNED):
+                    state = unit.apply(state, record)
+            self._projection_cache[key] = {'version': unit.state_version, 'session_id': self.session_id, 'leaf': target, 'watermark': len(records), 'state': state}
+            return deepcopy(state)
+
+    def messages_state(self, leaf=None):
+        return self._unit_state('messages', leaf)
+
+    def model_state(self, leaf=None):
+        return self._unit_state('model', leaf)
+
+    def input_queue_state(self, leaf=None):
+        return self._unit_state('queues', leaf)
+
+    def goal_state(self, leaf=None):
+        return self._unit_state('goal', leaf)
+
+    def child_delivery_state(self, leaf=None):
+        return self._unit_state('children', leaf)
+
+    def domain_state(self, leaf=None):
+        """Compatibility assembly; narrow readers never construct this object."""
+        return {key: self._unit_state(key, leaf) for key in ('latest','queues','children','messages')}
+
+    def save_projection_checkpoint(self):
+        """Save independently versioned units; retain legacy aggregate caches."""
+        for key, unit in UNITS.items():
+            state = self._unit_state(key)
+            cache = self._projection_cache[key]
+            with self.transaction():
+                self._db.execute('INSERT OR REPLACE INTO projection_units VALUES(?,?,?,?,?,?,?)', (self.session_id,key,unit.state_version,self.leaf,cache['watermark'],canonical(unit.checkpoint(state)),digest(state)))
 
     def completed_view(self) -> list[Message]:
         """获取最近一次已成功完成（turn_end）状态的上下文消息视图。
@@ -836,7 +973,7 @@ class SessionStore:
         Returns:
             dict | None: 找到的最新事件 payload 字典深拷贝，若不存在则返回 None。
         """
-        value = next((r["data"] for r in reversed(self.chain()) if r["kind"] == kind), None)
+        value = (self.goal_state() if kind == 'goal' else self.model_state() if kind == 'model_change' else self._unit_state('latest').get(kind))
         return json.loads(canonical(value)) if value is not None else None
 
     def branch(self, record_id: str) -> str:
@@ -871,7 +1008,7 @@ class SessionStore:
             self.leaf = record_id
             return self.append("branch", {"from": record_id}, checkpoint=True)["id"]
 
-    def fork(self, path=None, *, session_id=None) -> SessionStore:
+    def fork(self, path=None, *, session_id=None, delegated=False) -> SessionStore:
         """从当前会话投影深度复制并派生出全新的子会话存储 (Fork Session for Subagent)。
 
         【Pi Agent 派生思想与 DeepSeek-Harness 子任务隔离】
@@ -912,6 +1049,7 @@ class SessionStore:
                         "messages": [m.to_dict() for m in view],
                         "source_session": self.session_id,
                         "source_leaf": self.leaf,
+                        "delegated": delegated,
                     },
                 )
             ]
@@ -937,7 +1075,7 @@ class SessionStore:
         results = {}
         child_tasks = {}
         views = {}
-        for record in self.chain():
+        for record in self.business_chain():
             data = record["data"]
             if record["kind"] == "turn_start":
                 turn_id = data.get("turn_id", data.get("id"))
@@ -1016,6 +1154,7 @@ class SessionStore:
             if self.closed:
                 raise SessionError("Session is closed")
             if not self._depth:
+                self.save_projection_checkpoint()
                 self._db.execute("PRAGMA wal_checkpoint(PASSIVE)")
 
     def close(self):

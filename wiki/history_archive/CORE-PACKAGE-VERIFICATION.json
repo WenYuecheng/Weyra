@@ -1,0 +1,163 @@
+{
+  "status": "pass",
+  "verified_at_utc": "2026-10-18T11:30:01.041878+00:00",
+  "wheel": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/wheels/weyra-0.1.0-py3-none-any.whl",
+  "wheel_sha256": "5807311bb06e0135eed7f44198c92c23219f83581e831c2df94a88b48bb7666a",
+  "wheel_entries": {
+    "agents/core_corpus.py": {
+      "present": true,
+      "sha256": "9cc034a26f454533be99cd8457150ee6a727eb1692b48ea30ad214a3994bfe58"
+    },
+    "agents/core_context.py": {
+      "present": true,
+      "sha256": "f58fc248f2b55818b026760b6114bb5ed7ddcc4a0e1f368d458c39e4adb3d44e"
+    },
+    "agents/core_scoring.py": {
+      "present": true,
+      "sha256": "bc66c4c94813bb43a6953a71e23143c4d6e17acb8383671146d93767d75f436d"
+    },
+    "agents/core_evaluation.py": {
+      "present": true,
+      "sha256": "8d6f66c7d961e8639a690deb9dbe14fef532e79e8154c979dbde7fa3d9d4547b"
+    },
+    "agents/model_runtime.py": {
+      "present": true,
+      "sha256": "7bdef87bc7d7a753898229ed1c2afd3077edf0e9230252c147bfd24dca744cd7"
+    },
+    "agents/skill_evolution.py": {
+      "present": true,
+      "sha256": "08b2dce3f91bcd3b326b76a4537d93be2d553166386bd9a2464c4201fccfc9cf"
+    },
+    "weyra-0.1.0.data/data/share/weyra/data/core-eval-v1.json": {
+      "present": true,
+      "sha256": "af4edac56a3c439ca93b0b5842eaf75b32e563443a05f3d92bdf69725a5eb9f1"
+    },
+    "weyra-0.1.0.data/data/share/weyra/data/core-public-audit-v1.json": {
+      "present": true,
+      "sha256": "bcbaf921d61766afb20564e21ca3732374737cf8e5a72e2e56565345e2f5adf2"
+    }
+  },
+  "matches_current_source": {
+    "agents/core_corpus.py": true,
+    "agents/core_context.py": true,
+    "agents/core_scoring.py": true,
+    "agents/core_evaluation.py": true,
+    "agents/model_runtime.py": true,
+    "agents/skill_evolution.py": true,
+    "weyra-0.1.0.data/data/share/weyra/data/core-eval-v1.json": true,
+    "weyra-0.1.0.data/data/share/weyra/data/core-public-audit-v1.json": true
+  },
+  "all_python_source_hashes": {
+    "agents/core_scoring.py": "bc66c4c94813bb43a6953a71e23143c4d6e17acb8383671146d93767d75f436d",
+    "agents/skill_evolution.py": "08b2dce3f91bcd3b326b76a4537d93be2d553166386bd9a2464c4201fccfc9cf",
+    "agents/subagent.py": "d08ca1de655e45844de294d339eb1b489a0ab369a3b86fd1ce25675f5ff449df",
+    "agents/config.py": "ef68e17f7644ab8604046e6776edc8a126d6b99da7d5d0c3895c4e05feabd0ff",
+    "agents/frontmatter.py": "6a2077a1aa09f3d129a94f23d8d6275a95a33dfe3d60f3b1eb24d842438f2791",
+    "agents/skills.py": "87f6a89638bf6633941b54524a30f23bd1bbc08fdeba8c8c0ed61f8205d52de8",
+    "agents/demos.py": "cbdc4dba6a81a0df6e86f3618af28a2e4b9b3dceb5369ce6e86fbffe5c610695",
+    "agents/memory.py": "39ce132ee0914f1bbad38b8fa2dca0535f505d7c0d0a74830d68c19b02188afd",
+    "agents/ui.py": "d71f23b6e9d4ed8a07a7990acad99393e7ccc76445e922bd1ce7d1966c3be934",
+    "agents/evaluation.py": "ad7125a030963f75020aae2ab001940d4e2cd83af8f1c6411f912518b482ffe4",
+    "agents/tools.py": "9ffa24d248a83fd14d38f56d910706d9b88d5d1ce4119b436404514d8ccf2551",
+    "agents/agent_loop.py": "dc9908dd43219287c0fd8caefa02d33d56c46392f20d2c81f22d6e1a89755ec2",
+    "agents/session.py": "36f6fe52029f2ed09a05d851a63cf6cf36f4350549a217a1e2e503d8f986d244",
+    "agents/__init__.py": "b4fcd23bf9899da7bd092b13582350efe261c1c2b3be5647316f3378b7c8abe4",
+    "agents/runtime_state.py": "13f8e712842774c1abbbaf72ee9eb272f0f3f64cff86d3159a352231cb58dbff",
+    "agents/tool_runtime.py": "6a3e2cb670da087e27eebddf4a9f7f6db55560b89459b2e13c65b5c46614a9a5",
+    "agents/online_skill_evolution.py": "a8b8c954ff302f922112f33eabb40b68fc1cdc71a11e7941ee03a1b0376942d6",
+    "agents/jobs.py": "df1c465035a8d525cb9f0d57acf41684269901cdbdf7ac601c93ab26ee329a95",
+    "agents/context.py": "4104da4a6b5e46bcf372954c5776d75d3131f5fb835d3c164cabc3489d206102",
+    "agents/model_catalog.py": "62f2350c6ef2f69d73189191f8ce4e5b54c48c07521de533c6836289a24d03ce",
+    "agents/core_corpus.py": "9cc034a26f454533be99cd8457150ee6a727eb1692b48ea30ad214a3994bfe58",
+    "agents/core_evaluation.py": "8d6f66c7d961e8639a690deb9dbe14fef532e79e8154c979dbde7fa3d9d4547b",
+    "agents/agent.py": "b5da50840d1bdca08b4aec77231d108f1663892c667ee41b6d019d719c5f8d4e",
+    "agents/pricing.py": "ac2d3254d4bb013e6f76689480f9fdeb96bbf60c6e52fceff00d7d23eac8d6d6",
+    "agents/contracts.py": "95fdafb6fd96c94507906bcab53594da66fe50766a5ba4c1cb605057f6943815",
+    "agents/mcp_client.py": "94f067a2f7427ed46d5c3cf7300095ea1e8580aa0a93590a3861c9fcec29fefc",
+    "agents/prompt.py": "c21a682e8f193c7037877b5dd4037e354db5b3d15005bca8f3b250bca98fd385",
+    "agents/main.py": "a19cccea27f6943959072ed0e11c1f738d4c49b8376028bcdf4166324f04116c",
+    "agents/knowledge.py": "9d1450716811c723e29cdca1c8c1a7de94a36708d8f1d62d0b50d8752c2d31a7",
+    "agents/model_runtime.py": "7bdef87bc7d7a753898229ed1c2afd3077edf0e9230252c147bfd24dca744cd7",
+    "agents/commands.py": "08f447919059cf5afb7ac2e6f0a4843f9357e99791e854290f3cd3a4ab311a68",
+    "agents/core_context.py": "f58fc248f2b55818b026760b6114bb5ed7ddcc4a0e1f368d458c39e4adb3d44e",
+    "agents/__main__.py": "130acafaef8483625c857235eb995dace14121a5ba10eec2c7464c9f045153a7",
+    "agents/output.py": "6a979fad4a148aa7fa6a8a7c992e3df433d1aa0750f20ad73c232d63b7f0e7af"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/opt/anaconda3/bin/python",
+        "-m",
+        "pip",
+        "wheel",
+        ".",
+        "--no-deps",
+        "--no-build-isolation",
+        "--wheel-dir",
+        "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/wheels"
+      ],
+      "cwd": "/Users/wenyuecheng/code/python/Weyra"
+    },
+    {
+      "argv": [
+        "/opt/anaconda3/bin/python",
+        "-m",
+        "venv",
+        "--system-site-packages",
+        "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv"
+      ],
+      "cwd": "/Users/wenyuecheng/code/python/Weyra"
+    },
+    {
+      "argv": [
+        "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/wheels/weyra-0.1.0-py3-none-any.whl"
+      ],
+      "cwd": "/Users/wenyuecheng/code/python/Weyra"
+    },
+    {
+      "argv": [
+        "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/bin/python",
+        "-I",
+        "-c",
+        "\nimport inspect,json,sys,sysconfig\nfrom pathlib import Path\nimport agents.core_corpus as corpus\nimport agents.core_scoring as scoring\nimport agents.core_evaluation as evaluation\nimport agents.model_runtime as runtime_module\nimport agents.skill_evolution as evolution_store_module\nfrom agents.contracts import ModelInfo\nfrom agents.model_runtime import ModelRuntime,ProviderRegistry,ScriptedProvider\nmods=(corpus,scoring,evaluation,runtime_module,evolution_store_module)\nassert all(Path(m.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()) for m in mods)\nmanifest=corpus.load_core_manifest()\naudit=Path(sysconfig.get_path('data'))/'share/weyra/data/core-public-audit-v1.json'\nassert audit.is_file();json.loads(audit.read_text())\nregistry=ProviderRegistry();provider=ScriptedProvider([]);registry.register('offline',provider)\nruntime=ModelRuntime(registry,{'main':ModelInfo('offline','offline',16384,1024)})\nprotocol=evaluation.protocol(runtime,manifest)\nassert protocol['version']==4\nassert 'ledger_root' in inspect.signature(evaluation.CoreRunner.__init__).parameters\nassert callable(scoring.build_scoring_validity_audit)\nassert '_expected_resources' in inspect.signature(evolution_store_module.EvolutionStore.apply).parameters\ngrade=scoring.grade_task({'input':{'output_contract':{}},'grading':{'expected':{'failure':'checksum_mismatch'}}},'\\u007b\"failure\":\"Checksum mismatch occurred\"\\u007d')\nassert grade['pending_review'] and not grade['success']\nnested=scoring.grade_task({'grading':{'expected':{'items':[1,2]}}}, {'items':[True,2]})\nassert not nested['success'] and not nested['checks']['field:items']\nsource=inspect.getsource(runtime_module.ModelRuntime._stream_once)\nassert 'monetary_input_bound' in source and 'source_bound' in source\nassert not provider.requests\nprint(json.dumps({'cwd':str(Path.cwd()),'sys_prefix':sys.prefix,'imports':{m.__name__:m.__file__ for m in mods},'data_root':str(corpus._DATA),'manifest_counts':{k:len(v) for k,v in manifest.items() if isinstance(v,list)},'public_audit':str(audit),'protocol_version':protocol['version'],'ledger_binding_api':'CoreRunner.__init__(ledger_root=...)','score_pending_review':grade['pending_review'],'nested_bool_int_rejected':not nested['success'],'full_source_monetary_bound_present':True,'expected_resources_api_packaged':True,'model_requests':len(provider.requests)},indent=2))\n"
+      ],
+      "cwd": "/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-outside-sn07jfh1"
+    }
+  ],
+  "installed_evidence": {
+    "cwd": "/private/var/folders/xx/l1p7zjpd0q90kvrzkl98d8wr0000gn/T/weyra-package-outside-sn07jfh1",
+    "sys_prefix": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv",
+    "imports": {
+      "agents.core_corpus": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/lib/python3.13/site-packages/agents/core_corpus.py",
+      "agents.core_scoring": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/lib/python3.13/site-packages/agents/core_scoring.py",
+      "agents.core_evaluation": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/lib/python3.13/site-packages/agents/core_evaluation.py",
+      "agents.model_runtime": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/lib/python3.13/site-packages/agents/model_runtime.py",
+      "agents.skill_evolution": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/lib/python3.13/site-packages/agents/skill_evolution.py"
+    },
+    "data_root": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/share/weyra/data",
+    "manifest_counts": {
+      "skill_library": 8,
+      "localization_cases": 60,
+      "evolution_families": 6,
+      "long_history_cases": 12,
+      "public_cases": 12
+    },
+    "public_audit": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-current-20261018T112957Z/venv/share/weyra/data/core-public-audit-v1.json",
+    "protocol_version": 4,
+    "ledger_binding_api": "CoreRunner.__init__(ledger_root=...)",
+    "score_pending_review": true,
+    "nested_bool_int_rejected": true,
+    "full_source_monetary_bound_present": true,
+    "expected_resources_api_packaged": true,
+    "model_requests": 0
+  },
+  "limits": [
+    "System dependencies reused; not a clean dependency-resolution test.",
+    "No model/API calls; no ledger instantiated, no task runner executed."
+  ]
+}

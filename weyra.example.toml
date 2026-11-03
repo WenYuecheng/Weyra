@@ -45,3 +45,14 @@ summary_mode = "dsh_checkpoint"
 # judge_route = "skill_judge"
 # validation_manifest = ".weyra/validation/evidence.json"
 # 裁判计价也必须在 pricing 中显式配置；禁止自动回退到主模型。
+
+# P1 optional runtime policies
+[tools]
+apply_patch = false
+
+[goal_policy]
+max_continuations = 3
+max_stagnant_rounds = 2
+
+[retry_policy]
+argument_retries = 1

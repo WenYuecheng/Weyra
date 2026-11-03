@@ -392,6 +392,8 @@ def project_raw_session_records(records: list[dict[str, Any]]) -> list[DisplayCa
             ).get("reasoning")
             if source in {"memory_selection", "environment"}:
                 continue
+            if source in {"project_rules", "memory", "skills"} and "context_version" in data.get("provider_data", {}):
+                continue  # Resource facts remain in the journal, not as user chat bubbles.
 
             if role == "user":
                 if source == "compaction":

@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-16",
+  "provider": "cun",
+  "model": "glm-5.3-flash",
+  "base_url": "https://www.cun.ai/v1",
+  "price_source": "User-supplied CUN.AI default group console rates",
+  "currency": "USD",
+  "per_million": {
+    "input": ".137",
+    "output": ".4795",
+    "cache_read": ".039375",
+    "cache_write": ".039375"
+  },
+  "cny_per_usd": "6.95",
+  "conversion_source": "https://www.cun.ai/api/status : usd_exchange_rate",
+  "cny_per_million": {
+    "input_per_million": "0.95215",
+    "output_per_million": "3.332525",
+    "cache_read_per_million": "0.27365625",
+    "cache_write_per_million": "0.27365625"
+  },
+  "capacity_source": "User-supplied console metadata: context1M / output65.5K, explicit pin1,000,000/65,536",
+  "model_discovery": "Authenticated GET /v1/models confirmed exactID",
+  "paid_calls_before_smoke": 0,
+  "alternative_models": {
+    "date": "2026-10-17",
+    "fx_source": "https://www.cun.ai/api/status : usd_exchange_rate",
+    "cny_per_usd": "6.95",
+    "DeepSeek-V4.1-Flash": {
+      "window": 16384,
+      "output_cap": 8192,
+      "default_group_usd": {
+        "input": ".256849",
+        "output": ".770548",
+        "cache_read": ".008561"
+      },
+      "reserved_multiplier": "2",
+      "cost_basis": "ceiling",
+      "cache_write_billing": "included in ordinary input; no separately listed tariff",
+      "cny_ceiling_per_million": {
+        "input_per_million": "3.57020110",
+        "output_per_million": "10.71061720",
+        "cache_read_per_million": "0.11899790"
+      },
+      "cache_semantics_reference": "https://api-docs.deepseek.com/news/news0802/"
+    },
+    "gpt-5.6-luna": {
+      "window": 128000,
+      "output_cap": 16384,
+      "default_group_standard_usd": {
+        "input": ".25",
+        "output": "1.5",
+        "cache_read": ".025",
+        "cache_write": ".3125"
+      },
+      "standard_condition": "declared input+maximum output <272000, so long_context is unreachable",
+      "cny_standard_per_million": {
+        "input_per_million": "1.7375",
+        "output_per_million": "10.425",
+        "cache_read_per_million": "0.17375",
+        "cache_write_per_million": "2.171875"
+      }
+    }
+  }
+}

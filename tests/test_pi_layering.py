@@ -56,7 +56,8 @@ def test_integrated_views_overrides_and_input_transform(tmp_path):
         assert await agent.run_once('input') == 'done'
         assert provider.requests[0].system == 'run override'
         assert agent.context_manager.system == baseline
-        assert provider.requests[0].messages[0].content == 'transformed'
+        direct_inputs = [m for m in provider.requests[0].messages if m.source_kind == 'instruction']
+        assert [m.content for m in direct_inputs] == ['transformed']
         raw = [r['data'] for r in agent.session.chain() if r['kind']=='tool_result'][-1]
         assert raw['content'] == 'original' and raw['status']=='success'
         assert any(m.tool_call_id=='r' and m.content=='visible' for m in agent.session.project())

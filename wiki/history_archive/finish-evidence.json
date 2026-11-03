@@ -1,0 +1,889 @@
+{
+  "generated_at": "2026-10-19T14:00:55+08:00",
+  "project": "Weyra",
+  "main": {
+    "planned": 144,
+    "recorded": 61,
+    "unexecuted": 83,
+    "pass": 34,
+    "completed": 50,
+    "statuses": {
+      "pass": 34,
+      "timeout": 2,
+      "interrupted": 3,
+      "not_run": 83,
+      "fail": 16,
+      "error": 6
+    },
+    "planned_localization": 96,
+    "planned_skill_final": 48,
+    "localization": {
+      "old": {
+        "planned": 48,
+        "recorded": 7,
+        "unexecuted": 41,
+        "pass": 4,
+        "completed": 4,
+        "statuses": {
+          "pass": 4,
+          "timeout": 1,
+          "interrupted": 2,
+          "not_run": 41
+        },
+        "resolution_success": 4,
+        "followup_success": 4,
+        "wrong_target": 0,
+        "correct_abstention": 0,
+        "duplicate_creation": 0,
+        "planned_absent_targets": 16,
+        "unknown_resolution": 44,
+        "unknown_followup": 44
+      },
+      "new": {
+        "planned": 48,
+        "recorded": 6,
+        "unexecuted": 42,
+        "pass": 5,
+        "completed": 5,
+        "statuses": {
+          "pass": 5,
+          "timeout": 1,
+          "not_run": 42
+        },
+        "resolution_success": 5,
+        "followup_success": 5,
+        "wrong_target": 0,
+        "correct_abstention": 0,
+        "duplicate_creation": 0,
+        "planned_absent_targets": 16,
+        "unknown_resolution": 43,
+        "unknown_followup": 43
+      }
+    },
+    "skills": {
+      "evidence": {
+        "frozen": {
+          "planned": 8,
+          "recorded": 8,
+          "unexecuted": 0,
+          "pass": 4,
+          "completed": 8,
+          "statuses": {
+            "fail": 4,
+            "pass": 4
+          }
+        },
+        "adapted": {
+          "planned": 8,
+          "recorded": 8,
+          "unexecuted": 0,
+          "pass": 8,
+          "completed": 8,
+          "statuses": {
+            "pass": 8
+          }
+        }
+      },
+      "expression": {
+        "frozen": {
+          "planned": 8,
+          "recorded": 8,
+          "unexecuted": 0,
+          "pass": 0,
+          "completed": 8,
+          "statuses": {
+            "fail": 8
+          }
+        },
+        "adapted": {
+          "planned": 8,
+          "recorded": 8,
+          "unexecuted": 0,
+          "pass": 8,
+          "completed": 8,
+          "statuses": {
+            "pass": 8
+          }
+        }
+      },
+      "files": {
+        "frozen": {
+          "planned": 8,
+          "recorded": 8,
+          "unexecuted": 0,
+          "pass": 2,
+          "completed": 4,
+          "statuses": {
+            "fail": 2,
+            "pass": 2,
+            "error": 3,
+            "interrupted": 1
+          }
+        },
+        "adapted": {
+          "planned": 8,
+          "recorded": 8,
+          "unexecuted": 0,
+          "pass": 3,
+          "completed": 5,
+          "statuses": {
+            "pass": 3,
+            "fail": 2,
+            "error": 3
+          }
+        }
+      }
+    },
+    "localization_pairs": {
+      "old": "old",
+      "new": "new",
+      "completed_pairs": 3,
+      "old_pass": 3,
+      "new_pass": 3,
+      "only_new_pass": 0,
+      "only_old_pass": 0,
+      "difference_percentage_points": 0.0,
+      "policy": "仅同批次同题同重复的两侧pass/fail完整结果；error/timeout等保留总分母但不作完整配对",
+      "rows": [
+        {
+          "id": "loc-explicit_name-0",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "loc-explicit_name-1",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "loc-explicit_name-3",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        }
+      ]
+    },
+    "skill_pairs": {
+      "old": "frozen",
+      "new": "adapted",
+      "completed_pairs": 20,
+      "old_pass": 6,
+      "new_pass": 19,
+      "only_new_pass": 14,
+      "only_old_pass": 1,
+      "difference_percentage_points": 65.0,
+      "policy": "仅同批次同题同重复的两侧pass/fail完整结果；error/timeout等保留总分母但不作完整配对",
+      "rows": [
+        {
+          "id": "evidence-test-0",
+          "repeat": 0,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "evidence-test-1",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "evidence-test-2",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "evidence-test-3",
+          "repeat": 0,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "files-test-0",
+          "repeat": 0,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "files-test-1",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": false
+        },
+        {
+          "id": "files-test-2",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "files-test-3",
+          "repeat": 0,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "expression-test-0",
+          "repeat": 0,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "expression-test-1",
+          "repeat": 0,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "expression-test-2",
+          "repeat": 0,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "expression-test-3",
+          "repeat": 0,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "evidence-test-0",
+          "repeat": 1,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "evidence-test-1",
+          "repeat": 1,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "evidence-test-2",
+          "repeat": 1,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "evidence-test-3",
+          "repeat": 1,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "expression-test-0",
+          "repeat": 1,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "expression-test-1",
+          "repeat": 1,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "expression-test-2",
+          "repeat": 1,
+          "old_pass": false,
+          "new_pass": true
+        },
+        {
+          "id": "expression-test-3",
+          "repeat": 1,
+          "old_pass": false,
+          "new_pass": true
+        }
+      ]
+    },
+    "unexecuted_keys": [
+      "localization/loc-alias-2/new/0",
+      "localization/loc-alias-3/old/0",
+      "localization/loc-alias-3/new/0",
+      "localization/loc-turn_used-0/old/0",
+      "localization/loc-turn_used-0/new/0",
+      "localization/loc-turn_used-1/old/0",
+      "localization/loc-turn_used-1/new/0",
+      "localization/loc-turn_used-2/old/0",
+      "localization/loc-turn_used-2/new/0",
+      "localization/loc-turn_used-3/old/0",
+      "localization/loc-turn_used-3/new/0",
+      "localization/loc-ambiguous-0/old/0",
+      "localization/loc-ambiguous-0/new/0",
+      "localization/loc-ambiguous-1/old/0",
+      "localization/loc-ambiguous-1/new/0",
+      "localization/loc-ambiguous-2/old/0",
+      "localization/loc-ambiguous-2/new/0",
+      "localization/loc-ambiguous-3/old/0",
+      "localization/loc-ambiguous-3/new/0",
+      "localization/loc-distractor-0/old/0",
+      "localization/loc-distractor-0/new/0",
+      "localization/loc-distractor-1/old/0",
+      "localization/loc-distractor-1/new/0",
+      "localization/loc-distractor-2/old/0",
+      "localization/loc-distractor-2/new/0",
+      "localization/loc-distractor-3/old/0",
+      "localization/loc-distractor-3/new/0",
+      "localization/loc-absent-0/old/0",
+      "localization/loc-absent-0/new/0",
+      "localization/loc-absent-1/old/0",
+      "localization/loc-absent-1/new/0",
+      "localization/loc-absent-2/old/0",
+      "localization/loc-absent-2/new/0",
+      "localization/loc-absent-3/old/0",
+      "localization/loc-absent-3/new/0",
+      "localization/loc-explicit_name-0/old/1",
+      "localization/loc-explicit_name-0/new/1",
+      "localization/loc-explicit_name-1/old/1",
+      "localization/loc-explicit_name-1/new/1",
+      "localization/loc-explicit_name-2/old/1",
+      "localization/loc-explicit_name-2/new/1",
+      "localization/loc-explicit_name-3/old/1",
+      "localization/loc-explicit_name-3/new/1",
+      "localization/loc-alias-0/old/1",
+      "localization/loc-alias-0/new/1",
+      "localization/loc-alias-1/old/1",
+      "localization/loc-alias-1/new/1",
+      "localization/loc-alias-2/old/1",
+      "localization/loc-alias-2/new/1",
+      "localization/loc-alias-3/old/1",
+      "localization/loc-alias-3/new/1",
+      "localization/loc-turn_used-0/old/1",
+      "localization/loc-turn_used-0/new/1",
+      "localization/loc-turn_used-1/old/1",
+      "localization/loc-turn_used-1/new/1",
+      "localization/loc-turn_used-2/old/1",
+      "localization/loc-turn_used-2/new/1",
+      "localization/loc-turn_used-3/old/1",
+      "localization/loc-turn_used-3/new/1",
+      "localization/loc-ambiguous-0/old/1",
+      "localization/loc-ambiguous-0/new/1",
+      "localization/loc-ambiguous-1/old/1",
+      "localization/loc-ambiguous-1/new/1",
+      "localization/loc-ambiguous-2/old/1",
+      "localization/loc-ambiguous-2/new/1",
+      "localization/loc-ambiguous-3/old/1",
+      "localization/loc-ambiguous-3/new/1",
+      "localization/loc-distractor-0/old/1",
+      "localization/loc-distractor-0/new/1",
+      "localization/loc-distractor-1/old/1",
+      "localization/loc-distractor-1/new/1",
+      "localization/loc-distractor-2/old/1",
+      "localization/loc-distractor-2/new/1",
+      "localization/loc-distractor-3/old/1",
+      "localization/loc-distractor-3/new/1",
+      "localization/loc-absent-0/old/1",
+      "localization/loc-absent-0/new/1",
+      "localization/loc-absent-1/old/1",
+      "localization/loc-absent-1/new/1",
+      "localization/loc-absent-2/old/1",
+      "localization/loc-absent-2/new/1",
+      "localization/loc-absent-3/old/1",
+      "localization/loc-absent-3/new/1"
+    ],
+    "maintenance": {
+      "planned": 6,
+      "statuses": {
+        "pass": 4,
+        "error": 2
+      },
+      "errors": [
+        {
+          "key": "maintenance/evidence/1",
+          "status": "error",
+          "reason": "ContextOverflow",
+          "error_kind": null
+        },
+        {
+          "key": "maintenance/files/1",
+          "status": "error",
+          "reason": "ModelError",
+          "error_kind": "transient"
+        }
+      ]
+    },
+    "excluded_nonfinal_keys": [
+      "development/evidence/0/evidence-dev-0",
+      "development/evidence/0/evidence-dev-1",
+      "development/evidence/0/evidence-dev-2",
+      "development/evidence/0/evidence-dev-3",
+      "development/evidence/1/evidence-dev-0",
+      "development/evidence/1/evidence-dev-1",
+      "development/evidence/1/evidence-dev-2",
+      "development/evidence/1/evidence-dev-3",
+      "development/expression/0/expression-dev-0",
+      "development/expression/0/expression-dev-1",
+      "development/expression/0/expression-dev-2",
+      "development/expression/0/expression-dev-3",
+      "development/expression/1/expression-dev-0",
+      "development/expression/1/expression-dev-1",
+      "development/expression/1/expression-dev-2",
+      "development/expression/1/expression-dev-3",
+      "development/files/0/files-dev-0",
+      "development/files/0/files-dev-1",
+      "development/files/0/files-dev-2",
+      "development/files/0/files-dev-3",
+      "development/files/1/files-dev-0",
+      "development/files/1/files-dev-1",
+      "localization_validation/loc-alias-0/new/0/candidate",
+      "localization_validation/loc-alias-0/new/0/old",
+      "localization_validation/loc-alias-0/old/0/candidate",
+      "localization_validation/loc-alias-0/old/0/old",
+      "localization_validation/loc-alias-1/new/0/candidate",
+      "localization_validation/loc-alias-1/new/0/old",
+      "localization_validation/loc-alias-1/old/0/candidate",
+      "localization_validation/loc-alias-1/old/0/old",
+      "localization_validation/loc-explicit_name-0/new/0/candidate",
+      "localization_validation/loc-explicit_name-0/new/0/old",
+      "localization_validation/loc-explicit_name-0/old/0/candidate",
+      "localization_validation/loc-explicit_name-0/old/0/old",
+      "localization_validation/loc-explicit_name-1/new/0/candidate",
+      "localization_validation/loc-explicit_name-1/new/0/old",
+      "localization_validation/loc-explicit_name-1/old/0/candidate",
+      "localization_validation/loc-explicit_name-1/old/0/old",
+      "localization_validation/loc-explicit_name-2/new/0/candidate",
+      "localization_validation/loc-explicit_name-2/new/0/old",
+      "localization_validation/loc-explicit_name-2/old/0/candidate",
+      "localization_validation/loc-explicit_name-2/old/0/old",
+      "localization_validation/loc-explicit_name-3/new/0/candidate",
+      "localization_validation/loc-explicit_name-3/new/0/old",
+      "localization_validation/loc-explicit_name-3/old/0/candidate",
+      "localization_validation/loc-explicit_name-3/old/0/old",
+      "maintenance/evidence/0",
+      "maintenance/evidence/1",
+      "maintenance/expression/0",
+      "maintenance/expression/1",
+      "maintenance/files/0",
+      "maintenance/files/1",
+      "validation/evidence/0/0/candidate/evidence-validation-0",
+      "validation/evidence/0/0/candidate/evidence-validation-1",
+      "validation/evidence/0/0/candidate/evidence-validation-2",
+      "validation/evidence/0/0/candidate/evidence-validation-3",
+      "validation/evidence/0/0/old/evidence-validation-0",
+      "validation/evidence/0/0/old/evidence-validation-1",
+      "validation/evidence/0/0/old/evidence-validation-2",
+      "validation/evidence/0/0/old/evidence-validation-3",
+      "validation/evidence/0/1/candidate/evidence-validation-0",
+      "validation/evidence/0/1/candidate/evidence-validation-1",
+      "validation/evidence/0/1/candidate/evidence-validation-2",
+      "validation/evidence/0/1/candidate/evidence-validation-3",
+      "validation/evidence/0/1/old/evidence-validation-0",
+      "validation/evidence/0/1/old/evidence-validation-1",
+      "validation/evidence/0/1/old/evidence-validation-2",
+      "validation/evidence/0/1/old/evidence-validation-3",
+      "validation/evidence/1/0/candidate/evidence-validation-0",
+      "validation/evidence/1/0/candidate/evidence-validation-1",
+      "validation/evidence/1/0/candidate/evidence-validation-2",
+      "validation/evidence/1/0/candidate/evidence-validation-3",
+      "validation/evidence/1/0/old/evidence-validation-0",
+      "validation/evidence/1/0/old/evidence-validation-1",
+      "validation/evidence/1/0/old/evidence-validation-2",
+      "validation/evidence/1/0/old/evidence-validation-3",
+      "validation/evidence/1/1/old/evidence-validation-0",
+      "validation/evidence/1/1/old/evidence-validation-1",
+      "validation/evidence/1/1/old/evidence-validation-2",
+      "validation/expression/0/0/candidate/expression-validation-0",
+      "validation/expression/0/0/candidate/expression-validation-1",
+      "validation/expression/0/0/candidate/expression-validation-2",
+      "validation/expression/0/0/candidate/expression-validation-3",
+      "validation/expression/0/0/old/expression-validation-0",
+      "validation/expression/0/0/old/expression-validation-1",
+      "validation/expression/0/0/old/expression-validation-2",
+      "validation/expression/0/0/old/expression-validation-3",
+      "validation/expression/0/1/candidate/expression-validation-0",
+      "validation/expression/0/1/candidate/expression-validation-1",
+      "validation/expression/0/1/candidate/expression-validation-2",
+      "validation/expression/0/1/candidate/expression-validation-3",
+      "validation/expression/0/1/old/expression-validation-0",
+      "validation/expression/0/1/old/expression-validation-1",
+      "validation/expression/0/1/old/expression-validation-2",
+      "validation/expression/0/1/old/expression-validation-3",
+      "validation/expression/1/0/candidate/expression-validation-0",
+      "validation/expression/1/0/candidate/expression-validation-1",
+      "validation/expression/1/0/candidate/expression-validation-2",
+      "validation/expression/1/0/candidate/expression-validation-3",
+      "validation/expression/1/0/old/expression-validation-0",
+      "validation/expression/1/0/old/expression-validation-1",
+      "validation/expression/1/0/old/expression-validation-2",
+      "validation/expression/1/0/old/expression-validation-3",
+      "validation/files/0/0/candidate/files-validation-0",
+      "validation/files/0/0/candidate/files-validation-1",
+      "validation/files/0/0/candidate/files-validation-2",
+      "validation/files/0/0/candidate/files-validation-3",
+      "validation/files/0/0/old/files-validation-0",
+      "validation/files/0/0/old/files-validation-1",
+      "validation/files/0/0/old/files-validation-2",
+      "validation/files/0/0/old/files-validation-3"
+    ]
+  },
+  "context": {
+    "planned": 24,
+    "recorded": 24,
+    "unexecuted": 0,
+    "pass": 24,
+    "completed": 24,
+    "statuses": {
+      "pass": 24
+    },
+    "variants": {
+      "before": {
+        "planned": 12,
+        "recorded": 12,
+        "unexecuted": 0,
+        "pass": 12,
+        "completed": 12,
+        "statuses": {
+          "pass": 12
+        },
+        "facts_retained": 48,
+        "facts_observed_total": 48,
+        "facts_planned_total": 48,
+        "compaction_published": 12,
+        "raw_history_preserved": 12,
+        "physical_requests": 50,
+        "unit_accounted_cost_cny": "1.1213539272156",
+        "all_unit_costs_known": false
+      },
+      "after": {
+        "planned": 12,
+        "recorded": 12,
+        "unexecuted": 0,
+        "pass": 12,
+        "completed": 12,
+        "statuses": {
+          "pass": 12
+        },
+        "facts_retained": 48,
+        "facts_observed_total": 48,
+        "facts_planned_total": 48,
+        "compaction_published": 12,
+        "raw_history_preserved": 12,
+        "physical_requests": 52,
+        "unit_accounted_cost_cny": "1.1867956679256",
+        "all_unit_costs_known": false
+      }
+    },
+    "pairs": {
+      "old": "before",
+      "new": "after",
+      "completed_pairs": 12,
+      "old_pass": 12,
+      "new_pass": 12,
+      "only_new_pass": 0,
+      "only_old_pass": 0,
+      "difference_percentage_points": 0.0,
+      "policy": "仅同批次同题同重复的两侧pass/fail完整结果；error/timeout等保留总分母但不作完整配对",
+      "rows": [
+        {
+          "id": "finish-release-routing",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-audit-handoff",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-inventory-reconcile",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-dataset-freeze",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-migration-gate",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-incident-closure",
+          "repeat": 0,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-release-routing",
+          "repeat": 1,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-audit-handoff",
+          "repeat": 1,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-inventory-reconcile",
+          "repeat": 1,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-dataset-freeze",
+          "repeat": 1,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-migration-gate",
+          "repeat": 1,
+          "old_pass": true,
+          "new_pass": true
+        },
+        {
+          "id": "finish-incident-closure",
+          "repeat": 1,
+          "old_pass": true,
+          "new_pass": true
+        }
+      ]
+    },
+    "unexecuted_keys": [],
+    "excluded_keys": []
+  },
+  "delivery_decision": {
+    "decision": "user_prioritized_fast_delivery",
+    "time": "2026-10-19T13:59:51.075847+08:00",
+    "scope": "Deliver backend, completed skill/context experiments, partial localization and unexecuted list. Do not claim all 144 units completed.",
+    "user_text": "优先快速交付：保留当前定位结果与未完成清单，先交代码、报告和简历"
+  },
+  "execution_complete": false,
+  "ledger": {
+    "available": true,
+    "path": "/Users/wenyuecheng/code/python/Weyra/.weyra/state.db",
+    "session_id": "finish-live-cny100",
+    "checkpoint_seq": 5357,
+    "total_cost_cny": "14.8571202754308",
+    "pending_reservation_cny": "0",
+    "pending_requests": 0,
+    "accounted_plus_pending_cny": "14.8571202754308",
+    "calls": 1156,
+    "unknown_usage_requests": 58,
+    "accounted_tokens": 2814001,
+    "budget_limit_cny": "100",
+    "note": "根账本唯一总额；未知usage可能按保守预留记账，不是发票。"
+  },
+  "input_summary": {
+    "planned_final_units": 144,
+    "recorded_final_units": 62,
+    "unstarted_final_units": [
+      "localization/loc-alias-3/old/0",
+      "localization/loc-alias-3/new/0",
+      "localization/loc-turn_used-0/old/0",
+      "localization/loc-turn_used-0/new/0",
+      "localization/loc-turn_used-1/old/0",
+      "localization/loc-turn_used-1/new/0",
+      "localization/loc-turn_used-2/old/0",
+      "localization/loc-turn_used-2/new/0",
+      "localization/loc-turn_used-3/old/0",
+      "localization/loc-turn_used-3/new/0",
+      "localization/loc-ambiguous-0/old/0",
+      "localization/loc-ambiguous-0/new/0",
+      "localization/loc-ambiguous-1/old/0",
+      "localization/loc-ambiguous-1/new/0",
+      "localization/loc-ambiguous-2/old/0",
+      "localization/loc-ambiguous-2/new/0",
+      "localization/loc-ambiguous-3/old/0",
+      "localization/loc-ambiguous-3/new/0",
+      "localization/loc-distractor-0/old/0",
+      "localization/loc-distractor-0/new/0",
+      "localization/loc-distractor-1/old/0",
+      "localization/loc-distractor-1/new/0",
+      "localization/loc-distractor-2/old/0",
+      "localization/loc-distractor-2/new/0",
+      "localization/loc-distractor-3/old/0",
+      "localization/loc-distractor-3/new/0",
+      "localization/loc-absent-0/old/0",
+      "localization/loc-absent-0/new/0",
+      "localization/loc-absent-1/old/0",
+      "localization/loc-absent-1/new/0",
+      "localization/loc-absent-2/old/0",
+      "localization/loc-absent-2/new/0",
+      "localization/loc-absent-3/old/0",
+      "localization/loc-absent-3/new/0",
+      "localization/loc-explicit_name-0/old/1",
+      "localization/loc-explicit_name-0/new/1",
+      "localization/loc-explicit_name-1/old/1",
+      "localization/loc-explicit_name-1/new/1",
+      "localization/loc-explicit_name-2/old/1",
+      "localization/loc-explicit_name-2/new/1",
+      "localization/loc-explicit_name-3/old/1",
+      "localization/loc-explicit_name-3/new/1",
+      "localization/loc-alias-0/old/1",
+      "localization/loc-alias-0/new/1",
+      "localization/loc-alias-1/old/1",
+      "localization/loc-alias-1/new/1",
+      "localization/loc-alias-2/old/1",
+      "localization/loc-alias-2/new/1",
+      "localization/loc-alias-3/old/1",
+      "localization/loc-alias-3/new/1",
+      "localization/loc-turn_used-0/old/1",
+      "localization/loc-turn_used-0/new/1",
+      "localization/loc-turn_used-1/old/1",
+      "localization/loc-turn_used-1/new/1",
+      "localization/loc-turn_used-2/old/1",
+      "localization/loc-turn_used-2/new/1",
+      "localization/loc-turn_used-3/old/1",
+      "localization/loc-turn_used-3/new/1",
+      "localization/loc-ambiguous-0/old/1",
+      "localization/loc-ambiguous-0/new/1",
+      "localization/loc-ambiguous-1/old/1",
+      "localization/loc-ambiguous-1/new/1",
+      "localization/loc-ambiguous-2/old/1",
+      "localization/loc-ambiguous-2/new/1",
+      "localization/loc-ambiguous-3/old/1",
+      "localization/loc-ambiguous-3/new/1",
+      "localization/loc-distractor-0/old/1",
+      "localization/loc-distractor-0/new/1",
+      "localization/loc-distractor-1/old/1",
+      "localization/loc-distractor-1/new/1",
+      "localization/loc-distractor-2/old/1",
+      "localization/loc-distractor-2/new/1",
+      "localization/loc-distractor-3/old/1",
+      "localization/loc-distractor-3/new/1",
+      "localization/loc-absent-0/old/1",
+      "localization/loc-absent-0/new/1",
+      "localization/loc-absent-1/old/1",
+      "localization/loc-absent-1/new/1",
+      "localization/loc-absent-2/old/1",
+      "localization/loc-absent-2/new/1",
+      "localization/loc-absent-3/old/1",
+      "localization/loc-absent-3/new/1"
+    ],
+    "groups": {
+      "localization/old": {
+        "n": 48,
+        "pass": 4,
+        "hard_failures": 0,
+        "resolution_successes": 4,
+        "followup_successes": 4,
+        "timeout": 1,
+        "interrupted": 2,
+        "not_run": 41,
+        "success_rate": 0.08333333333333333
+      },
+      "localization/new": {
+        "n": 48,
+        "pass": 5,
+        "hard_failures": 0,
+        "resolution_successes": 5,
+        "followup_successes": 5,
+        "timeout": 1,
+        "interrupted": 1,
+        "not_run": 41,
+        "success_rate": 0.10416666666666667
+      },
+      "skill_test/frozen": {
+        "n": 24,
+        "pass": 6,
+        "hard_failures": 0,
+        "fail": 14,
+        "error": 3,
+        "interrupted": 1,
+        "success_rate": 0.25
+      },
+      "skill_test/adapted": {
+        "n": 24,
+        "pass": 19,
+        "hard_failures": 0,
+        "fail": 2,
+        "error": 3,
+        "success_rate": 0.7916666666666666
+      }
+    },
+    "comparisons": [
+      {
+        "old": "old",
+        "new": "new",
+        "paired_units": 5,
+        "clusters": 2,
+        "difference": 0.375,
+        "ci95": [
+          -0.25,
+          1.0
+        ],
+        "only_new_success": 1,
+        "only_old_success": 1,
+        "both_success": 3,
+        "both_unsuccessful": 0,
+        "method": "paired cluster bootstrap, 2000 resamples; failures/errors remain denominator"
+      },
+      {
+        "old": "frozen",
+        "new": "adapted",
+        "paired_units": 23,
+        "clusters": 3,
+        "difference": 0.5476190476190476,
+        "ci95": [
+          0.14285714285714285,
+          1.0
+        ],
+        "only_new_success": 14,
+        "only_old_success": 1,
+        "both_success": 5,
+        "both_unsuccessful": 3,
+        "method": "paired cluster bootstrap, 2000 resamples; failures/errors remain denominator"
+      }
+    ],
+    "denominator_policy": "All 144 planned final units; errors/interrupted/unexecuted count as unsuccessful",
+    "claim": "Mechanism cohort; no general performance or full paper reproduction claim"
+  },
+  "sources": {
+    "main_results": {
+      "path": "/Users/wenyuecheng/code/python/Weyra/.weyra/finish-20261018/formal-v2/results.json",
+      "available": true,
+      "sha256": "cd468138fc7429b9fe77297c353a938eb02b3e518bb69d00153ccb494bae2781"
+    },
+    "main_summary": {
+      "path": "/Users/wenyuecheng/code/python/Weyra/.weyra/finish-20261018/formal-v2/summary.json",
+      "available": true,
+      "sha256": "667fa84233e4e4d87f07aeb29c32af4dfc0ec0a002dd45158390f93f2e66a22e"
+    },
+    "main_protocol": {
+      "path": "/Users/wenyuecheng/code/python/Weyra/.weyra/finish-20261018/formal-v2/protocol.json",
+      "available": true,
+      "sha256": "5933faf6bf703cfd43830fa31dd1bd61ffc20bb9fee8d3816d8d7b0272a70425"
+    },
+    "context_results": {
+      "path": "/Users/wenyuecheng/code/python/Weyra/.weyra/finish-20261018/context-v2/results.json",
+      "available": true,
+      "sha256": "d3467bfe0719ca3f636be9415ca4e289ceff69f4660c184de14f8a2c5732b68b"
+    },
+    "context_protocol": {
+      "path": "/Users/wenyuecheng/code/python/Weyra/.weyra/finish-20261018/context-v2/protocol.json",
+      "available": true,
+      "sha256": "6b595aedc8f5ec098e21a2adde7c516f2abf4fe4b45c0db295f3a6dec6a33320"
+    },
+    "main_manifest": {
+      "path": "/Users/wenyuecheng/code/python/Weyra/data/finish-eval-v1.json",
+      "available": true,
+      "sha256": "631dd0ed438943771b164cdc1c8f3ee7f733f0425d49618e4cde07701d8936c1"
+    },
+    "context_manifest": {
+      "path": "/Users/wenyuecheng/code/python/Weyra/data/finish-context-v1.json",
+      "available": true,
+      "sha256": "a7dc9f312a86291b983385fe88c87cd9a5b236a1255a681d24787d3a5240db31"
+    }
+  },
+  "denominator_policy": "主最终144=定位96+技能最终48；压缩24。缺失明确未执行，错误/超时不剔除；仅完整两侧进行配对。",
+  "cost_policy": "总费用只读finish-live-cny100根账本，不相加维护/validation/最终任务等嵌套unit费用；未知usage保守预留不是发票。",
+  "historical_results": {
+    "early_benchmark": "20/20",
+    "old_core_recorded": "552/822",
+    "localization_v1": "34/60→54/60",
+    "localization_v2": "23/60→59/60",
+    "limitation": "声明别名库机制测试；新版使用显式ID/调用记录等额外信息，属于不同信息量，不证明通用跨语言语义提升。"
+  }
+}

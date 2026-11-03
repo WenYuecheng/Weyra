@@ -20,13 +20,20 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import inspect
-import json
 from contextlib import asynccontextmanager
 from pathlib import Path
 from jsonschema import Draft202012Validator
-from weyra.contracts import ToolResult, ToolCall
-from weyra.core.hooks import ToolCallHook
+from weyra.contracts import ToolResult
 from weyra.output import preview_output
+
+
+from .tool_admission import (ToolSnapshot, ToolRegistration, ResolvedToolSet, freeze)
+
+class ToolBatchExecutionError(RuntimeError):
+    """A failed batch with retained execution outcomes; never implies rollback."""
+    def __init__(self, cause, results):
+        self.cause, self.results = cause, tuple(results)
+        super().__init__('Tool result settlement failed; execution effects may already exist')
 
 
 class ToolRuntime:
@@ -60,6 +67,10 @@ class ToolRuntime:
         self.permission_mode = permission_mode
         self.confirm = confirm
         self.specs = {}
+        self._registrations = {}
+        self._generation = 0
+        from .tool_pipeline import ToolExecutionPipeline
+        self.pipeline = ToolExecutionPipeline(self)
         self.private_paths = set()
         self.coordination = (
             shared.get("coordination")
@@ -91,7 +102,7 @@ class ToolRuntime:
         """获取全局文件系统操作互斥锁 (Get Global File Lock)。"""
         return self._file_lock
 
-    def register(self, spec):
+    def register(self, spec, *, when=None):
         """校验入参规范并向运行时注册新工具 (Register Tool with JSON Schema Validation)。
 
         【安全校验】
@@ -101,7 +112,16 @@ class ToolRuntime:
             spec: 工具规范契约对象 ToolSpec。
         """
         Draft202012Validator.check_schema(spec.schema)
-        self.specs[spec.name] = spec
+        snapshot = ToolSnapshot(spec.name, spec.description, freeze(spec.schema), spec.handler,
+                                spec.execution_mode, spec.permission)
+        previous = self._registrations.get(spec.name)
+        if previous:
+            previous.dispose()
+        self._generation += 1
+        registration = ToolRegistration(self, snapshot, self._generation, when)
+        self.specs[spec.name] = snapshot
+        self._registrations[spec.name] = registration
+        return registration
 
     def declarations(self):
         """导出所有公开工具的标准 Function Calling 声明元组 (Export Public Tool Declarations)。
@@ -115,8 +135,30 @@ class ToolRuntime:
         return tuple(
             self.specs[name].declaration()
             for name in sorted(self.specs)
-            if not name.startswith("mcp__")
+            if not name.startswith("mcp__") and (name not in self._registrations or self._registrations[name].when is None)
         )
+
+    async def resolve_tools(self, context):
+        """Resolve all conditions atomically for one captured model and scope."""
+        admitted = {}
+        initial = dict(self._registrations)
+        for name in sorted(initial):
+            registration = initial[name]
+            if context.ctx is not None:
+                context.ctx.check_cancelled()
+            if context.scope is not None and name not in context.scope:
+                continue
+            condition = registration.when
+            enabled = True if condition is None else condition(context)
+            if inspect.isawaitable(enabled):
+                enabled = await enabled
+            if context.ctx is not None:
+                context.ctx.check_cancelled()
+            if type(enabled) is not bool:
+                raise TypeError('Tool condition must return bool')
+            if enabled and registration.live and self._registrations.get(name) is registration and self.specs.get(name) is registration.spec:
+                admitted[name] = registration
+        return ResolvedToolSet(self, admitted)
 
     def resolve_path(self, value):
         """解析并强力校验目标文件路径是否逃逸工程沙箱边界 (Resolve & Sandbox Project Path)。
@@ -288,102 +330,8 @@ class ToolRuntime:
             decision = self._policy(spec, args, context)
             return approved and decision is not False
 
-    async def _run(self, call, context, previous=None, prepared=None):
-        """执行单个工具调用的核心流转与异常捕获逻辑 (Execute Single Tool Invocation Core)。
-
-        【执行管道】
-        1. 依赖等待：若存在前置就绪事件 `previous`，等待前序工具准备完毕；
-        2. 运行时拦截挂钩：调用 HookRegistry 的 ToolCallHook 支持动态修改参数或熔断阻断；
-        3. 槽位获取与鉴权：获取读写互斥槽位并验证权限；
-        4. 意图记录与事件广播：在 SessionStore 中记入 `tool_intent` 并派发 `tool_start`；
-        5. 执行与结果归一化：捕获异常与取消信号，生成标准 ToolResult。
-
-        Args:
-            call: 待执行的工具调用请求。
-            context: 运行上下文。
-            previous: 可选的前置准备事件。
-            prepared: 可选的当前准备就绪通知事件。
-
-        Returns:
-            ToolResult: 工具执行生成的标准结果。
-        """
-        spec = self.specs.get(call.name)
-        result = ToolResult(call.id, call.name, "", status="invalid")
-        try:
-            if previous is not None:
-                await previous.wait()
-            if spec is None:
-                result.content = "Unknown tool"
-                return result
-            hooks = context.services.get("hooks")
-            if hooks:
-                intervention = await hooks.emit(ToolCallHook(call.id, call.name, call.arguments))
-                if intervention and intervention.block:
-                    result.status, result.content = "denied", intervention.reason or "Tool blocked"
-                    return result
-                if intervention and intervention.updated_args is not None:
-                    call = ToolCall(call.id, call.name, intervention.updated_args)
-            errors = list(Draft202012Validator(spec.schema).iter_errors(call.arguments))
-            if errors:
-                result.content = "Arguments do not satisfy the tool schema"
-                return result
-            read = (
-                None
-                if spec.execution_mode == "dispatch"
-                else spec.execution_mode == "read" and spec.permission == "read"
-            )
-            async with self._slot(read):
-                context.check_cancelled()
-                if not await self._allowed(spec, call.arguments, context):
-                    result.status, result.content = "denied", "Permission denied"
-                    return result
-                context.check_cancelled()
-                context.services["tools"] = self
-                capture = context.services.get("replay_capture")
-                if capture is not None:
-                    capture.tool(call.name)
-                self.session.append(
-                    "tool_intent",
-                    {"call_id": call.id, "name": call.name, "arguments": call.arguments},
-                    checkpoint=True,
-                )
-                result.started = True
-                emit = getattr(context, "emit", None)
-                if emit:
-                    await emit("tool_start", {"call_id": call.id, "name": call.name, "arguments": call.arguments})
-                if prepared is not None:
-                    prepared.set()
-                value = spec.handler(call.arguments, context)
-                value = await value if inspect.isawaitable(value) else value
-                if isinstance(value, ToolResult):
-                    result = value
-                    result.call_id, result.name, result.started = call.id, call.name, True
-                else:
-                    result.content = (
-                        value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
-                    )
-                    result.structured = value if not isinstance(value, str) else None
-                    result.status = "success"
-                    result.effect = "none" if spec.permission == "read" else "completed"
-        except asyncio.CancelledError:
-            result.status, result.content = "cancelled", "Cancelled"
-            result.effect = (
-                "unknown"
-                if result.started and spec is not None and spec.permission != "read"
-                else "none"
-            )
-        except Exception as exc:
-            result.status = "error"
-            result.content = f"Tool failed ({type(exc).__name__})"
-            result.effect = (
-                "unknown"
-                if result.started and spec is not None and spec.permission != "read"
-                else "none"
-            )
-        finally:
-            if prepared is not None:
-                prepared.set()
-        return result
+    async def _run(self, call, context, previous=None, prepared=None, tool_set=None):
+        return await self.pipeline.run(call, context, previous, prepared, tool_set)
 
     async def _finalize(self, result, context, persist=True):
         """工具执行结果终结流转与全量产物落盘 (Finalize Tool Result & Persist Artifact)。
@@ -403,7 +351,7 @@ class ToolRuntime:
             await emit("tool_completed", {"call_id": result.call_id, "status": result.status})
         return result
 
-    async def execute(self, call, context):
+    async def execute(self, call, context, *, tool_set=None):
         """单工具执行对外公共标准异步入口 (Public Single Tool Execution Entrypoint)。
 
         Args:
@@ -413,10 +361,7 @@ class ToolRuntime:
         Returns:
             ToolResult: 执行完毕的标准结果。
         """
-        result = await self._finalize(await self._run(call, context), context)
-        if asyncio.current_task().cancelling():
-            raise asyncio.CancelledError
-        return result
+        return (await self.execute_batch([call], context, tool_set=tool_set))[0]
 
     def _persist(self, result):
         """将工具完整输出持久化至磁盘并生成紧凑上下文预览 (Persist Full Tool Output & Generate Context Preview)。
@@ -440,7 +385,7 @@ class ToolRuntime:
         result.content = preview_output(result)
         self.session.append("tool_result", vars(result).copy(), checkpoint=True)
 
-    async def execute_batch(self, calls, context):
+    async def execute_batch(self, calls, context, *, tool_set=None):
         """按调用顺序准备、按读写安全分类并发流转、严格按序提交结果 (Ordered Batch Tool Execution)。
 
         【DSH 10 路并发调度流水线】
@@ -473,7 +418,7 @@ class ToolRuntime:
                     while cursor < end and len(active) < (self.concurrency if safe else 1):
                         ready = asyncio.Event()
                         task = asyncio.create_task(
-                            self._run(calls[cursor], context, previous, ready)
+                            self._run(calls[cursor], context, previous, ready, tool_set)
                         )
                         active[task] = cursor
                         previous = ready
@@ -483,8 +428,8 @@ class ToolRuntime:
                         values[active.pop(task)] = task.result()
                     while next_commit in values:
                         value = values.pop(next_commit)
-                        self._persist(value)
                         results.append(value)
+                        self._persist(value)
                         next_commit += 1
                         await self._finalize(value, context, persist=False)
         except asyncio.CancelledError:
@@ -505,4 +450,10 @@ class ToolRuntime:
                 )
                 results.append(await self._finalize(value, context))
             raise
+        except Exception as error:
+            for task in active:
+                task.cancel()
+            drained = await asyncio.gather(*active, return_exceptions=True)
+            settled = results + list(values.values()) + [v for v in drained if isinstance(v, ToolResult)]
+            raise ToolBatchExecutionError(error, settled) from error
         return results

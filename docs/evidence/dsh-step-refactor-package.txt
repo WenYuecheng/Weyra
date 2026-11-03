@@ -1,0 +1,16 @@
+isolated_environment: PASS
+wheel_install: PASS
+installed_dependencies: PASS
+wheel_resources: PASS
+cli_help: PASS
+check_config: PASS
+analysis_demo: PASS
+writing_demo: PASS
+offline_evaluation: PASS
+historical_guidance: PASS
+sdist_install: PASS
+sdist_dependencies: PASS
+sdist_cli_help: PASS
+source_load_and_report: PASS
+benchmarks.final_delivery_eval_help: PASS
+weyra.final_delivery_eval_help: PASS

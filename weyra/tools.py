@@ -61,6 +61,7 @@ def install_builtin_tools(runtime, jobs):
         "list_files": "List files inside the current project. Use path '.' to discover fixture or project files without a shell. Absolute paths must remain inside this project.",
         "grep_search": "Search text inside the current project with a regex. Returns at most 100 matches by default, with paths and line numbers; use read_file for full text.",
         "write_file": "Create or replace a project-relative UTF-8 file. Existing files must first be read in this turn so the current content version can be checked.",
+        "apply_patch": "Apply the input string as an optional multi-file patch using *** Begin Patch / *** End Patch with Add, Update, Delete File and Move to directives. Exact forward context matching; existing files must be read first. Full preflight precedes sequential writes; inspect structured partial outcomes on failure.",
         "edit_file": "Replace exactly one occurrence of old_text in a project-relative UTF-8 file. Read the current file first; conflicting external changes are rejected.",
         "run_shell": "Run a shell command in the current project. Explicit approval is normally required; prefer file tools when approval is unavailable. Background mode returns an owned job ID.",
     }
@@ -321,6 +322,13 @@ def install_builtin_tools(runtime, jobs):
         write,
         "write",
     )
+    if getattr(runtime, "apply_patch_enabled", False):
+        from .patch_tool import apply_patch
+
+        async def patch(args, ctx):
+            return await apply_patch(runtime, args, ctx)
+
+        register("apply_patch", {"input": string}, ["input"], patch, "write")
     register("list_files", {"path": string}, [], listing)
     register(
         "grep_search",

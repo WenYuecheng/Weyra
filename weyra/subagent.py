@@ -60,21 +60,15 @@ class ChildManager:
         self._tasks = {}
         self._results = []
         self._closed = False
-        archived = {}
-        for entry in getattr(parent_agent.session, "records", []):
-            data = entry["data"]
-            if entry["kind"] == "child_task":
-                archived[data["task_id"]] = data
-            elif entry["kind"] == "child_result" and data["task_id"] in archived:
-                previous = archived[data["task_id"]]
-                self._tasks[data["task_id"]] = {
-                    **previous,
-                    "result": copy.deepcopy(data),
-                    "state": data["state"],
-                    "child": None,
-                    "task": None,
-                    "queued": [],
-                }
+        from .projections import replay
+        session = parent_agent.session
+        recovered = {'children': session.child_delivery_state()} if hasattr(session, "child_delivery_state") else replay(getattr(session, "records", []))
+        for task_id, data in recovered["children"].items():
+            self._tasks[task_id] = {
+                **copy.deepcopy(data),
+                "result": copy.deepcopy(data.get("result")),
+                "child": None, "task": None, "queued": [],
+            }
 
     def _view(self, record: dict) -> dict:
         """生成任务状态的安全只读视图字典。

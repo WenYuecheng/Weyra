@@ -108,7 +108,16 @@ def test_lifecycle_retains_project_instructions(tmp_path):
         agent = Agent(tmp_path, scripted_runtime([ModelResponse("done")]), enable_memory=False)
         agent.enable_evolution = True
         await agent.run_once("hi")
-        assert "Use Chinese in every answer" in agent._pending_window["replay"]["system_instructions"]
+        replay = agent._pending_window["replay"]
+        assert "Use Chinese in every answer" not in replay["system_instructions"]
+        assert any(
+            "Use Chinese in every answer" in message["content"]
+            and '"source":"project_rules"' in message["content"]
+            for message in replay["context"]
+        )
+        from weyra.skill_replay import freeze_window
+        window = freeze_window(evidence(replay=replay), [case(0)])
+        assert "Use Chinese in every answer" in window.development[0]["prompt"]
         await agent.close()
     asyncio.run(run())
 

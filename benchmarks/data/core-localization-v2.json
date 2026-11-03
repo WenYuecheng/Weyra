@@ -1,0 +1,630 @@
+{
+  "version": "core-localization-v2",
+  "purpose": "Posthoc independent supplementary host-parser probe; does not replace v1. Expected targets fixed before execution. No model calls or model-visible gold.",
+  "skill_library": [
+    {
+      "id": "evidence",
+      "description": "Compare source claims and preserve provenance",
+      "body": "Report each claim with its supporting source and mark unsupported claims unknown.",
+      "name": "evidence",
+      "version": "1.0.0",
+      "aliases": [
+        "核对两个来源的说法并标注出处",
+        "Reconcile conflicting accounts with provenance"
+      ]
+    },
+    {
+      "id": "report",
+      "description": "Calculate operational metrics from tabular records",
+      "body": "Use the defined denominator; report counts, rate, and excluded rows.",
+      "name": "report",
+      "version": "1.0.0",
+      "aliases": [
+        "Calcula la tasa de finalización de esta tabla",
+        "Work out the funnel percentage from the ledger"
+      ]
+    },
+    {
+      "id": "narrative",
+      "description": "Reconstruct a factual timeline for readers",
+      "body": "Order events by time, preserve named actors, and separate known causes from speculation.",
+      "name": "narrative",
+      "version": "1.0.0",
+      "aliases": [
+        "按发生时间整理事故经过",
+        "Reconstruct what happened and when"
+      ]
+    },
+    {
+      "id": "technical",
+      "description": "Diagnose traces and select a minimal verified repair",
+      "body": "Use observed error evidence, specify the failed operation and a check of the repair.",
+      "name": "technical",
+      "version": "1.0.0",
+      "aliases": [
+        "Diagnostica este error de ejecución",
+        "Find the failing operation in this stack trace"
+      ]
+    },
+    {
+      "id": "file_workflow",
+      "description": "Plan safe file transformations and manifests",
+      "body": "Preserve original files; return relative output paths and explicit transformation steps.",
+      "name": "file_workflow",
+      "version": "1.0.0",
+      "aliases": [
+        "保留原件并安排文件转换",
+        "Map originals to converted copies safely"
+      ]
+    },
+    {
+      "id": "structured",
+      "description": "Normalize records into typed JSON",
+      "body": "Preserve identifiers, distinguish missing values from zero, and use explicit units.",
+      "name": "structured",
+      "version": "1.0.0",
+      "aliases": [
+        "Convertis ces lignes en JSON typé",
+        "Coerce the row values into a typed object"
+      ]
+    },
+    {
+      "id": "report-style",
+      "description": "Polish report wording without calculating metrics",
+      "body": "Edit prose only; preserve quantitative claims.",
+      "name": "report-style",
+      "version": "1.0.0",
+      "aliases": []
+    },
+    {
+      "id": "technical-writing",
+      "description": "Explain existing technical concepts",
+      "body": "Explain concepts without diagnosing runtime failures.",
+      "name": "technical-writing",
+      "version": "1.0.0",
+      "aliases": []
+    }
+  ],
+  "cases": [
+    {
+      "id": "v2-explicit-01",
+      "category": "explicit",
+      "input": {
+        "query": "The delivery count was challenged. Update the selected evidence workflow so signed receipts stay attributable.",
+        "explicit_id": "evidence"
+      },
+      "expected_target": "evidence"
+    },
+    {
+      "id": "v2-explicit-02",
+      "category": "explicit",
+      "input": {
+        "query": "Our weekly funnel includes cancellations. Correct the selected report workflow denominator.",
+        "explicit_id": "report"
+      },
+      "expected_target": "report"
+    },
+    {
+      "id": "v2-explicit-03",
+      "category": "explicit",
+      "input": {
+        "query": "Readers confused the rollback with the cause. Adjust the selected incident-writing workflow.",
+        "explicit_id": "narrative"
+      },
+      "expected_target": "narrative"
+    },
+    {
+      "id": "v2-explicit-04",
+      "category": "explicit",
+      "input": {
+        "query": "The retry advice missed an index error. Tighten the selected diagnosis workflow.",
+        "explicit_id": "technical"
+      },
+      "expected_target": "technical"
+    },
+    {
+      "id": "v2-explicit-05",
+      "category": "explicit",
+      "input": {
+        "query": "The migration replaced originals. Correct the selected conversion workflow to retain source copies.",
+        "explicit_id": "file_workflow"
+      },
+      "expected_target": "file_workflow"
+    },
+    {
+      "id": "v2-explicit-06",
+      "category": "explicit",
+      "input": {
+        "query": "A customer identifier lost leading zeros. Repair the selected normalization workflow.",
+        "explicit_id": "structured"
+      },
+      "expected_target": "structured"
+    },
+    {
+      "id": "v2-explicit-07",
+      "category": "explicit",
+      "input": {
+        "query": "The management report is too wordy. Edit its prose workflow while preserving the figures.",
+        "explicit_id": "report-style"
+      },
+      "expected_target": "report-style"
+    },
+    {
+      "id": "v2-explicit-08",
+      "category": "explicit",
+      "input": {
+        "query": "The glossary assumes expert knowledge. Improve the selected explanation workflow for beginners.",
+        "explicit_id": "technical-writing"
+      },
+      "expected_target": "technical-writing"
+    },
+    {
+      "id": "v2-explicit-09",
+      "category": "explicit",
+      "input": {
+        "query": "The selected provenance method silently resolved two conflicting accounts. Keep the unresolved dispute visible.",
+        "explicit_id": "evidence"
+      },
+      "expected_target": "evidence"
+    },
+    {
+      "id": "v2-explicit-10",
+      "category": "explicit",
+      "input": {
+        "query": "The selected record method turned a blank note into zero. Preserve the missing-value distinction.",
+        "explicit_id": "structured"
+      },
+      "expected_target": "structured"
+    },
+    {
+      "id": "v2-recent-01",
+      "category": "recent",
+      "input": {
+        "query": "In the receipt comparison you just produced, the unsigned estimate should stay unverified.",
+        "used_ids": [
+          "evidence"
+        ]
+      },
+      "expected_target": "evidence"
+    },
+    {
+      "id": "v2-recent-02",
+      "category": "recent",
+      "input": {
+        "query": "For the conversion-rate calculation you just ran, cancelled requests must stay outside eligibility.",
+        "used_ids": [
+          "report"
+        ]
+      },
+      "expected_target": "report"
+    },
+    {
+      "id": "v2-recent-03",
+      "category": "recent",
+      "input": {
+        "query": "In that incident chronology, keep the cause unknown until the investigation establishes it.",
+        "used_ids": [
+          "narrative"
+        ]
+      },
+      "expected_target": "narrative"
+    },
+    {
+      "id": "v2-recent-04",
+      "category": "recent",
+      "input": {
+        "query": "The stack-trace diagnosis you just gave should test both the last valid and the failing index.",
+        "used_ids": [
+          "technical"
+        ]
+      },
+      "expected_target": "technical"
+    },
+    {
+      "id": "v2-recent-05",
+      "category": "recent",
+      "input": {
+        "query": "For the archive plan you just prepared, put converted copies under the output folder.",
+        "used_ids": [
+          "file_workflow"
+        ]
+      },
+      "expected_target": "file_workflow"
+    },
+    {
+      "id": "v2-recent-06",
+      "category": "recent",
+      "input": {
+        "query": "The records you normalized need literal customer IDs, including initial zeros.",
+        "used_ids": [
+          "structured"
+        ]
+      },
+      "expected_target": "structured"
+    },
+    {
+      "id": "v2-recent-07",
+      "category": "recent",
+      "input": {
+        "query": "The report wording you just edited should keep the original percentage precision.",
+        "used_ids": [
+          "report-style"
+        ]
+      },
+      "expected_target": "report-style"
+    },
+    {
+      "id": "v2-recent-08",
+      "category": "recent",
+      "input": {
+        "query": "The concept explanation you just wrote needs a short example before the advanced terminology.",
+        "used_ids": [
+          "technical-writing"
+        ]
+      },
+      "expected_target": "technical-writing"
+    },
+    {
+      "id": "v2-recent-09",
+      "category": "recent",
+      "input": {
+        "query": "In the source reconciliation from your last turn, do not invent a tie breaker for unsigned claims.",
+        "used_ids": [
+          "evidence"
+        ]
+      },
+      "expected_target": "evidence"
+    },
+    {
+      "id": "v2-recent-10",
+      "category": "recent",
+      "input": {
+        "query": "For that completed conversion plan, retain a manifest mapping each source to its new copy.",
+        "used_ids": [
+          "file_workflow"
+        ]
+      },
+      "expected_target": "file_workflow"
+    },
+    {
+      "id": "v2-cross_language-01",
+      "category": "cross_language",
+      "input": {
+        "query": "请核对两个来源的说法并标注出处。这次有一份签收单和一条未核实的聊天记录。"
+      },
+      "expected_target": "evidence"
+    },
+    {
+      "id": "v2-cross_language-02",
+      "category": "cross_language",
+      "input": {
+        "query": "Calcula la tasa de finalización de esta tabla; excluye las cancelaciones del conjunto elegible."
+      },
+      "expected_target": "report"
+    },
+    {
+      "id": "v2-cross_language-03",
+      "category": "cross_language",
+      "input": {
+        "query": "请按发生时间整理事故经过。不要把先发生的事件自动写成原因。"
+      },
+      "expected_target": "narrative"
+    },
+    {
+      "id": "v2-cross_language-04",
+      "category": "cross_language",
+      "input": {
+        "query": "Diagnostica este error de ejecución: el índice solicitado es igual a la longitud de la lista."
+      },
+      "expected_target": "technical"
+    },
+    {
+      "id": "v2-cross_language-05",
+      "category": "cross_language",
+      "input": {
+        "query": "请保留原件并安排文件转换。转换后的副本应该放在另一个目录。"
+      },
+      "expected_target": "file_workflow"
+    },
+    {
+      "id": "v2-cross_language-06",
+      "category": "cross_language",
+      "input": {
+        "query": "Convertis ces lignes en JSON typé; conserve les zéros initiaux des identifiants."
+      },
+      "expected_target": "structured"
+    },
+    {
+      "id": "v2-cross_language-07",
+      "category": "cross_language",
+      "input": {
+        "query": "この署名付き記録とチャットを比較してください。Reconcile conflicting accounts with provenance."
+      },
+      "expected_target": "evidence"
+    },
+    {
+      "id": "v2-cross_language-08",
+      "category": "cross_language",
+      "input": {
+        "query": "이 취소 건을 분모에서 빼 주세요. Work out the funnel percentage from the ledger."
+      },
+      "expected_target": "report"
+    },
+    {
+      "id": "v2-cross_language-09",
+      "category": "cross_language",
+      "input": {
+        "query": "この例外の原因を調べてください。Find the failing operation in this stack trace."
+      },
+      "expected_target": "technical"
+    },
+    {
+      "id": "v2-cross_language-10",
+      "category": "cross_language",
+      "input": {
+        "query": "Bitte die Kennungen unverändert lassen. Coerce the row values into a typed object."
+      },
+      "expected_target": "structured"
+    },
+    {
+      "id": "v2-synonyms-01",
+      "category": "synonyms",
+      "input": {
+        "query": "Reconcile conflicting accounts with provenance. One statement comes from a signed ledger and the other from an estimate."
+      },
+      "expected_target": "evidence"
+    },
+    {
+      "id": "v2-synonyms-02",
+      "category": "synonyms",
+      "input": {
+        "query": "Work out the funnel percentage from the ledger. There are successful, incomplete, and cancelled requests."
+      },
+      "expected_target": "report"
+    },
+    {
+      "id": "v2-synonyms-03",
+      "category": "synonyms",
+      "input": {
+        "query": "Reconstruct what happened and when. The responder rolled back after the first monitor alert."
+      },
+      "expected_target": "narrative"
+    },
+    {
+      "id": "v2-synonyms-04",
+      "category": "synonyms",
+      "input": {
+        "query": "Find the failing operation in this stack trace. Increasing the timeout did not change the exception."
+      },
+      "expected_target": "technical"
+    },
+    {
+      "id": "v2-synonyms-05",
+      "category": "synonyms",
+      "input": {
+        "query": "Map originals to converted copies safely. The input archive must remain available for rollback."
+      },
+      "expected_target": "file_workflow"
+    },
+    {
+      "id": "v2-synonyms-06",
+      "category": "synonyms",
+      "input": {
+        "query": "Coerce the row values into a typed object. Empty notes and zero counts have different meanings."
+      },
+      "expected_target": "structured"
+    },
+    {
+      "id": "v2-synonyms-07",
+      "category": "synonyms",
+      "input": {
+        "query": "For the disputed shipment, Reconcile conflicting accounts with provenance before issuing a confirmed count."
+      },
+      "expected_target": "evidence"
+    },
+    {
+      "id": "v2-synonyms-08",
+      "category": "synonyms",
+      "input": {
+        "query": "Before the operations meeting, Work out the funnel percentage from the ledger using eligible requests."
+      },
+      "expected_target": "report"
+    },
+    {
+      "id": "v2-synonyms-09",
+      "category": "synonyms",
+      "input": {
+        "query": "For the outage review, Reconstruct what happened and when using the three timestamped observations."
+      },
+      "expected_target": "narrative"
+    },
+    {
+      "id": "v2-synonyms-10",
+      "category": "synonyms",
+      "input": {
+        "query": "For the CSV migration, Map originals to converted copies safely and retain a source-to-destination manifest."
+      },
+      "expected_target": "file_workflow"
+    },
+    {
+      "id": "v2-ambiguous-01",
+      "category": "ambiguous",
+      "input": {
+        "query": "Use evidence and report together; I have not chosen which existing workflow should receive this correction."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-02",
+      "category": "ambiguous",
+      "input": {
+        "query": "Both narrative and technical were involved in the incident response. Which one should retain this new rule?"
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-03",
+      "category": "ambiguous",
+      "input": {
+        "query": "The feedback applies to file_workflow or structured, but I cannot tell whether the error came from conversion or normalization."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-04",
+      "category": "ambiguous",
+      "input": {
+        "query": "I mentioned report-style and technical-writing, but have not identified which prose workflow produced the wording."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-05",
+      "category": "ambiguous",
+      "input": {
+        "query": "Please review evidence and narrative; the problem could be attribution or chronological ordering."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-06",
+      "category": "ambiguous",
+      "input": {
+        "query": "The previous turn successfully used two workflows; I do not know which one caused the bad output.",
+        "used_ids": [
+          "evidence",
+          "report"
+        ]
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-07",
+      "category": "ambiguous",
+      "input": {
+        "query": "Two loaded methods share responsibility for this report; do not choose one without clarification.",
+        "used_ids": [
+          "technical",
+          "narrative"
+        ]
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-08",
+      "category": "ambiguous",
+      "input": {
+        "query": "Either the loaded record method or the loaded conversion method stripped the zero prefix.",
+        "used_ids": [
+          "structured",
+          "file_workflow"
+        ]
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-09",
+      "category": "ambiguous",
+      "input": {
+        "query": "I used two explanation methods in the last answer and cannot attribute the correction to either one.",
+        "used_ids": [
+          "report-style",
+          "technical-writing"
+        ]
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-ambiguous-10",
+      "category": "ambiguous",
+      "input": {
+        "query": "The source dispute involved two selected workflows and the feedback does not distinguish them.",
+        "used_ids": [
+          "evidence",
+          "narrative"
+        ]
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-01",
+      "category": "absent",
+      "input": {
+        "query": "What is seven multiplied by eight?"
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-02",
+      "category": "absent",
+      "input": {
+        "query": "Translate the greeting hello into German."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-03",
+      "category": "absent",
+      "input": {
+        "query": "Compose a birthday greeting for my sister."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-04",
+      "category": "absent",
+      "input": {
+        "query": "Suggest a name for a fictional orange cat."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-05",
+      "category": "absent",
+      "input": {
+        "query": "Explain the legal moves of a knight in chess."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-06",
+      "category": "absent",
+      "input": {
+        "query": "Tell me a lighthearted joke about rain."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-07",
+      "category": "absent",
+      "input": {
+        "query": "Give me a vegetarian sandwich idea with cucumber."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-08",
+      "category": "absent",
+      "input": {
+        "query": "Write a four-line poem about the moon."
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-09",
+      "category": "absent",
+      "input": {
+        "query": "What color do blue and yellow pigments usually make when mixed?"
+      },
+      "expected_target": null
+    },
+    {
+      "id": "v2-absent-10",
+      "category": "absent",
+      "input": {
+        "query": "Help me remember the order of the planets with a mnemonic."
+      },
+      "expected_target": null
+    }
+  ]
+}

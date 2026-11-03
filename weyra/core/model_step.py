@@ -24,13 +24,14 @@
 """
 
 import asyncio
+import copy
 from .context import ContextOverflow, estimate_tokens
 from weyra.contracts import digest, PreparedRequest
 from .model_runtime import ModelError
 from .hooks import BeforeModelCallHook
 
 
-async def run_model_step(self, ctx):
+async def run_model_step(self, ctx, *, prepared_step=None):
     """编排并执行单次模型推理请求，集成流式传输与自愈重试。
 
     【执行流程与容灾时序】
@@ -55,13 +56,16 @@ async def run_model_step(self, ctx):
         ContextOverflow: 当请求超出上下文容量且无法压缩精简时抛出。
         ModelError: 当达到物理尝试上限或遇到无法恢复的模型错误时抛出。
     """
+    if prepared_step is None:
+        from .step import PreparedStep
+        async with PreparedStep(self, ctx) as step:
+            return await run_model_step(self, ctx, prepared_step=step)
+    step = prepared_step
     attempts = {"attempts": 0, "limit": 4}
     overflow_retries = 0
     while attempts["attempts"] < attempts["limit"]:
         ctx.check_cancelled()
-        request = await self.context_manager.prepare(
-            self.runtime, ctx, self.tools.declarations()
-        )
+        request = await step.manager.prepare(self.runtime, ctx, step.declarations())
         start_system = ctx.services.get("run_system")
         transformed = await self.hooks.emit(BeforeModelCallHook(list(request.messages), attempts["attempts"]))
         if transformed and transformed.block:
@@ -75,11 +79,11 @@ async def run_model_step(self, ctx):
             request = copy_request(request, parameters=parameters)
             from .model_runtime import _validate_pairs
             _validate_pairs(request)
-            if parameters["estimated_input_tokens"] + self.context_manager._reserved_output > request.model.context_window:
+            if parameters["estimated_input_tokens"] + step.manager._reserved_output > request.model.context_window:
                 raise ContextOverflow("Hook-transformed request exceeds model capacity")
         response = None
         try:
-            async for event in self.runtime.stream(request, ctx, attempt_budget=attempts):
+            async for event in step.prepare_request(request).stream(ctx, attempt_budget=attempts):
                 if event.kind == "text":
                     await ctx.emit("text", event.data)
                 elif event.kind == "response":
@@ -92,11 +96,11 @@ async def run_model_step(self, ctx):
             ctx.check_cancelled()
             if (
                 error.kind == "overflow"
-                and overflow_retries < self.context_manager.policy.max_overflow_retries
+                and overflow_retries < step.manager.policy.max_overflow_retries
             ):
                 before = digest([m.to_dict() for m in self.session.project()])
                 try:
-                    await self.context_manager.compact(self.runtime, ctx, trigger="overflow")
+                    await step.manager.compact(self.runtime, ctx, trigger="overflow")
                 except asyncio.CancelledError:
                     raise
                 except Exception:
@@ -106,18 +110,17 @@ async def run_model_step(self, ctx):
                 if before == after:
                     raise ContextOverflow("Provider overflow could not be reduced") from error
                 overflow_retries += 1
+                step.new_series()
                 continue
-            model = self.runtime.next_fallback("main", self.context_manager.model)
+            model = self.runtime.next_fallback("main", step.model)
             if (
                 error.kind != "transient"
                 or model is None
                 or attempts["attempts"] >= attempts["limit"]
             ):
                 raise
-            self.runtime.activate_route("main", model, ctx)
-            self.context_manager.model = model
-            self.context_manager._sync_policy(self.runtime)
-            self.context_manager.change("explicit_model_failover")
+            await switch_model(self, model, ctx, step.declarations())
+            await step.reselect()
     raise ModelError("attempt_limit", "Model physical attempt limit reached")
 
 
@@ -140,3 +143,48 @@ def copy_request(request: PreparedRequest, **changes) -> PreparedRequest:
                   parameters=request.parameters, id=request.id)
     values.update(changes)
     return PreparedRequest(**values)
+
+
+async def switch_model(host, model, ctx, tools):
+    """Admit a destination against its capacity before committing a route change.
+
+    Compression uses the current model/runtime. Durable reductions survive a
+    refused switch; the effective route and policy remain unchanged on failure.
+    """
+    manager = host.context_manager
+    host.runtime.registry.get(model.provider_id)
+    candidate = copy.copy(manager)
+    candidate.model = model
+    candidate._sync_policy(host.runtime)
+    threshold = candidate.threshold
+    declarations = tools if model.supports_tools else ()
+
+    def fits():
+        measured = candidate._measure(manager.session.project(), declarations)
+        size = measured["estimated_input_tokens"]
+        return size < threshold and size + candidate._reserved_output <= model.context_window
+
+    if not fits() and candidate.policy.auto:
+        await manager.reduce_large_results()
+        for _ in range(candidate.policy.compaction_retries + 1):
+            if fits():
+                break
+            if not await manager.compact(host.runtime, ctx, trigger="pressure"):
+                break
+    if not fits():
+        raise ContextOverflow("Destination model admission failed; previous route preserved")
+    if ctx is not None:
+        ctx.check_cancelled()
+    previous_routes = dict(host.runtime.routes)
+    previous_state = dict(manager.__dict__)
+    try:
+        with manager.session.transaction():
+            host.runtime.activate_route("main", model, ctx)
+            manager.model = model
+            manager._sync_policy(host.runtime)
+            manager.change("explicit_model_failover")
+    except BaseException:
+        host.runtime.routes.clear()
+        host.runtime.routes.update(previous_routes)
+        manager.__dict__.update(previous_state)
+        raise

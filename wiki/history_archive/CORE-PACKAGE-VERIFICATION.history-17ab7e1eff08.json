@@ -1,0 +1,65 @@
+{
+  "status": "pass",
+  "verified_at_utc": "2026-10-18T05:33:55.970225+00:00",
+  "wheel": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-20261018T053321Z/wheels/weyra-0.1.0-py3-none-any.whl",
+  "wheel_sha256": "0787000166437df293fea91021ef94eb399b9f7f38a6e61a80909cb0abc6625b",
+  "wheel_entries": {
+    "agents/core_corpus.py": {
+      "present": true,
+      "sha256": "9cc034a26f454533be99cd8457150ee6a727eb1692b48ea30ad214a3994bfe58"
+    },
+    "agents/core_scoring.py": {
+      "present": true,
+      "sha256": "82dde543b91d6aec2afd025cb22b5f79d14f177fc1b64855904ce100feabdc98"
+    },
+    "agents/core_evaluation.py": {
+      "present": true,
+      "sha256": "b7709d0741107f72e2f62aafd9f2b2e816977fd1c3c331ee38e875f437ae3e85"
+    },
+    "weyra-0.1.0.data/data/share/weyra/data/core-eval-v1.json": {
+      "present": true,
+      "sha256": "af4edac56a3c439ca93b0b5842eaf75b32e563443a05f3d92bdf69725a5eb9f1"
+    },
+    "weyra-0.1.0.data/data/share/weyra/data/core-public-audit-v1.json": {
+      "present": true,
+      "sha256": "bcbaf921d61766afb20564e21ca3732374737cf8e5a72e2e56565345e2f5adf2"
+    }
+  },
+  "matches_current_source": {
+    "agents/core_corpus.py": true,
+    "agents/core_scoring.py": true,
+    "agents/core_evaluation.py": true,
+    "weyra-0.1.0.data/data/share/weyra/data/core-eval-v1.json": true,
+    "weyra-0.1.0.data/data/share/weyra/data/core-public-audit-v1.json": true
+  },
+  "commands": [
+    "python -m pip wheel . --no-deps --no-build-isolation --wheel-dir .weyra/core-package-check-20261018T053321Z/wheels",
+    "python -m venv --system-site-packages .weyra/core-package-check-20261018T053321Z/venv",
+    ".weyra/core-package-check-20261018T053321Z/venv/bin/python -m pip install --no-deps .weyra/core-package-check-20261018T053321Z/wheels/weyra-0.1.0-py3-none-any.whl",
+    "From /tmp: isolated-environment Python -I imports core modules and calls load_core_manifest()"
+  ],
+  "installed_evidence": {
+    "cwd": "/private/tmp",
+    "sys_prefix": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-20261018T053321Z/venv",
+    "imports": {
+      "agents.core_corpus": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-20261018T053321Z/venv/lib/python3.13/site-packages/agents/core_corpus.py",
+      "agents.core_scoring": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-20261018T053321Z/venv/lib/python3.13/site-packages/agents/core_scoring.py",
+      "agents.core_evaluation": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-20261018T053321Z/venv/lib/python3.13/site-packages/agents/core_evaluation.py"
+    },
+    "data_root": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-20261018T053321Z/venv/share/weyra/data",
+    "manifest_counts": {
+      "skill_library": 8,
+      "localization_cases": 60,
+      "evolution_families": 6,
+      "long_history_cases": 12,
+      "public_cases": 12
+    },
+    "public_audit": "/Users/wenyuecheng/code/python/Weyra/.weyra/core-package-check-20261018T053321Z/venv/share/weyra/data/core-public-audit-v1.json",
+    "public_audit_type": "dict"
+  },
+  "limits": [
+    "The environment reused available system dependencies; this was not a clean dependency-resolution test.",
+    "No model/API calls, examples, or report-rewriting verification commands were run."
+  ],
+  "build_frontend_note": "python -m build unavailable; pip wheel built successfully with installed setuptools."
+}

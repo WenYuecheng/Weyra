@@ -1,0 +1,709 @@
+{
+  "version": "core-localization-supplement-v2",
+  "manifest_sha256": "c21e01cb0b05637d83c25c33d2489852011af3cccba011e22aa215ea9fc7afd3",
+  "code_sha256": {
+    "agents/skills.py": "87f6a89638bf6633941b54524a30f23bd1bbc08fdeba8c8c0ed61f8205d52de8",
+    "agents/frontmatter.py": "6a2077a1aa09f3d129a94f23d8d6275a95a33dfe3d60f3b1eb24d842438f2791"
+  },
+  "protocol": "Frozen 60 unique host inputs and expected labels before one paired deterministic execution. Old search_top1 sees query; new resolve_target also receives explicit_id/used_ids when supplied. No models. No selection from v3 outcomes.",
+  "counts": {
+    "rows": 60,
+    "unique_inputs": 60,
+    "old_successes": 23,
+    "new_successes": 59
+  },
+  "by_category": {
+    "absent": {
+      "cases": 10,
+      "old_successes": 0,
+      "new_successes": 9
+    },
+    "ambiguous": {
+      "cases": 10,
+      "old_successes": 0,
+      "new_successes": 10
+    },
+    "cross_language": {
+      "cases": 10,
+      "old_successes": 6,
+      "new_successes": 10
+    },
+    "explicit": {
+      "cases": 10,
+      "old_successes": 5,
+      "new_successes": 10
+    },
+    "recent": {
+      "cases": 10,
+      "old_successes": 5,
+      "new_successes": 10
+    },
+    "synonyms": {
+      "cases": 10,
+      "old_successes": 7,
+      "new_successes": 10
+    }
+  },
+  "results": [
+    {
+      "id": "v2-explicit-01",
+      "category": "explicit",
+      "expected_target": "evidence",
+      "old_selected": "technical",
+      "new_selected": "evidence",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-02",
+      "category": "explicit",
+      "expected_target": "report",
+      "old_selected": "report",
+      "new_selected": "report",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-03",
+      "category": "explicit",
+      "expected_target": "narrative",
+      "old_selected": "technical-writing",
+      "new_selected": "narrative",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-04",
+      "category": "explicit",
+      "expected_target": "technical",
+      "old_selected": "technical",
+      "new_selected": "technical",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-05",
+      "category": "explicit",
+      "expected_target": "file_workflow",
+      "old_selected": "evidence",
+      "new_selected": "file_workflow",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-06",
+      "category": "explicit",
+      "expected_target": "structured",
+      "old_selected": "technical",
+      "new_selected": "structured",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-07",
+      "category": "explicit",
+      "expected_target": "report-style",
+      "old_selected": "report-style",
+      "new_selected": "report-style",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-08",
+      "category": "explicit",
+      "expected_target": "technical-writing",
+      "old_selected": "file_workflow",
+      "new_selected": "technical-writing",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-09",
+      "category": "explicit",
+      "expected_target": "evidence",
+      "old_selected": "evidence",
+      "new_selected": "evidence",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-explicit-10",
+      "category": "explicit",
+      "expected_target": "structured",
+      "old_selected": "structured",
+      "new_selected": "structured",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "explicit_id",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-01",
+      "category": "recent",
+      "expected_target": "evidence",
+      "old_selected": "technical",
+      "new_selected": "evidence",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-02",
+      "category": "recent",
+      "expected_target": "report",
+      "old_selected": "report",
+      "new_selected": "report",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-03",
+      "category": "recent",
+      "expected_target": "narrative",
+      "old_selected": "evidence",
+      "new_selected": "narrative",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-04",
+      "category": "recent",
+      "expected_target": "technical",
+      "old_selected": "technical",
+      "new_selected": "technical",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-05",
+      "category": "recent",
+      "expected_target": "file_workflow",
+      "old_selected": "file_workflow",
+      "new_selected": "file_workflow",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-06",
+      "category": "recent",
+      "expected_target": "structured",
+      "old_selected": "report",
+      "new_selected": "structured",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-07",
+      "category": "recent",
+      "expected_target": "report-style",
+      "old_selected": "report-style",
+      "new_selected": "report-style",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-08",
+      "category": "recent",
+      "expected_target": "technical-writing",
+      "old_selected": "technical",
+      "new_selected": "technical-writing",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-09",
+      "category": "recent",
+      "expected_target": "evidence",
+      "old_selected": "evidence",
+      "new_selected": "evidence",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-recent-10",
+      "category": "recent",
+      "expected_target": "file_workflow",
+      "old_selected": "evidence",
+      "new_selected": "file_workflow",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-01",
+      "category": "cross_language",
+      "expected_target": "evidence",
+      "old_selected": null,
+      "new_selected": "evidence",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-02",
+      "category": "cross_language",
+      "expected_target": "report",
+      "old_selected": null,
+      "new_selected": "report",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-03",
+      "category": "cross_language",
+      "expected_target": "narrative",
+      "old_selected": null,
+      "new_selected": "narrative",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-04",
+      "category": "cross_language",
+      "expected_target": "technical",
+      "old_selected": "technical",
+      "new_selected": "technical",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-05",
+      "category": "cross_language",
+      "expected_target": "file_workflow",
+      "old_selected": null,
+      "new_selected": "file_workflow",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-06",
+      "category": "cross_language",
+      "expected_target": "structured",
+      "old_selected": "structured",
+      "new_selected": "structured",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-07",
+      "category": "cross_language",
+      "expected_target": "evidence",
+      "old_selected": "evidence",
+      "new_selected": "evidence",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-08",
+      "category": "cross_language",
+      "expected_target": "report",
+      "old_selected": "report",
+      "new_selected": "report",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-09",
+      "category": "cross_language",
+      "expected_target": "technical",
+      "old_selected": "technical",
+      "new_selected": "technical",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-cross_language-10",
+      "category": "cross_language",
+      "expected_target": "structured",
+      "old_selected": "structured",
+      "new_selected": "structured",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-01",
+      "category": "synonyms",
+      "expected_target": "evidence",
+      "old_selected": "evidence",
+      "new_selected": "evidence",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-02",
+      "category": "synonyms",
+      "expected_target": "report",
+      "old_selected": "report",
+      "new_selected": "report",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-03",
+      "category": "synonyms",
+      "expected_target": "narrative",
+      "old_selected": "technical",
+      "new_selected": "narrative",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-04",
+      "category": "synonyms",
+      "expected_target": "technical",
+      "old_selected": "technical",
+      "new_selected": "technical",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-05",
+      "category": "synonyms",
+      "expected_target": "file_workflow",
+      "old_selected": "narrative",
+      "new_selected": "file_workflow",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-06",
+      "category": "synonyms",
+      "expected_target": "structured",
+      "old_selected": "structured",
+      "new_selected": "structured",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-07",
+      "category": "synonyms",
+      "expected_target": "evidence",
+      "old_selected": "evidence",
+      "new_selected": "evidence",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-08",
+      "category": "synonyms",
+      "expected_target": "report",
+      "old_selected": "report",
+      "new_selected": "report",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-09",
+      "category": "synonyms",
+      "expected_target": "narrative",
+      "old_selected": "narrative",
+      "new_selected": "narrative",
+      "old_success": true,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-synonyms-10",
+      "category": "synonyms",
+      "expected_target": "file_workflow",
+      "old_selected": "technical",
+      "new_selected": "file_workflow",
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-ambiguous-01",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "report",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-02",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "technical",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-03",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "file_workflow",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-04",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "report-style",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-05",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "technical",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "exact_alias",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-06",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "file_workflow",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-07",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "report-style",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-08",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "structured",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-09",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "technical",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-ambiguous-10",
+      "category": "ambiguous",
+      "expected_target": null,
+      "old_selected": "evidence",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "used_ids",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-01",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "narrative",
+      "new_selected": "narrative",
+      "old_success": false,
+      "new_success": false,
+      "new_source": "lexical",
+      "new_reason": "resolved"
+    },
+    {
+      "id": "v2-absent-02",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "structured",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-03",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "narrative",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-04",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "narrative",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-05",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "technical",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-06",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "technical",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-07",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "evidence",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-08",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "technical",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-09",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "evidence",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    },
+    {
+      "id": "v2-absent-10",
+      "category": "absent",
+      "expected_target": null,
+      "old_selected": "technical",
+      "new_selected": null,
+      "old_success": false,
+      "new_success": true,
+      "new_source": "lexical",
+      "new_reason": "ambiguous"
+    }
+  ]
+}

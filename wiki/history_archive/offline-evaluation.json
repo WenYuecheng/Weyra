@@ -1,0 +1,2610 @@
+{
+  "run_id": "4998fa1bde4543af1d9a",
+  "mode": "offline",
+  "quality_claim": false,
+  "scope": "deterministic fixture checks; offline validates behavior only",
+  "groups": {
+    "cache": {
+      "factor": "cache",
+      "one_factor": true,
+      "eligible_cases": [
+        "P01",
+        "P02"
+      ],
+      "variants": {
+        "stable": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 168,
+              "answer": "Evidence: source.json, README.md",
+              "checks": {
+                "artifact_json": true,
+                "cache_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0832,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/cache/stable/P01-4bfce8c10a",
+              "group": "cache",
+              "id": "P01",
+              "metrics": {
+                "branch": "cache/stable",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 120,
+                "output_tokens": 48,
+                "parent_context_chars": 4839,
+                "prefix_stable": true,
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 6,
+                    "input_tokens": 120,
+                    "output_tokens": 48
+                  }
+                },
+                "usage_samples": 6
+              },
+              "model_calls": 6,
+              "session_id": "18d8ec951c19404daa0f1d1894f7318f",
+              "status": "pass",
+              "variant": "stable"
+            },
+            {
+              "accounted_tokens": 168,
+              "answer": "Evidence: source.json, README.md, app.py, engine.py, storage.py",
+              "checks": {
+                "artifact_json": true,
+                "cache_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0926,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/cache/stable/P02-1c469a3224",
+              "group": "cache",
+              "id": "P02",
+              "metrics": {
+                "branch": "cache/stable",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 120,
+                "output_tokens": 48,
+                "parent_context_chars": 7066,
+                "prefix_stable": true,
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 6,
+                    "input_tokens": 120,
+                    "output_tokens": 48
+                  }
+                },
+                "usage_samples": 6
+              },
+              "model_calls": 6,
+              "session_id": "8b0330c61cf448ae9b38bf93d1360500",
+              "status": "pass",
+              "variant": "stable"
+            }
+          ],
+          "cost_cny": "0"
+        },
+        "rebuild": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 168,
+              "answer": "Evidence: source.json, README.md",
+              "checks": {
+                "artifact_json": true,
+                "cache_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0805,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/cache/rebuild/P01-1d935cfc40",
+              "group": "cache",
+              "id": "P01",
+              "metrics": {
+                "branch": "cache/rebuild",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 120,
+                "output_tokens": 48,
+                "parent_context_chars": 4841,
+                "prefix_stable": false,
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 6,
+                    "input_tokens": 120,
+                    "output_tokens": 48
+                  }
+                },
+                "usage_samples": 6
+              },
+              "model_calls": 6,
+              "session_id": "e5af0f178a0243228b75488b72fd726b",
+              "status": "pass",
+              "variant": "rebuild"
+            },
+            {
+              "accounted_tokens": 168,
+              "answer": "Evidence: source.json, README.md, app.py, engine.py, storage.py",
+              "checks": {
+                "artifact_json": true,
+                "cache_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0943,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/cache/rebuild/P02-465aaf5cdd",
+              "group": "cache",
+              "id": "P02",
+              "metrics": {
+                "branch": "cache/rebuild",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 120,
+                "output_tokens": 48,
+                "parent_context_chars": 7068,
+                "prefix_stable": false,
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 6,
+                    "input_tokens": 120,
+                    "output_tokens": 48
+                  }
+                },
+                "usage_samples": 6
+              },
+              "model_calls": 6,
+              "session_id": "062b69f85942416ab78abbf4a06262dc",
+              "status": "pass",
+              "variant": "rebuild"
+            }
+          ],
+          "cost_cny": "0"
+        }
+      }
+    },
+    "compression": {
+      "factor": "compression",
+      "one_factor": true,
+      "eligible_cases": [
+        "P05",
+        "W09"
+      ],
+      "variants": {
+        "plain": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json, engine.py",
+              "checks": {
+                "artifact_json": true,
+                "compression_branch": true,
+                "edit_engine.py": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0897,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/compression/plain/P05-6f88a137af",
+              "group": "compression",
+              "id": "P05",
+              "metrics": {
+                "after_chars": 521,
+                "before_chars": 39242,
+                "branch": "compression/plain",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "compacted": true,
+                "context_policy": {
+                  "_max_from_headroom": false,
+                  "auto": true,
+                  "compaction_retries": 1,
+                  "headroom_tokens": 1024,
+                  "max_overflow_retries": 1,
+                  "max_tokens": 1024,
+                  "model_policies": [],
+                  "retain_ratio": null,
+                  "retain_tokens": 256,
+                  "summarization_model": "",
+                  "summarization_provider": "",
+                  "summary_mode": "single_json",
+                  "threshold_ratio": 0.8
+                },
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 3456,
+                "request_latencies": [],
+                "summary_mode": "single_json",
+                "usage_by_purpose": {
+                  "compression": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "a9098a63cb6a4f90825ee2587dde2b5c",
+              "status": "pass",
+              "variant": "plain"
+            },
+            {
+              "accounted_tokens": 112,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "compression_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0742,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/compression/plain/W09-3dede70723",
+              "group": "compression",
+              "id": "W09",
+              "metrics": {
+                "after_chars": 521,
+                "before_chars": 39242,
+                "branch": "compression/plain",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "compacted": true,
+                "context_policy": {
+                  "_max_from_headroom": false,
+                  "auto": true,
+                  "compaction_retries": 1,
+                  "headroom_tokens": 1024,
+                  "max_overflow_retries": 1,
+                  "max_tokens": 1024,
+                  "model_policies": [],
+                  "retain_ratio": null,
+                  "retain_tokens": 256,
+                  "summarization_model": "",
+                  "summarization_provider": "",
+                  "summary_mode": "single_json",
+                  "threshold_ratio": 0.8
+                },
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 80,
+                "output_tokens": 32,
+                "parent_context_chars": 2513,
+                "request_latencies": [],
+                "summary_mode": "single_json",
+                "usage_by_purpose": {
+                  "compression": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 4
+              },
+              "model_calls": 4,
+              "session_id": "f1c96b5621b1439f9a29c9f8e73fc374",
+              "status": "pass",
+              "variant": "plain"
+            }
+          ],
+          "cost_cny": "0"
+        },
+        "dsh": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json, engine.py",
+              "checks": {
+                "artifact_json": true,
+                "compression_branch": true,
+                "edit_engine.py": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0943,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/compression/dsh/P05-276c9809cb",
+              "group": "compression",
+              "id": "P05",
+              "metrics": {
+                "after_chars": 766,
+                "before_chars": 39242,
+                "branch": "compression/dsh",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "compacted": true,
+                "context_policy": {
+                  "_max_from_headroom": false,
+                  "auto": true,
+                  "compaction_retries": 1,
+                  "headroom_tokens": 1024,
+                  "max_overflow_retries": 1,
+                  "max_tokens": 1024,
+                  "model_policies": [],
+                  "retain_ratio": null,
+                  "retain_tokens": 256,
+                  "summarization_model": "",
+                  "summarization_provider": "",
+                  "summary_mode": "dsh_checkpoint",
+                  "threshold_ratio": 0.8
+                },
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 3699,
+                "request_latencies": [],
+                "summary_mode": "dsh_checkpoint",
+                "usage_by_purpose": {
+                  "compression": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "b8f544490e4244399bc7981f71bd1b2b",
+              "status": "pass",
+              "variant": "dsh"
+            },
+            {
+              "accounted_tokens": 112,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "compression_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0757,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/compression/dsh/W09-b491e02335",
+              "group": "compression",
+              "id": "W09",
+              "metrics": {
+                "after_chars": 766,
+                "before_chars": 39242,
+                "branch": "compression/dsh",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "compacted": true,
+                "context_policy": {
+                  "_max_from_headroom": false,
+                  "auto": true,
+                  "compaction_retries": 1,
+                  "headroom_tokens": 1024,
+                  "max_overflow_retries": 1,
+                  "max_tokens": 1024,
+                  "model_policies": [],
+                  "retain_ratio": null,
+                  "retain_tokens": 256,
+                  "summarization_model": "",
+                  "summarization_provider": "",
+                  "summary_mode": "dsh_checkpoint",
+                  "threshold_ratio": 0.8
+                },
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 80,
+                "output_tokens": 32,
+                "parent_context_chars": 2756,
+                "request_latencies": [],
+                "summary_mode": "dsh_checkpoint",
+                "usage_by_purpose": {
+                  "compression": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 4
+              },
+              "model_calls": 4,
+              "session_id": "71be2a8cb7a04a22a2c144c7d6de5bb1",
+              "status": "pass",
+              "variant": "dsh"
+            }
+          ],
+          "cost_cny": "0"
+        },
+        "three_layer": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 196,
+              "answer": "Evidence: source.json, engine.py",
+              "checks": {
+                "artifact_json": true,
+                "compression_branch": true,
+                "edit_engine.py": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0963,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/compression/three_layer/P05-0af72a7499",
+              "group": "compression",
+              "id": "P05",
+              "metrics": {
+                "after_chars": 676,
+                "before_chars": 39242,
+                "branch": "compression/three_layer",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "compacted": true,
+                "context_policy": {
+                  "_max_from_headroom": false,
+                  "auto": true,
+                  "compaction_retries": 1,
+                  "headroom_tokens": 1024,
+                  "max_overflow_retries": 1,
+                  "max_tokens": 1024,
+                  "model_policies": [],
+                  "retain_ratio": null,
+                  "retain_tokens": 256,
+                  "summarization_model": "",
+                  "summarization_provider": "",
+                  "summary_mode": "three_parallel",
+                  "threshold_ratio": 0.8
+                },
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 140,
+                "output_tokens": 56,
+                "parent_context_chars": 3617,
+                "request_latencies": [],
+                "summary_mode": "three_parallel",
+                "usage_by_purpose": {
+                  "compression": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 7
+              },
+              "model_calls": 7,
+              "session_id": "c2c7defc384a411ca17e05ff8acf85dd",
+              "status": "pass",
+              "variant": "three_layer"
+            },
+            {
+              "accounted_tokens": 168,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "compression_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.085,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/compression/three_layer/W09-dc8a9aedce",
+              "group": "compression",
+              "id": "W09",
+              "metrics": {
+                "after_chars": 676,
+                "before_chars": 39242,
+                "branch": "compression/three_layer",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "compacted": true,
+                "context_policy": {
+                  "_max_from_headroom": false,
+                  "auto": true,
+                  "compaction_retries": 1,
+                  "headroom_tokens": 1024,
+                  "max_overflow_retries": 1,
+                  "max_tokens": 1024,
+                  "model_policies": [],
+                  "retain_ratio": null,
+                  "retain_tokens": 256,
+                  "summarization_model": "",
+                  "summarization_provider": "",
+                  "summary_mode": "three_parallel",
+                  "threshold_ratio": 0.8
+                },
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 120,
+                "output_tokens": 48,
+                "parent_context_chars": 2674,
+                "request_latencies": [],
+                "summary_mode": "three_parallel",
+                "usage_by_purpose": {
+                  "compression": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 6
+              },
+              "model_calls": 6,
+              "session_id": "37119e7e377941d9bafe852781179443",
+              "status": "pass",
+              "variant": "three_layer"
+            }
+          ],
+          "cost_cny": "0"
+        }
+      }
+    },
+    "subtasks": {
+      "factor": "subtasks",
+      "one_factor": true,
+      "eligible_cases": [
+        "P07",
+        "P08"
+      ],
+      "variants": {
+        "single": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 84,
+              "answer": "Evidence: source.json, app.py, storage.py",
+              "checks": {
+                "artifact_json": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0445,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/subtasks/single/P07-3aaaca3529",
+              "group": "subtasks",
+              "id": "P07",
+              "metrics": {
+                "branch": "subtasks/single",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 60,
+                "output_tokens": 24,
+                "parent_context_chars": 2648,
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 3
+              },
+              "model_calls": 3,
+              "session_id": "94a359b3543440c6bae9615520394d37",
+              "status": "pass",
+              "variant": "single"
+            },
+            {
+              "accounted_tokens": 84,
+              "answer": "Evidence: source.json, app.py, storage.py",
+              "checks": {
+                "artifact_json": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0452,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/subtasks/single/P08-49addd62a2",
+              "group": "subtasks",
+              "id": "P08",
+              "metrics": {
+                "branch": "subtasks/single",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 60,
+                "output_tokens": 24,
+                "parent_context_chars": 2636,
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 3
+              },
+              "model_calls": 3,
+              "session_id": "7408bd9d6a6243e1b3ad940c64869dd0",
+              "status": "pass",
+              "variant": "single"
+            }
+          ],
+          "cost_cny": "0"
+        },
+        "spawn": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json, app.py, storage.py",
+              "checks": {
+                "artifact_json": true,
+                "child_completed": true,
+                "fork_seed_boundary": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.1357,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/subtasks/spawn/P07-d887a32d29",
+              "group": "subtasks",
+              "id": "P07",
+              "metrics": {
+                "branch": "subtasks/spawn",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "child_state": "completed",
+                "child_usage": 56,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 3603,
+                "request_latencies": [],
+                "seeded_messages": 0,
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 5,
+                    "input_tokens": 100,
+                    "output_tokens": 40
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "a55a959ae34d4867a871ea26e8f15875",
+              "status": "pass",
+              "variant": "spawn"
+            },
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json, app.py, storage.py",
+              "checks": {
+                "artifact_json": true,
+                "child_completed": true,
+                "fork_seed_boundary": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0953,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/subtasks/spawn/P08-6d95e8de93",
+              "group": "subtasks",
+              "id": "P08",
+              "metrics": {
+                "branch": "subtasks/spawn",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "child_state": "completed",
+                "child_usage": 56,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 3585,
+                "request_latencies": [],
+                "seeded_messages": 0,
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 5,
+                    "input_tokens": 100,
+                    "output_tokens": 40
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "4f51b4f0d72f4959a16b3a35fd49316b",
+              "status": "pass",
+              "variant": "spawn"
+            }
+          ],
+          "cost_cny": "0"
+        },
+        "fork": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json, app.py, storage.py",
+              "checks": {
+                "artifact_json": true,
+                "child_completed": true,
+                "fork_seed_boundary": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0917,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/subtasks/fork/P07-aea1962f64",
+              "group": "subtasks",
+              "id": "P07",
+              "metrics": {
+                "branch": "subtasks/fork",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "child_state": "completed",
+                "child_usage": 56,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 3601,
+                "request_latencies": [],
+                "seeded_messages": 1,
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 5,
+                    "input_tokens": 100,
+                    "output_tokens": 40
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "4daeb1e652fc41ce8c1e6ad89915e57e",
+              "status": "pass",
+              "variant": "fork"
+            },
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json, app.py, storage.py",
+              "checks": {
+                "artifact_json": true,
+                "child_completed": true,
+                "fork_seed_boundary": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0911,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/subtasks/fork/P08-9b239f8d99",
+              "group": "subtasks",
+              "id": "P08",
+              "metrics": {
+                "branch": "subtasks/fork",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "child_state": "completed",
+                "child_usage": 56,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 3583,
+                "request_latencies": [],
+                "seeded_messages": 1,
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 5,
+                    "input_tokens": 100,
+                    "output_tokens": 40
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "bfc80c381d97446d934d42f2992a3267",
+              "status": "pass",
+              "variant": "fork"
+            }
+          ],
+          "cost_cny": "0"
+        }
+      }
+    },
+    "memory": {
+      "factor": "memory",
+      "one_factor": true,
+      "eligible_cases": [
+        "W07",
+        "W09"
+      ],
+      "variants": {
+        "absent": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 84,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "memory_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0467,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/memory/absent/W07-229fd0732c",
+              "group": "memory",
+              "id": "W07",
+              "metrics": {
+                "branch": "memory/absent",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 60,
+                "output_tokens": 24,
+                "parent_context_chars": 1948,
+                "recall_injections": 0,
+                "recall_mode": "absent",
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 3
+              },
+              "model_calls": 3,
+              "session_id": "046bff1b875c45a083d5b9f12106297d",
+              "status": "pass",
+              "variant": "absent"
+            },
+            {
+              "accounted_tokens": 84,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "memory_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0479,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/memory/absent/W09-ab06cbf936",
+              "group": "memory",
+              "id": "W09",
+              "metrics": {
+                "branch": "memory/absent",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 60,
+                "output_tokens": 24,
+                "parent_context_chars": 1989,
+                "recall_injections": 0,
+                "recall_mode": "absent",
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 3
+              },
+              "model_calls": 3,
+              "session_id": "01deceb0152c4064a8af188c4236471d",
+              "status": "pass",
+              "variant": "absent"
+            }
+          ],
+          "cost_cny": "0"
+        },
+        "baseline": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 84,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "memory_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0553,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/memory/baseline/W07-95a628a240",
+              "group": "memory",
+              "id": "W07",
+              "metrics": {
+                "branch": "memory/baseline",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 60,
+                "legacy_recall_injections": 0,
+                "output_tokens": 24,
+                "parent_context_chars": 1950,
+                "recall_injections": 0,
+                "recall_mode": "baseline",
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 3
+              },
+              "model_calls": 3,
+              "session_id": "5c11c8420f314de9b0e4f2467d41602c",
+              "status": "pass",
+              "variant": "baseline"
+            },
+            {
+              "accounted_tokens": 84,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "memory_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0475,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/memory/baseline/W09-08ad49364c",
+              "group": "memory",
+              "id": "W09",
+              "metrics": {
+                "branch": "memory/baseline",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 60,
+                "legacy_recall_injections": 0,
+                "output_tokens": 24,
+                "parent_context_chars": 1991,
+                "recall_injections": 0,
+                "recall_mode": "baseline",
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  }
+                },
+                "usage_samples": 3
+              },
+              "model_calls": 3,
+              "session_id": "afc23ddc8fdc4c1f95479742575dd647",
+              "status": "pass",
+              "variant": "baseline"
+            }
+          ],
+          "cost_cny": "0"
+        },
+        "fixed": {
+          "denominator": 20,
+          "eligible_denominator": 2,
+          "executed": 2,
+          "counts": {
+            "pass": 2,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.1,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 112,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "memory_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0511,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/memory/fixed/W07-916ea06668",
+              "group": "memory",
+              "id": "W07",
+              "metrics": {
+                "branch": "memory/fixed",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 80,
+                "output_tokens": 32,
+                "parent_context_chars": 2519,
+                "recall_injections": 1,
+                "recall_mode": "fixed",
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  },
+                  "memory": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  }
+                },
+                "usage_samples": 4
+              },
+              "model_calls": 4,
+              "session_id": "3ff6059734f84bd78504d29bdf2d737a",
+              "status": "pass",
+              "variant": "fixed"
+            },
+            {
+              "accounted_tokens": 112,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "memory_branch": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0509,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/memory/fixed/W09-5c40a333b4",
+              "group": "memory",
+              "id": "W09",
+              "metrics": {
+                "branch": "memory/fixed",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "first_token_seconds": null,
+                "input_tokens": 80,
+                "output_tokens": 32,
+                "parent_context_chars": 2560,
+                "recall_injections": 1,
+                "recall_mode": "fixed",
+                "request_latencies": [],
+                "usage_by_purpose": {
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 3,
+                    "input_tokens": 60,
+                    "output_tokens": 24
+                  },
+                  "memory": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  }
+                },
+                "usage_samples": 4
+              },
+              "model_calls": 4,
+              "session_id": "21b35c0a67cb499b8cc9c2c2f6bbfac2",
+              "status": "pass",
+              "variant": "fixed"
+            }
+          ],
+          "cost_cny": "0"
+        }
+      }
+    },
+    "evolution": {
+      "factor": "evolution",
+      "one_factor": true,
+      "eligible_cases": [
+        "W03",
+        "W04",
+        "W05",
+        "W08"
+      ],
+      "variants": {
+        "full_merge": {
+          "denominator": 20,
+          "eligible_denominator": 4,
+          "executed": 4,
+          "counts": {
+            "pass": 4,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.2,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "narrative_exception": true,
+                "proposal_applied": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true,
+                "updated_skill_loaded": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0602,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/evolution/full_merge/W03-ef663d2ff2",
+              "group": "evolution",
+              "id": "W03",
+              "metrics": {
+                "body_after_chars": 18,
+                "body_before_chars": 9,
+                "boundary_saved": false,
+                "branch": "evolution/full_merge",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "experience_given_to_maintenance": false,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 2927,
+                "proposal_applied": true,
+                "request_latencies": [],
+                "revised_body": "正式汇报先给结论；故事遵循叙事需要。",
+                "usage_by_purpose": {
+                  "evolution": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "452a74431a7f402b9cd6ecf7920f4694",
+              "status": "pass",
+              "variant": "full_merge"
+            },
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "narrative_exception": true,
+                "proposal_applied": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true,
+                "updated_skill_loaded": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.061,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/evolution/full_merge/W04-bf8c023afa",
+              "group": "evolution",
+              "id": "W04",
+              "metrics": {
+                "body_after_chars": 18,
+                "body_before_chars": 9,
+                "boundary_saved": false,
+                "branch": "evolution/full_merge",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "experience_given_to_maintenance": false,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 2931,
+                "proposal_applied": true,
+                "request_latencies": [],
+                "revised_body": "正式汇报先给结论；故事遵循叙事需要。",
+                "usage_by_purpose": {
+                  "evolution": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "59e08cdc3d864c0ea1d7456486cbf612",
+              "status": "pass",
+              "variant": "full_merge"
+            },
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "narrative_exception": true,
+                "proposal_applied": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true,
+                "updated_skill_loaded": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0627,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/evolution/full_merge/W05-092259e980",
+              "group": "evolution",
+              "id": "W05",
+              "metrics": {
+                "body_after_chars": 18,
+                "body_before_chars": 9,
+                "boundary_saved": false,
+                "branch": "evolution/full_merge",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "experience_given_to_maintenance": false,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 2980,
+                "proposal_applied": true,
+                "request_latencies": [],
+                "revised_body": "正式汇报先给结论；故事遵循叙事需要。",
+                "usage_by_purpose": {
+                  "evolution": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "754e1acdeb1f4343ae4a59e6d913c221",
+              "status": "pass",
+              "variant": "full_merge"
+            },
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "narrative_exception": true,
+                "proposal_applied": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true,
+                "updated_skill_loaded": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0656,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/evolution/full_merge/W08-c505cb0a9d",
+              "group": "evolution",
+              "id": "W08",
+              "metrics": {
+                "body_after_chars": 18,
+                "body_before_chars": 9,
+                "boundary_saved": false,
+                "branch": "evolution/full_merge",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "experience_given_to_maintenance": false,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 2926,
+                "proposal_applied": true,
+                "request_latencies": [],
+                "revised_body": "正式汇报先给结论；故事遵循叙事需要。",
+                "usage_by_purpose": {
+                  "evolution": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "d6b9e42e6728471caa985ea8d4b67c22",
+              "status": "pass",
+              "variant": "full_merge"
+            }
+          ],
+          "cost_cny": "0"
+        },
+        "experience_bounded": {
+          "denominator": 20,
+          "eligible_denominator": 4,
+          "executed": 4,
+          "counts": {
+            "pass": 4,
+            "fail": 0,
+            "error": 0,
+            "budget_stopped": 0
+          },
+          "success_rate": 0.2,
+          "eligible_success_rate": 1.0,
+          "cases": [
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "experience_saved": true,
+                "narrative_exception": true,
+                "proposal_applied": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true,
+                "updated_skill_loaded": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0695,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/evolution/experience_bounded/W03-b300104151",
+              "group": "evolution",
+              "id": "W03",
+              "metrics": {
+                "body_after_chars": 18,
+                "body_before_chars": 9,
+                "boundary_saved": true,
+                "branch": "evolution/experience_bounded",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "experience_given_to_maintenance": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 2935,
+                "proposal_applied": true,
+                "request_latencies": [],
+                "revised_body": "正式汇报先给结论；故事遵循叙事需要。",
+                "usage_by_purpose": {
+                  "evolution": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "c3f3e8739c5149e29c2dd2bfa56a406e",
+              "status": "pass",
+              "variant": "experience_bounded"
+            },
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "experience_saved": true,
+                "narrative_exception": true,
+                "proposal_applied": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true,
+                "updated_skill_loaded": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0664,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/evolution/experience_bounded/W04-cf1192a153",
+              "group": "evolution",
+              "id": "W04",
+              "metrics": {
+                "body_after_chars": 18,
+                "body_before_chars": 9,
+                "boundary_saved": true,
+                "branch": "evolution/experience_bounded",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "experience_given_to_maintenance": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 2939,
+                "proposal_applied": true,
+                "request_latencies": [],
+                "revised_body": "正式汇报先给结论；故事遵循叙事需要。",
+                "usage_by_purpose": {
+                  "evolution": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "78fd02bf05e744feb2113a9ff867ef02",
+              "status": "pass",
+              "variant": "experience_bounded"
+            },
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "experience_saved": true,
+                "narrative_exception": true,
+                "proposal_applied": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true,
+                "updated_skill_loaded": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.0694,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/evolution/experience_bounded/W05-67eb6b28ca",
+              "group": "evolution",
+              "id": "W05",
+              "metrics": {
+                "body_after_chars": 18,
+                "body_before_chars": 9,
+                "boundary_saved": true,
+                "branch": "evolution/experience_bounded",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "experience_given_to_maintenance": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 2988,
+                "proposal_applied": true,
+                "request_latencies": [],
+                "revised_body": "正式汇报先给结论；故事遵循叙事需要。",
+                "usage_by_purpose": {
+                  "evolution": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "815ce7ea41d8428898dce259799f7c5a",
+              "status": "pass",
+              "variant": "experience_bounded"
+            },
+            {
+              "accounted_tokens": 140,
+              "answer": "Evidence: source.json",
+              "checks": {
+                "artifact_json": true,
+                "experience_saved": true,
+                "narrative_exception": true,
+                "proposal_applied": true,
+                "protected_file_unchanged": true,
+                "source_evidence_read": true,
+                "updated_skill_loaded": true
+              },
+              "cost_cny": "0",
+              "elapsed_seconds": 0.2158,
+              "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/evolution/experience_bounded/W08-f6383b63b5",
+              "group": "evolution",
+              "id": "W08",
+              "metrics": {
+                "body_after_chars": 18,
+                "body_before_chars": 9,
+                "boundary_saved": true,
+                "branch": "evolution/experience_bounded",
+                "cache_read_tokens": null,
+                "cache_write_tokens": null,
+                "cost_known": true,
+                "experience_given_to_maintenance": true,
+                "first_token_seconds": null,
+                "input_tokens": 100,
+                "output_tokens": 40,
+                "parent_context_chars": 2934,
+                "proposal_applied": true,
+                "request_latencies": [],
+                "revised_body": "正式汇报先给结论；故事遵循叙事需要。",
+                "usage_by_purpose": {
+                  "evolution": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 1,
+                    "input_tokens": 20,
+                    "output_tokens": 8
+                  },
+                  "main": {
+                    "cache_read_tokens": null,
+                    "cache_write_tokens": null,
+                    "calls": 4,
+                    "input_tokens": 80,
+                    "output_tokens": 32
+                  }
+                },
+                "usage_samples": 5
+              },
+              "model_calls": 5,
+              "session_id": "790fba055e2c42a4b48269a4c56a3a12",
+              "status": "pass",
+              "variant": "experience_bounded"
+            }
+          ],
+          "cost_cny": "0"
+        }
+      }
+    }
+  },
+  "resumed_cases": 50,
+  "session_id": "evaluation-4998fa1bde4543af1d9a",
+  "baseline": {
+    "denominator": 20,
+    "eligible_denominator": 20,
+    "executed": 20,
+    "counts": {
+      "pass": 20,
+      "fail": 0,
+      "error": 0,
+      "budget_stopped": 0
+    },
+    "success_rate": 1.0,
+    "eligible_success_rate": 1.0,
+    "cases": [
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json, README.md",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0456,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P01-ef5a124cdd",
+        "group": "baseline",
+        "id": "P01",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 2324,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "2910a51b0320438794021aed8ab878ad",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json, README.md, app.py, engine.py, storage.py",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0472,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P02-c0cb7babeb",
+        "group": "baseline",
+        "id": "P02",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 3404,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "9580c60e89a24c4ba969fba51bb42ce1",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 112,
+        "answer": "Evidence: source.json, engine.py",
+        "checks": {
+          "artifact_json": true,
+          "edit_engine.py": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0493,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P03-0d811a1645",
+        "group": "baseline",
+        "id": "P03",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 80,
+          "output_tokens": 32,
+          "parent_context_chars": 2930,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 4,
+              "input_tokens": 80,
+              "output_tokens": 32
+            }
+          },
+          "usage_samples": 4
+        },
+        "model_calls": 4,
+        "session_id": "2fc7278205ac4862aa56e78a624d4a83",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json, long.txt",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0546,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P04-8b0a24d83d",
+        "group": "baseline",
+        "id": "P04",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 42263,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "83d264b664d2419180d4a7a643f97658",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 112,
+        "answer": "Evidence: source.json, engine.py",
+        "checks": {
+          "artifact_json": true,
+          "edit_engine.py": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0544,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P05-a44cc0cc3c",
+        "group": "baseline",
+        "id": "P05",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 80,
+          "output_tokens": 32,
+          "parent_context_chars": 2936,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 4,
+              "input_tokens": 80,
+              "output_tokens": 32
+            }
+          },
+          "usage_samples": 4
+        },
+        "model_calls": 4,
+        "session_id": "59115c7f3d6c4e81b1b434d7949d9a8f",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json, app.py, engine.py, storage.py",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0477,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P06-69f60d44b7",
+        "group": "baseline",
+        "id": "P06",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 2994,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "81d51e40b1be448793bd1bb06b0a2269",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json, app.py, storage.py",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0448,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P07-730994a3db",
+        "group": "baseline",
+        "id": "P07",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 2650,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "a8441019009e4ac0b028242b025ccf9c",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json, app.py, storage.py",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0454,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P08-7fc5eaaf77",
+        "group": "baseline",
+        "id": "P08",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 2638,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "8685449df939403899ba471325e1f9b6",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0414,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P09-e592e810b8",
+        "group": "baseline",
+        "id": "P09",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1984,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "1863814b2b304037b9e9e50855d3378a",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0433,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/P10-e524680c82",
+        "group": "baseline",
+        "id": "P10",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1939,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "5d910734e499400f9654cae40b53c97f",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.043,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W01-2ac9b0a2a6",
+        "group": "baseline",
+        "id": "W01",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1972,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "288d03b40ab747ca9ed060bdb8a60f0d",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0426,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W02-690ebe695a",
+        "group": "baseline",
+        "id": "W02",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1957,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "f67f2e1908b240d5a424b62379ef2a65",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0433,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W03-5cd14abd33",
+        "group": "baseline",
+        "id": "W03",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1957,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "5510019ff53b433c9189ea21e8e8db73",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0449,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W04-77a1366c3d",
+        "group": "baseline",
+        "id": "W04",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1961,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "f3f6748695924aa4b875d70bab8f47a1",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0504,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W05-e2a5d40250",
+        "group": "baseline",
+        "id": "W05",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 2010,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "169199a950e94fd0ae1b168ec94e4cee",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0426,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W06-1ad6280714",
+        "group": "baseline",
+        "id": "W06",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 2008,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "83460f4b86f64e6bbd9de2e72b5e28ab",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0446,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W07-d45d6469ea",
+        "group": "baseline",
+        "id": "W07",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1952,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "d682f434049d4452a83148744fdd8194",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0422,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W08-81b5c9bbe3",
+        "group": "baseline",
+        "id": "W08",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1956,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "7619784c5387487b8550b0eb372d20e8",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.0426,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W09-a4f992e7ff",
+        "group": "baseline",
+        "id": "W09",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 1993,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "b3eb82ee9cd14f39acdb4cab9bf59863",
+        "status": "pass",
+        "variant": "standard"
+      },
+      {
+        "accounted_tokens": 84,
+        "answer": "Evidence: source.json",
+        "checks": {
+          "artifact_json": true,
+          "protected_file_unchanged": true,
+          "source_evidence_read": true
+        },
+        "cost_cny": "0",
+        "elapsed_seconds": 0.043,
+        "fixture_project": "/Users/wenyuecheng/code/python/Weyra/.weyra/verification/evaluation/.weyra/evaluation-fixtures/4998fa1bde4543af1d9a/baseline/standard/W10-1ca2054ca8",
+        "group": "baseline",
+        "id": "W10",
+        "metrics": {
+          "branch": "baseline/standard",
+          "cache_read_tokens": null,
+          "cache_write_tokens": null,
+          "cost_known": true,
+          "first_token_seconds": null,
+          "input_tokens": 60,
+          "output_tokens": 24,
+          "parent_context_chars": 2000,
+          "request_latencies": [],
+          "usage_by_purpose": {
+            "main": {
+              "cache_read_tokens": null,
+              "cache_write_tokens": null,
+              "calls": 3,
+              "input_tokens": 60,
+              "output_tokens": 24
+            }
+          },
+          "usage_samples": 3
+        },
+        "model_calls": 3,
+        "session_id": "523ab608c9324b48a1c7d64709c24ffd",
+        "status": "pass",
+        "variant": "standard"
+      }
+    ],
+    "cost_cny": "0"
+  },
+  "complete": true,
+  "identity": "4998fa1bde4543af1d9ab6f30e442a22af3a1c42d015220f7bcd2f5473f624d3",
+  "new_model_calls": 0,
+  "total_tokens": 5684,
+  "total_cost_cny": "0",
+  "budget_stopped": false,
+  "budget": {
+    "id": null,
+    "calls": 203,
+    "tokens": 5684,
+    "accounted_cost_cny": "0",
+    "unknown_calls": 0
+  }
+}

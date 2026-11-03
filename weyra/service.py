@@ -36,15 +36,20 @@ from __future__ import annotations
 
 import asyncio
 import copy
+import json
+import sqlite3
 import shlex
 import time
 import uuid
+from contextlib import closing
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Literal
 
 from .contracts import new_id
 from .events import AppEvent, EventBus, Subscription
+from .storage_version import SCHEMA_VERSION
+
 from .presentation import OutputPage, paginate_text, project_raw_session_records
 from .runtime_state import Budget
 
@@ -144,6 +149,7 @@ class HistoryPage:
     cards: list[dict[str, Any]]
     total_records: int
     has_more: bool
+    persistent_through_seq: int = 0
 
 
 @dataclass
@@ -186,6 +192,7 @@ class StateSnapshot:
     pending_approvals: list[dict[str, Any]]
     background: dict[str, Any]
     last_outcome: str | None
+    persistent_through_seq: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         """将状态快照深拷贝序列化为只读字典表示。
@@ -197,6 +204,7 @@ class StateSnapshot:
             "schema_version": self.schema_version,
             "service_id": self.service_id,
             "through_seq": self.through_seq,
+            "persistent_through_seq": self.persistent_through_seq,
             "session_generation": self.session_generation,
             "project": copy.deepcopy(self.project),
             "session": copy.deepcopy(self.session),
@@ -405,7 +413,62 @@ class WeyraAppService:
             return "maintaining"
         return "idle"
 
-    async def get_snapshot(self) -> StateSnapshot:
+    def _read_session(self, session_id, *, include_records=True):
+        """Read durable facts without a writer lease, recovery, or agent startup."""
+        state_dir = self.project_path / ".weyra"
+        path = state_dir / "state.db"
+        if not state_dir.resolve().is_relative_to(self.project_path) or path.is_symlink():
+            raise PermissionError("Session database escapes project")
+        if not path.is_file():
+            return [], None, 0
+        from .event_schema import OWNED, validate_event
+        from .session import SessionError
+        with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)) as db:
+            db.execute("BEGIN")
+            if db.execute("PRAGMA user_version").fetchone()[0] > SCHEMA_VERSION:
+                raise SessionError("Unsupported database schema version")
+            row = db.execute("SELECT project,leaf FROM sessions WHERE session_id=?", (session_id,)).fetchone()
+            if row is None:
+                raise ValueError("Unknown session")
+            if Path(row[0]).resolve() != self.project_path:
+                raise PermissionError("Session belongs to another project")
+            if not include_records:
+                watermark = db.execute("SELECT COALESCE(MAX(seq),0) FROM events WHERE session_id=?", (session_id,)).fetchone()[0]
+                return [], row[1], watermark
+            rows = db.execute("SELECT seq,id,parent,kind,data FROM events WHERE session_id=? ORDER BY seq", (session_id,)).fetchall()
+            has_metadata = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='event_metadata'").fetchone()
+            metadata_rows = list(db.execute(
+                "SELECT event_id,version,ignorable FROM event_metadata WHERE session_id=?", (session_id,)
+            )) if has_metadata else []
+            if any(item[2] not in (0, 1) for item in metadata_rows):
+                raise SessionError("Invalid event ignorable declaration")
+            metadata = {item[0]: (item[1], bool(item[2])) for item in metadata_rows}
+        records = []
+        for item in rows:
+            try:
+                record = {"id": item[1], "parent": item[2], "kind": item[3], "data": json.loads(item[4])}
+                admitted = validate_event(record["kind"], record["data"], *metadata.get(record["id"], (1, True)))
+            except ValueError as error:
+                raise SessionError(str(error)) from error
+            if not admitted and record["kind"] in OWNED:
+                record["_projectable"] = False
+            records.append(record)
+        return records, row[1], rows[-1][0] if rows else 0
+
+    @staticmethod
+    def _session_chain(records, leaf):
+        by_id = {item["id"]: item for item in records}
+        chain, seen = [], set()
+        while leaf is not None:
+            if leaf in seen or leaf not in by_id:
+                raise ValueError("Invalid session ancestry")
+            seen.add(leaf)
+            item = by_id[leaf]
+            chain.append(item)
+            leaf = item["parent"]
+        return list(reversed(chain))
+
+    async def get_snapshot(self, *, session_id: str | None = None) -> StateSnapshot:
         """生成不可变的系统全局状态全量快照（StateSnapshot）。
 
         【架构定位】
@@ -415,6 +478,36 @@ class WeyraAppService:
         Returns:
             StateSnapshot: 全量不可变状态快照实例。
         """
+        selected_id = session_id or self.session_id
+        cold = not self.agent or selected_id != self.session_id
+        records, leaf, watermark = self._read_session(selected_id, include_records=cold)
+        if cold:
+            from .projections import replay
+            from .core.state import Goal
+            recovered = replay(self._session_chain(records, leaf))
+            latest = recovered["latest"]
+            goal = latest.get("goal")
+            goal_view = {**asdict(Goal.restore(goal)), "armed": False} if goal else None
+            checkpoint = latest.get("budget_checkpoint", {})
+            pending = checkpoint.get("pending", {})
+            pending_values = pending.values() if isinstance(pending, dict) else []
+            budget = {
+                "calls": checkpoint.get("calls", 0), "tokens": checkpoint.get("total_tokens", 0),
+                "cost_cny": checkpoint.get("total_cost_cny", "0"),
+                "unknown_calls": checkpoint.get("unknown_calls", 0),
+                "pending_tokens": sum(item.get("tokens", 0) for item in pending_values),
+                "is_cost_reliable": False,
+            }
+            return StateSnapshot(
+                1, self.service_id, self.events.current_seq, self.session_generation,
+                {"path": str(self.project_path), "name": self.project_path.name},
+                {"session_id": selected_id, "leaf": leaf, "parent": None, "branch_depth": 0,
+                 "goal": goal_view, "children": [copy.deepcopy(item.get("result")) or {key: item.get(key) for key in ("task_id", "state", "owner", "mode", "role")} for item in recovered["children"].values()]},
+                {"main": copy.deepcopy(latest["model_change"])} if latest.get("model_change") else {},
+                self.permission_mode, self.lifecycle, "idle", budget,
+                [copy.deepcopy(item) for queue in recovered["queues"].values() for item in queue],
+                [], {"active_tasks": 0, "active_tools_count": 0}, None, watermark,
+            )
         activity = self._derive_activity()
         budget_dict = {
             "calls": 0,
@@ -461,6 +554,8 @@ class WeyraAppService:
             "leaf": getattr(self.agent.session, "leaf", None) if self.agent else None,
             "parent": None,
             "branch_depth": getattr(self.agent, "depth", 0) if self.agent else 0,
+            "goal": {**asdict(self.agent.goal), "armed": self.agent.goal.armed} if self.agent and self.agent.goal else None,
+            "children": self.agent.children.list() if self.agent else [],
         }
 
         background_dict = {
@@ -484,6 +579,7 @@ class WeyraAppService:
             pending_approvals=pending_approvals_list,
             background=background_dict,
             last_outcome=self._last_outcome,
+            persistent_through_seq=watermark,
         )
 
     def _emit_event(self, kind: str, data: dict[str, Any], **kwargs) -> AppEvent:
@@ -955,7 +1051,19 @@ class WeyraAppService:
         self._emit_event("state_changed", snapshot.to_dict())
         return snapshot
 
-    async def get_history(self, *, before_record_id: str | None = None, limit: int = 100) -> HistoryPage:
+    async def mutate_goal(self, operation, *, goal_id, revision, **values):
+        """Apply a host-requested goal mutation with optimistic concurrency."""
+        from .goals import GoalRef, GoalError
+        if self.agent is None:
+            raise GoalError('goal_not_found')
+        self.agent.goal = self.agent.goals.mutate(GoalRef(goal_id, revision), operation, **values)
+        self.agent._goal_ref = self.agent.goals.ref()
+        state = asdict(self.agent.goal)
+        state['armed'] = self.agent.goal.armed
+        self._emit_event('goal_changed', state)
+        return state
+
+    async def get_history(self, *, session_id: str | None = None, before_record_id: str | None = None, limit: int = 100) -> HistoryPage:
         """检索底层会话原始日志并投影转换为 UI 展示卡片分页数据。
 
         【设计思想与开源血统】
@@ -969,10 +1077,14 @@ class WeyraAppService:
         Returns:
             HistoryPage: 包含投影卡片列表与分页标识的数据结构体。
         """
-        if not self.agent or not self.agent.session:
-            return HistoryPage(self.session_id, [], 0, False)
-
-        records = getattr(self.agent.session, "records", [])
+        selected_id = session_id or self.session_id
+        records, leaf, watermark = self._read_session(selected_id)
+        records = self._session_chain(records, leaf)
+        if before_record_id is not None:
+            position = next((index for index, record in enumerate(records) if record["id"] == before_record_id), None)
+            if position is None:
+                raise ValueError("Unknown history cursor")
+            records = records[:position]
         clears = [i for i, r in enumerate(records) if r["kind"] == "seed" and r["data"].get("reason") == "user_clear"]
         if clears:
             records = records[clears[-1] + 1:]
@@ -981,10 +1093,11 @@ class WeyraAppService:
         cards = project_raw_session_records(selected_records)
         card_dicts = [asdict(c) for c in cards]
         return HistoryPage(
-            session_id=self.session_id,
+            session_id=selected_id,
             cards=card_dicts,
             total_records=total_records,
             has_more=limit > 0 and total_records > limit,
+            persistent_through_seq=watermark,
         )
 
     async def read_tool_output(self, output_id: str, *, offset: int = 0, limit: int = 200) -> OutputPage:

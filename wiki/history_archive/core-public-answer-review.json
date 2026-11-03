@@ -1,0 +1,797 @@
+{
+  "scope": "Post-hoc deterministic format review; primary statuses unchanged; no human review claimed",
+  "rows": [
+    {
+      "key": "public/public-hle-6712c2616313b64cf8499927/none/0",
+      "id": "public-hle-6712c2616313b64cf8499927",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-6712c2616313b64cf8499927/dsh_configured/0",
+      "id": "public-hle-6712c2616313b64cf8499927",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-671abf7f136758472327f840/dsh_configured/0",
+      "id": "public-hle-671abf7f136758472327f840",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "equivalent",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-671abf7f136758472327f840/none/0",
+      "id": "public-hle-671abf7f136758472327f840",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673b50769ff1dae6f5b8b65d/dsh_configured/0",
+      "id": "public-hle-673b50769ff1dae6f5b8b65d",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673b50769ff1dae6f5b8b65d/none/0",
+      "id": "public-hle-673b50769ff1dae6f5b8b65d",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672d2195841ae6e83ce51e18/none/0",
+      "id": "public-hle-672d2195841ae6e83ce51e18",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672d2195841ae6e83ce51e18/dsh_configured/0",
+      "id": "public-hle-672d2195841ae6e83ce51e18",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673531cae26d0576765bd963/dsh_configured/0",
+      "id": "public-hle-673531cae26d0576765bd963",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673531cae26d0576765bd963/none/0",
+      "id": "public-hle-673531cae26d0576765bd963",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66e939c176b5b4f3e8a369b8/none/0",
+      "id": "public-hle-66e939c176b5b4f3e8a369b8",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66e939c176b5b4f3e8a369b8/dsh_configured/0",
+      "id": "public-hle-66e939c176b5b4f3e8a369b8",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672f74159150f3ac08f0c9f5/dsh_configured/0",
+      "id": "public-hle-672f74159150f3ac08f0c9f5",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672f74159150f3ac08f0c9f5/none/0",
+      "id": "public-hle-672f74159150f3ac08f0c9f5",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ec11b230ba0debf40b1fec/dsh_configured/0",
+      "id": "public-hle-66ec11b230ba0debf40b1fec",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-66ec11b230ba0debf40b1fec/none/0",
+      "id": "public-hle-66ec11b230ba0debf40b1fec",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-671c1099414cc58c0f2db443/dsh_configured/0",
+      "id": "public-hle-671c1099414cc58c0f2db443",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-671c1099414cc58c0f2db443/none/0",
+      "id": "public-hle-671c1099414cc58c0f2db443",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ef20a50312bf74c8ff43a0/none/0",
+      "id": "public-hle-66ef20a50312bf74c8ff43a0",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-66ef20a50312bf74c8ff43a0/dsh_configured/0",
+      "id": "public-hle-66ef20a50312bf74c8ff43a0",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-6717eb4518d92aa466b94d70/dsh_configured/0",
+      "id": "public-hle-6717eb4518d92aa466b94d70",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-6717eb4518d92aa466b94d70/none/0",
+      "id": "public-hle-6717eb4518d92aa466b94d70",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-66fc82b2bb24336da864daef/dsh_configured/0",
+      "id": "public-hle-66fc82b2bb24336da864daef",
+      "variant": "dsh_configured",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66fc82b2bb24336da864daef/none/0",
+      "id": "public-hle-66fc82b2bb24336da864daef",
+      "variant": "none",
+      "repeat": 0,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-6712c2616313b64cf8499927/dsh_configured/1",
+      "id": "public-hle-6712c2616313b64cf8499927",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-6712c2616313b64cf8499927/none/1",
+      "id": "public-hle-6712c2616313b64cf8499927",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "interrupted",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-671abf7f136758472327f840/dsh_configured/1",
+      "id": "public-hle-671abf7f136758472327f840",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-671abf7f136758472327f840/none/1",
+      "id": "public-hle-671abf7f136758472327f840",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673b50769ff1dae6f5b8b65d/none/1",
+      "id": "public-hle-673b50769ff1dae6f5b8b65d",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673b50769ff1dae6f5b8b65d/dsh_configured/1",
+      "id": "public-hle-673b50769ff1dae6f5b8b65d",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672d2195841ae6e83ce51e18/none/1",
+      "id": "public-hle-672d2195841ae6e83ce51e18",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672d2195841ae6e83ce51e18/dsh_configured/1",
+      "id": "public-hle-672d2195841ae6e83ce51e18",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-673531cae26d0576765bd963/none/1",
+      "id": "public-hle-673531cae26d0576765bd963",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-673531cae26d0576765bd963/dsh_configured/1",
+      "id": "public-hle-673531cae26d0576765bd963",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66e939c176b5b4f3e8a369b8/dsh_configured/1",
+      "id": "public-hle-66e939c176b5b4f3e8a369b8",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66e939c176b5b4f3e8a369b8/none/1",
+      "id": "public-hle-66e939c176b5b4f3e8a369b8",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672f74159150f3ac08f0c9f5/dsh_configured/1",
+      "id": "public-hle-672f74159150f3ac08f0c9f5",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672f74159150f3ac08f0c9f5/none/1",
+      "id": "public-hle-672f74159150f3ac08f0c9f5",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ec11b230ba0debf40b1fec/none/1",
+      "id": "public-hle-66ec11b230ba0debf40b1fec",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ec11b230ba0debf40b1fec/dsh_configured/1",
+      "id": "public-hle-66ec11b230ba0debf40b1fec",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-671c1099414cc58c0f2db443/none/1",
+      "id": "public-hle-671c1099414cc58c0f2db443",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-671c1099414cc58c0f2db443/dsh_configured/1",
+      "id": "public-hle-671c1099414cc58c0f2db443",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ef20a50312bf74c8ff43a0/none/1",
+      "id": "public-hle-66ef20a50312bf74c8ff43a0",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-66ef20a50312bf74c8ff43a0/dsh_configured/1",
+      "id": "public-hle-66ef20a50312bf74c8ff43a0",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-6717eb4518d92aa466b94d70/dsh_configured/1",
+      "id": "public-hle-6717eb4518d92aa466b94d70",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-6717eb4518d92aa466b94d70/none/1",
+      "id": "public-hle-6717eb4518d92aa466b94d70",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-66fc82b2bb24336da864daef/none/1",
+      "id": "public-hle-66fc82b2bb24336da864daef",
+      "variant": "none",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66fc82b2bb24336da864daef/dsh_configured/1",
+      "id": "public-hle-66fc82b2bb24336da864daef",
+      "variant": "dsh_configured",
+      "repeat": 1,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-6712c2616313b64cf8499927/none/2",
+      "id": "public-hle-6712c2616313b64cf8499927",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-6712c2616313b64cf8499927/dsh_configured/2",
+      "id": "public-hle-6712c2616313b64cf8499927",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-671abf7f136758472327f840/none/2",
+      "id": "public-hle-671abf7f136758472327f840",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-671abf7f136758472327f840/dsh_configured/2",
+      "id": "public-hle-671abf7f136758472327f840",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "equivalent",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673b50769ff1dae6f5b8b65d/dsh_configured/2",
+      "id": "public-hle-673b50769ff1dae6f5b8b65d",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673b50769ff1dae6f5b8b65d/none/2",
+      "id": "public-hle-673b50769ff1dae6f5b8b65d",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672d2195841ae6e83ce51e18/dsh_configured/2",
+      "id": "public-hle-672d2195841ae6e83ce51e18",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672d2195841ae6e83ce51e18/none/2",
+      "id": "public-hle-672d2195841ae6e83ce51e18",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-673531cae26d0576765bd963/none/2",
+      "id": "public-hle-673531cae26d0576765bd963",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-673531cae26d0576765bd963/dsh_configured/2",
+      "id": "public-hle-673531cae26d0576765bd963",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66e939c176b5b4f3e8a369b8/none/2",
+      "id": "public-hle-66e939c176b5b4f3e8a369b8",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "different",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66e939c176b5b4f3e8a369b8/dsh_configured/2",
+      "id": "public-hle-66e939c176b5b4f3e8a369b8",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672f74159150f3ac08f0c9f5/dsh_configured/2",
+      "id": "public-hle-672f74159150f3ac08f0c9f5",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-672f74159150f3ac08f0c9f5/none/2",
+      "id": "public-hle-672f74159150f3ac08f0c9f5",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ec11b230ba0debf40b1fec/dsh_configured/2",
+      "id": "public-hle-66ec11b230ba0debf40b1fec",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ec11b230ba0debf40b1fec/none/2",
+      "id": "public-hle-66ec11b230ba0debf40b1fec",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-671c1099414cc58c0f2db443/none/2",
+      "id": "public-hle-671c1099414cc58c0f2db443",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-671c1099414cc58c0f2db443/dsh_configured/2",
+      "id": "public-hle-671c1099414cc58c0f2db443",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ef20a50312bf74c8ff43a0/none/2",
+      "id": "public-hle-66ef20a50312bf74c8ff43a0",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66ef20a50312bf74c8ff43a0/dsh_configured/2",
+      "id": "public-hle-66ef20a50312bf74c8ff43a0",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-6717eb4518d92aa466b94d70/dsh_configured/2",
+      "id": "public-hle-6717eb4518d92aa466b94d70",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-6717eb4518d92aa466b94d70/none/2",
+      "id": "public-hle-6717eb4518d92aa466b94d70",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "error",
+      "review": {
+        "verdict": "unresolved",
+        "method": "Incomplete/failed execution not promoted"
+      }
+    },
+    {
+      "key": "public/public-hle-66fc82b2bb24336da864daef/dsh_configured/2",
+      "id": "public-hle-66fc82b2bb24336da864daef",
+      "variant": "dsh_configured",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    },
+    {
+      "key": "public/public-hle-66fc82b2bb24336da864daef/none/2",
+      "id": "public-hle-66fc82b2bb24336da864daef",
+      "variant": "none",
+      "repeat": 2,
+      "primary_status": "pending_review",
+      "review": {
+        "verdict": "unresolved",
+        "method": "restricted symbolic/choice format audit"
+      }
+    }
+  ]
+}

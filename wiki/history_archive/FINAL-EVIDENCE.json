@@ -1,0 +1,892 @@
+{
+  "fixed_final_slots": 294,
+  "planned_new_executions": 220,
+  "final_slot_counts": {
+    "localization": 96,
+    "legacy_skill": 48,
+    "compression": 24,
+    "progressive": 54,
+    "new_skill": 72
+  },
+  "localization": {
+    "old": {
+      "planned": 48,
+      "pass": 26,
+      "statuses": {
+        "pass": 26,
+        "fail": 22,
+        "not_run": 0
+      },
+      "success_rate": 0.5416666666666666
+    },
+    "new": {
+      "planned": 48,
+      "pass": 40,
+      "statuses": {
+        "pass": 40,
+        "fail": 8,
+        "not_run": 0
+      },
+      "success_rate": 0.8333333333333334
+    }
+  },
+  "localization_pairs": {
+    "complete_pairs": 48,
+    "independent_tasks": 24,
+    "candidate_only_success": 14,
+    "baseline_only_success": 0,
+    "same": 34,
+    "difference_pp": 29.166666666666668,
+    "task_bootstrap_95_pp": [
+      12.5,
+      50.0
+    ]
+  },
+  "legacy_skill": {
+    "evidence": {
+      "frozen": {
+        "planned": 8,
+        "pass": 4,
+        "statuses": {
+          "fail": 4,
+          "pass": 4,
+          "not_run": 0
+        },
+        "success_rate": 0.5
+      },
+      "adapted": {
+        "planned": 8,
+        "pass": 8,
+        "statuses": {
+          "pass": 8,
+          "not_run": 0
+        },
+        "success_rate": 1.0
+      }
+    },
+    "files": {
+      "frozen": {
+        "planned": 8,
+        "pass": 4,
+        "statuses": {
+          "fail": 4,
+          "pass": 4,
+          "not_run": 0
+        },
+        "success_rate": 0.5
+      },
+      "adapted": {
+        "planned": 8,
+        "pass": 5,
+        "statuses": {
+          "pass": 5,
+          "fail": 3,
+          "not_run": 0
+        },
+        "success_rate": 0.625
+      }
+    },
+    "expression": {
+      "frozen": {
+        "planned": 8,
+        "pass": 0,
+        "statuses": {
+          "fail": 8,
+          "not_run": 0
+        },
+        "success_rate": 0.0
+      },
+      "adapted": {
+        "planned": 8,
+        "pass": 8,
+        "statuses": {
+          "pass": 8,
+          "not_run": 0
+        },
+        "success_rate": 1.0
+      }
+    }
+  },
+  "progressive": {
+    "old_old": {
+      "planned": 18,
+      "pass": 14,
+      "statuses": {
+        "fail": 4,
+        "pass": 14,
+        "not_run": 0
+      },
+      "success_rate": 0.7777777777777778
+    },
+    "old_new": {
+      "planned": 18,
+      "pass": 18,
+      "statuses": {
+        "pass": 18,
+        "not_run": 0
+      },
+      "success_rate": 1.0
+    },
+    "new_new": {
+      "planned": 18,
+      "pass": 17,
+      "statuses": {
+        "pass": 17,
+        "fail": 1,
+        "not_run": 0
+      },
+      "success_rate": 0.9444444444444444
+    }
+  },
+  "progressive_loads": {
+    "old_old": 18,
+    "old_new": 18,
+    "new_new": 18
+  },
+  "new_skill": {
+    "evidence": {
+      "old_no_feedback": {
+        "planned": 8,
+        "pass": 3,
+        "statuses": {
+          "pass": 3,
+          "fail": 5,
+          "not_run": 0
+        },
+        "success_rate": 0.375
+      },
+      "old_direct_feedback": {
+        "planned": 8,
+        "pass": 3,
+        "statuses": {
+          "pass": 3,
+          "fail": 5,
+          "not_run": 0
+        },
+        "success_rate": 0.375
+      },
+      "adapted_skill": {
+        "planned": 8,
+        "pass": 4,
+        "statuses": {
+          "pass": 4,
+          "fail": 4,
+          "not_run": 0
+        },
+        "success_rate": 0.5
+      },
+      "pairs": {
+        "old_no_feedback": {
+          "complete_pairs": 8,
+          "independent_tasks": 8,
+          "candidate_only_success": 1,
+          "baseline_only_success": 0,
+          "same": 7,
+          "difference_pp": 12.5,
+          "task_bootstrap_95_pp": [
+            0.0,
+            37.5
+          ]
+        },
+        "old_direct_feedback": {
+          "complete_pairs": 8,
+          "independent_tasks": 8,
+          "candidate_only_success": 1,
+          "baseline_only_success": 0,
+          "same": 7,
+          "difference_pp": 12.5,
+          "task_bootstrap_95_pp": [
+            0.0,
+            37.5
+          ]
+        }
+      }
+    },
+    "multi_file": {
+      "old_no_feedback": {
+        "planned": 8,
+        "pass": 8,
+        "statuses": {
+          "pass": 8,
+          "not_run": 0
+        },
+        "success_rate": 1.0
+      },
+      "old_direct_feedback": {
+        "planned": 8,
+        "pass": 8,
+        "statuses": {
+          "pass": 8,
+          "not_run": 0
+        },
+        "success_rate": 1.0
+      },
+      "adapted_skill": {
+        "planned": 8,
+        "pass": 8,
+        "statuses": {
+          "pass": 8,
+          "not_run": 0
+        },
+        "success_rate": 1.0
+      },
+      "pairs": {
+        "old_no_feedback": {
+          "complete_pairs": 8,
+          "independent_tasks": 8,
+          "candidate_only_success": 0,
+          "baseline_only_success": 0,
+          "same": 8,
+          "difference_pp": 0.0,
+          "task_bootstrap_95_pp": [
+            0.0,
+            0.0
+          ]
+        },
+        "old_direct_feedback": {
+          "complete_pairs": 8,
+          "independent_tasks": 8,
+          "candidate_only_success": 0,
+          "baseline_only_success": 0,
+          "same": 8,
+          "difference_pp": 0.0,
+          "task_bootstrap_95_pp": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "expression": {
+      "old_no_feedback": {
+        "planned": 8,
+        "pass": 6,
+        "statuses": {
+          "fail": 2,
+          "pass": 6,
+          "not_run": 0
+        },
+        "success_rate": 0.75
+      },
+      "old_direct_feedback": {
+        "planned": 8,
+        "pass": 7,
+        "statuses": {
+          "pass": 7,
+          "fail": 1,
+          "not_run": 0
+        },
+        "success_rate": 0.875
+      },
+      "adapted_skill": {
+        "planned": 8,
+        "pass": 5,
+        "statuses": {
+          "fail": 3,
+          "pass": 5,
+          "not_run": 0
+        },
+        "success_rate": 0.625
+      },
+      "pairs": {
+        "old_no_feedback": {
+          "complete_pairs": 8,
+          "independent_tasks": 8,
+          "candidate_only_success": 0,
+          "baseline_only_success": 1,
+          "same": 7,
+          "difference_pp": -12.5,
+          "task_bootstrap_95_pp": [
+            -37.5,
+            0.0
+          ]
+        },
+        "old_direct_feedback": {
+          "complete_pairs": 8,
+          "independent_tasks": 8,
+          "candidate_only_success": 0,
+          "baseline_only_success": 2,
+          "same": 6,
+          "difference_pp": -25.0,
+          "task_bootstrap_95_pp": [
+            -62.5,
+            0.0
+          ]
+        }
+      }
+    }
+  },
+  "blind": {
+    "evidence": {
+      "old_no_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "tie": 5,
+          "inconsistent": 2,
+          "old": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 2,
+          "adapted": 2,
+          "valid_judgments": 6
+        }
+      },
+      "old_direct_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "tie": 7,
+          "inconsistent": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 3,
+          "adapted": 3,
+          "valid_judgments": 7
+        }
+      }
+    },
+    "multi_file": {
+      "old_no_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "tie": 8
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 8,
+          "adapted": 8,
+          "valid_judgments": 8
+        }
+      },
+      "old_direct_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "tie": 7,
+          "interrupted": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 7,
+          "adapted": 7,
+          "valid_judgments": 7
+        }
+      }
+    },
+    "expression": {
+      "old_no_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "inconsistent": 5,
+          "tie": 2,
+          "old": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 3,
+          "adapted": 2,
+          "valid_judgments": 3
+        }
+      },
+      "old_direct_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "old": 3,
+          "inconsistent": 4,
+          "tie": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 4,
+          "adapted": 1,
+          "valid_judgments": 4
+        }
+      }
+    }
+  },
+  "gate_special": [],
+  "recoveries": [
+    {
+      "key": "localization/loc-alias-0/old/0",
+      "original": "timeout",
+      "recovered": "fail"
+    },
+    {
+      "key": "localization/loc-alias-1/old/0",
+      "original": "interrupted",
+      "recovered": "pass"
+    },
+    {
+      "key": "localization/loc-alias-2/old/0",
+      "original": "interrupted",
+      "recovered": "fail"
+    },
+    {
+      "key": "localization/loc-explicit_name-2/new/0",
+      "original": "timeout",
+      "recovered": "pass"
+    },
+    {
+      "key": "skill_test/files-test-0/adapted/1",
+      "original": "error",
+      "recovered": "fail"
+    },
+    {
+      "key": "skill_test/files-test-0/frozen/1",
+      "original": "error",
+      "recovered": "fail"
+    },
+    {
+      "key": "skill_test/files-test-1/adapted/1",
+      "original": "error",
+      "recovered": "pass"
+    },
+    {
+      "key": "skill_test/files-test-1/frozen/1",
+      "original": "error",
+      "recovered": "pass"
+    },
+    {
+      "key": "skill_test/files-test-2/adapted/1",
+      "original": "error",
+      "recovered": "pass"
+    },
+    {
+      "key": "skill_test/files-test-2/frozen/1",
+      "original": "error",
+      "recovered": "pass"
+    },
+    {
+      "key": "skill_test/files-test-3/frozen/1",
+      "original": "interrupted",
+      "recovered": "fail"
+    }
+  ],
+  "cost": {
+    "total_cny": "34.6891133898287",
+    "cap_cny": "100",
+    "physical_requests": 3740,
+    "unknown_usage_requests": 71,
+    "pending_reservations": 0,
+    "basis": "settled/conservative ledger, not provider invoice",
+    "increment_since_final_plan_cny": "19.8319931143979"
+  },
+  "complete": false,
+  "limitations": [
+    "Controlled 24-task cohort; judge is a quality proxy, not general task intelligence.",
+    "Repeated old tasks are clustered by task; only three new families.",
+    "Progressive loading uses one installed skill; no large-library retrieval or duplicate-creation claim.",
+    "Recovery results are separate follow-up observations, not overwritten original outcomes."
+  ],
+  "blind_raw": {
+    "evidence": {
+      "old_no_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "tie": 5,
+          "inconsistent": 2,
+          "old": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 2,
+          "adapted": 2,
+          "valid_judgments": 6
+        }
+      },
+      "old_direct_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "tie": 7,
+          "inconsistent": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 3,
+          "adapted": 3,
+          "valid_judgments": 7
+        }
+      }
+    },
+    "multi_file": {
+      "old_no_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "tie": 8
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 8,
+          "adapted": 8,
+          "valid_judgments": 8
+        }
+      },
+      "old_direct_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "tie": 7,
+          "interrupted": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 7,
+          "adapted": 7,
+          "valid_judgments": 7
+        }
+      }
+    },
+    "expression": {
+      "old_no_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "inconsistent": 5,
+          "tie": 2,
+          "old": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 3,
+          "adapted": 2,
+          "valid_judgments": 3
+        }
+      },
+      "old_direct_feedback": {
+        "planned_pairs": 8,
+        "recorded_pairs": 8,
+        "outcomes": {
+          "old": 3,
+          "inconsistent": 4,
+          "tie": 1
+        },
+        "all_criteria_and_host_checks_met": {
+          "baseline": 4,
+          "adapted": 1,
+          "valid_judgments": 4
+        }
+      }
+    }
+  },
+  "blind_effective": {
+    "evidence": {
+      "old_no_feedback": {
+        "planned": 8,
+        "outcomes": {
+          "tie": 5,
+          "inconsistent": 2,
+          "old": 1
+        },
+        "order_consistent": 6
+      },
+      "old_direct_feedback": {
+        "planned": 8,
+        "outcomes": {
+          "tie": 7,
+          "inconsistent": 1
+        },
+        "order_consistent": 7
+      }
+    },
+    "multi_file": {
+      "old_no_feedback": {
+        "planned": 8,
+        "outcomes": {
+          "tie": 8
+        },
+        "order_consistent": 8
+      },
+      "old_direct_feedback": {
+        "planned": 8,
+        "outcomes": {
+          "tie": 8
+        },
+        "order_consistent": 8
+      }
+    },
+    "expression": {
+      "old_no_feedback": {
+        "planned": 8,
+        "outcomes": {
+          "inconsistent": 5,
+          "tie": 2,
+          "old": 1
+        },
+        "order_consistent": 3
+      },
+      "old_direct_feedback": {
+        "planned": 8,
+        "outcomes": {
+          "old": 3,
+          "inconsistent": 4,
+          "tie": 1
+        },
+        "order_consistent": 4
+      }
+    }
+  },
+  "blind_recoveries": [
+    {
+      "original_key": "blind/mf-mixed_catalog-2/old_direct_feedback",
+      "recovery_key": "blind_recovery/mf-mixed_catalog-2/old_direct_feedback",
+      "original_status": "interrupted",
+      "recovered_status": "pass"
+    }
+  ],
+  "localization_metrics": {
+    "old": {
+      "resolution_success": 26,
+      "wrong_target": 22,
+      "correct_abstention": 0,
+      "skill_loaded": 41,
+      "followup_success": 48,
+      "planned": 48,
+      "actual_modifications": 0,
+      "wrong_modifications": 0
+    },
+    "new": {
+      "resolution_success": 40,
+      "wrong_target": 8,
+      "correct_abstention": 8,
+      "skill_loaded": 43,
+      "followup_success": 48,
+      "planned": 48,
+      "actual_modifications": 0,
+      "wrong_modifications": 0
+    }
+  },
+  "legacy_skill_pairs": {
+    "evidence": {
+      "complete_pairs": 8,
+      "independent_tasks": 4,
+      "candidate_only_success": 4,
+      "baseline_only_success": 0,
+      "same": 4,
+      "difference_pp": 50.0,
+      "task_bootstrap_95_pp": [
+        0.0,
+        100.0
+      ]
+    },
+    "files": {
+      "complete_pairs": 8,
+      "independent_tasks": 4,
+      "candidate_only_success": 2,
+      "baseline_only_success": 1,
+      "same": 5,
+      "difference_pp": 12.5,
+      "task_bootstrap_95_pp": [
+        -25.0,
+        50.0
+      ]
+    },
+    "expression": {
+      "complete_pairs": 8,
+      "independent_tasks": 4,
+      "candidate_only_success": 8,
+      "baseline_only_success": 0,
+      "same": 0,
+      "difference_pp": 100.0,
+      "task_bootstrap_95_pp": [
+        100.0,
+        100.0
+      ]
+    }
+  },
+  "progressive_pairs": {
+    "old_old": {
+      "complete_pairs": 18,
+      "independent_tasks": 6,
+      "candidate_only_success": 4,
+      "baseline_only_success": 1,
+      "same": 13,
+      "difference_pp": 16.666666666666668,
+      "task_bootstrap_95_pp": [
+        -5.555555555555557,
+        44.44444444444444
+      ]
+    },
+    "old_new": {
+      "complete_pairs": 18,
+      "independent_tasks": 6,
+      "candidate_only_success": 0,
+      "baseline_only_success": 1,
+      "same": 17,
+      "difference_pp": -5.555555555555555,
+      "task_bootstrap_95_pp": [
+        -16.666666666666664,
+        0.0
+      ]
+    }
+  },
+  "all_recorded_before_recovery": {
+    "localization": {
+      "pass": 64,
+      "timeout": 2,
+      "interrupted": 2,
+      "fail": 28
+    },
+    "skill_test": {
+      "fail": 16,
+      "pass": 25,
+      "error": 6,
+      "interrupted": 1
+    }
+  },
+  "localization_before_recovery_pairs": {
+    "complete_pairs": 44,
+    "independent_tasks": 24,
+    "candidate_only_success": 12,
+    "baseline_only_success": 0,
+    "same": 32,
+    "difference_pp": 27.272727272727273,
+    "task_bootstrap_95_pp": [
+      12.5,
+      45.83333333333333
+    ]
+  },
+  "runtime_accounting": {
+    "localization": {
+      "sum_task_seconds": 8846.27592399808,
+      "recorded_task_calls": 1065
+    },
+    "legacy_skill": {
+      "sum_task_seconds": 826.8576493720029,
+      "recorded_task_calls": 266
+    },
+    "progressive": {
+      "sum_task_seconds": 384.22903237788705,
+      "recorded_task_calls": 109
+    },
+    "new_skill": {
+      "sum_task_seconds": 1141.3298272879765,
+      "recorded_task_calls": 364
+    }
+  },
+  "runtime_accounting_note": "Sum of task durations, not campaign wall time; task counters exclude or can nest auxiliary calls. Root ledger is authoritative for total cost/calls.",
+  "original_pre_recovery_statuses": {
+    "localization": {
+      "pass": 9,
+      "timeout": 2,
+      "interrupted": 2
+    },
+    "skill_test": {
+      "fail": 16,
+      "pass": 25,
+      "error": 6,
+      "interrupted": 1
+    }
+  },
+  "scope_amendment": {
+    "user_instruction": "不要自己进行防御性测试，一切以快速出结果为主，一切以减少你自己消耗为主",
+    "cancelled": "Nine unstarted gate fault-injection controls; not part of the 294 final slots",
+    "unchanged": "All 294 core slots, task definitions, models, scoring, 100 CNY root and 20 CNY skill cap",
+    "resume": "Frozen source execution; current parallel presentation/service changes do not enter this process"
+  },
+  "gate_special_status": "cancelled_by_user_before_execution_0_of_9",
+  "maintenance": {
+    "expression-snapshot": {
+      "family": "expression",
+      "status": "completed",
+      "committed_body": "Read the source material and the requested audience carefully. Preserve factual details, uncertainty, and any explicitly requested source language. Write clearly and directly.\n",
+      "effective_skill_hash": "9522d8c2e561c881866fad4074a1109da8c306c8996c7bff4c71a357b5e6a6c4",
+      "rounds": [
+        {
+          "event_id": "646141ce03044029a920e5f803d8e920",
+          "reason": "The feedback reiterates preservation of facts, names, numbers, and uncertainty—already covered by the existing 'expression' skill's body. No explicit durable user correction or new reusable method is evidenced.",
+          "status": "discarded"
+        },
+        {
+          "event_id": "6e861a87a6fe4bea89e9befbee1a75bf",
+          "reason": "The existing expression skill already covers preserving counts, uncertainty, and requested source language; this run is a one-off status note with no explicit durable correction or new reusable method.",
+          "status": "discarded"
+        }
+      ],
+      "maintenance_evidence": {
+        "session_id": "5a5bd5348fe142788cf93d2a94ceb0cf",
+        "actual_version": "1.0.0"
+      },
+      "workspace": "/Users/wenyuecheng/code/python/Weyra/.weyra/final-20261019-v2/skill/maintenance/expression"
+    },
+    "evidence-snapshot": {
+      "family": "evidence",
+      "status": "completed",
+      "committed_body": "Read all supplied evidence before answering. Keep claims separate, use sources, and avoid unsupported facts.\n",
+      "effective_skill_hash": "c51b15fe954149850cd2ab4a32b3a41fc29093d2a547641675937ce6393e2c27",
+      "rounds": [
+        {
+          "event_id": "c789d0d9118143aeab29e34f424b8e9e",
+          "failure_kind": "failure_to_apply",
+          "reason": "Invalid knowledge kind",
+          "status": "rejected",
+          "task_quality": null
+        },
+        {
+          "event_id": "dab72a8d692043018327eec538dc5068",
+          "failure_kind": "failure_to_apply",
+          "reason": "Independent model review did not approve candidate",
+          "status": "rejected",
+          "task_quality": null
+        }
+      ],
+      "maintenance_evidence": {
+        "session_id": "2222b29721c848f19494a7b314d656dd",
+        "actual_version": "1.0.0"
+      },
+      "workspace": "/Users/wenyuecheng/code/python/Weyra/.weyra/final-20261019-v2/skill/maintenance/evidence"
+    },
+    "multi_file-snapshot": {
+      "family": "multi_file",
+      "status": "completed",
+      "committed_body": "Inspect the project files before changing them. Preserve originals and make only requested outputs.\n",
+      "effective_skill_hash": "9171155e83341d349548ab653222e7cb4bb2fc6c46318e7e224f871372811fb3",
+      "rounds": [
+        {
+          "event_id": "71679fe17bf24841a024cb1eadb82c54",
+          "failure_kind": "failure_to_apply",
+          "reason": "Independent model review did not approve candidate",
+          "status": "rejected",
+          "task_quality": null
+        },
+        {
+          "event_id": "69fa7e61d4504c60bb63c7c600c139bc",
+          "reason": "The feedback restates requirements already covered by the existing multi_file skill (inspect before changing, preserve sources, make only requested outputs) and does not establish a new durable, reusable rule or scope correction.",
+          "status": "discarded"
+        }
+      ],
+      "maintenance_evidence": {
+        "session_id": "c1da4369cf04489fa16f3ef70faa5815",
+        "actual_version": "1.0.0"
+      },
+      "workspace": "/Users/wenyuecheng/code/python/Weyra/.weyra/final-20261019-v2/skill/maintenance/multi_file"
+    }
+  },
+  "new_skill_hard_failures": {
+    "old_no_feedback": 0,
+    "old_direct_feedback": 0,
+    "adapted_skill": 0
+  },
+  "terminal_final_statuses": {
+    "pass": 196,
+    "fail": 74
+  },
+  "complete_under_amended_scope": true,
+  "raw_complete_flag_explanation": "Frozen reporter requires cancelled nine controls and ignores one separately stored blind recovery; original complete=false retained.",
+  "skill_stage_cost": {
+    "start_cny": "14.8571202754308",
+    "end_cny": "20.8544127800827",
+    "increment_cny": "5.9972925046519",
+    "cap_cny": "20",
+    "stopped": false
+  },
+  "source_drift": [
+    "agents/events.py",
+    "agents/main.py",
+    "agents/presentation.py",
+    "agents/service.py"
+  ],
+  "scoring_caveats": [
+    "Raw host grades preserved without retuning: source-file paths may fail exact source-ID matching despite correct evidence.",
+    "Name anchors can reject shortened salutations; host grade is a strict contract check, not general writing quality.",
+    "All three candidate bodies equal initial skills: new cohort C-A variation is not an evolution effect.",
+    "Wrong-target selection is not actual wrong modification; all localization runs published zero changes."
+  ]
+}

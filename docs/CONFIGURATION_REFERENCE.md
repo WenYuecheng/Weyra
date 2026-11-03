@@ -1,5 +1,11 @@
 # 配置参考
 
+当前步骤、工具准入、独立投影及目标 CAS 语义见 [DSH 架构改造说明](DSH_STEP_ARCHITECTURE.md)。数据库为 v2；/goal resume 保留进度，/goal restart 显式重置。
+
+
+2026-11-03 更新：目标 pause/resume/complete、冷会话查询、来源回放及 tools/goal_policy/retry_policy 配置见 [P1 运行说明](P1_RUNTIME_GUIDE.md)。patch 默认关闭，部分提交不回滚。
+
+
 行为配置放在项目根目录 `weyra.toml`，凭据放在 `.env` 或进程环境变量中。标准模板见 [weyra.example.toml](../weyra.example.toml)。
 
 ## 加载优先级
@@ -86,3 +92,7 @@ weyra check-config --project .
 ```
 
 检查配置、路由容量与凭据就绪情况，不发起模型请求，也不测试端点连通性。
+
+## 模型故障切换准入（2026-11-02）
+
+本轮不增加配置键。候选路由使用已有 per-model 上下文策略和 `max_output_tokens` 计算输出预留及压力阈值；`compaction_retries` 限制目标准入过程的压缩尝试，摘要仍经原运行时计入预算。`auto = false` 不自动压缩，目标不满足准入条件时拒绝切换。配置无效会拒绝候选，不修改有效主路由。旧路由不可用时仍可能因摘要路由不可用而无法切换，不承诺全部容灾场景成功。

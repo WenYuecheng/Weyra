@@ -1,0 +1,43 @@
+{
+  "scope": "same-version narrow read versus compatibility aggregate; not an old/new end-to-end speedup",
+  "rows": [
+    {
+      "messages": 100,
+      "goal_read": {
+        "p50_ms": 0.010603980626910925,
+        "p95_ms": 0.016125035472214222,
+        "peak_python_bytes": 22622
+      },
+      "compatibility_full_state_read": {
+        "p50_ms": 1.6169789887499064,
+        "p95_ms": 1.811874972190708,
+        "peak_python_bytes": 63856
+      },
+      "message_projection": {
+        "p50_ms": 3.6603545013349503,
+        "p95_ms": 4.008499963674694,
+        "peak_python_bytes": 63152
+      },
+      "cold_open_goal_ms": 2.2589160362258554
+    },
+    {
+      "messages": 1000,
+      "goal_read": {
+        "p50_ms": 0.010167015716433525,
+        "p95_ms": 0.015041034203022718,
+        "peak_python_bytes": 157938
+      },
+      "compatibility_full_state_read": {
+        "p50_ms": 15.809249976882711,
+        "p95_ms": 16.45820797421038,
+        "peak_python_bytes": 698280
+      },
+      "message_projection": {
+        "p50_ms": 35.838208481436595,
+        "p95_ms": 36.95158404298127,
+        "peak_python_bytes": 697072
+      },
+      "cold_open_goal_ms": 12.179915967863053
+    }
+  ]
+}

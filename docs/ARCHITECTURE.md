@@ -1,7 +1,15 @@
 # Weyra 系统全景架构与工业级核心微内核白皮书 (System Architecture & Microkernel Whitepaper)
 
+当前步骤、工具准入、独立投影及目标 CAS 语义见 [DSH 架构改造说明](DSH_STEP_ARCHITECTURE.md)。数据库为 v2；/goal resume 保留进度，/goal restart 显式重置。
+
+
+## 当前执行语义（2026-11-03）
+
+模型切换准入、步骤工具集合以及 P1 恢复/生命周期/协议来源/可选 patch 已实现。完整接口、迁移、默认值及失败语义统一见 [P1 运行说明](P1_RUNTIME_GUIDE.md)。下文分层与算法说明沿用；涉及上下文更新时，项目规则、记忆和技能目录采用版本化事实消息，目标恢复默认不自动继续，数据库使用明确版本迁移。
+
+
 > **文档定位**：本文档为 **Weyra** 自主编码智能体系统的官方核心技术白皮书与架构工程实现指南。
-> 系统性阐述了基于 **Pi Agent 极简纯函数 ReAct 微内核**（Session Tree DAG 树形事件溯源、Steering/Follow-up 双队列优先级调度、成对工具抗 400 防御、TTY 单输入源协同）、**DeepSeek-Harness 工业级工程规约**（DSH 8 节结构化检查点压缩、8192 字符中间修剪、Fail-Closed 预算硬防护与微美分结算、POSIX 进程组隔离与多读单写协调锁）、**Anthropic/Pi 4 阶段 Prompt Cache 前缀对齐** 以及 **基于 WikiSkill/SkillOpt 的自进化技能与双盲仲裁门禁** 的完整设计思想、数学推导与全栈源码落地。
+> 系统性阐述了基于 **Pi Agent 极简依赖注入的 ReAct 微内核**（Session Tree DAG 树形事件溯源、Steering/Follow-up 双队列优先级调度、成对工具抗 400 防御、TTY 单输入源协同）、**DeepSeek-Harness 工业级工程规约**（DSH 8 节结构化检查点压缩、8192 字符中间修剪、Fail-Closed 预算硬防护与微美分结算、POSIX 进程组隔离与多读单写协调锁）、**Anthropic/Pi 4 阶段 Prompt Cache 前缀对齐** 以及 **基于 WikiSkill/SkillOpt 的自进化技能与双盲仲裁门禁** 的完整设计思想、数学推导与全栈源码落地。
 >
 > 适用于底层架构师、智能体研发工程师以及开源核心贡献者的系统化技术参考。
 
@@ -10,7 +18,7 @@
 ## 目录 (Table of Contents)
 
 - [第一章：五层解耦拓扑与全景系统架构](#第一章五层解耦拓扑与全景系统架构)
-- [第二章：Pi Agent 纯函数 ReAct 微内核与执行流](#第二章pi-agent-纯函数-react-微内核与执行流)
+- [第二章：Pi Agent 依赖注入的 ReAct 微内核与执行流](#第二章pi-agent-纯函数-react-微内核与执行流)
 - [第三章：人类意图 Steering/Follow-up 双队列调度体系](#第三章人类意图-steeringfollow-up-双队列调度体系)
 - [第四章：Anthropic/Pi 4 阶段 Prompt Cache 前缀对齐与 KV 缓存机制](#第四章anthropicpi-4-阶段-prompt-cache-前缀对齐与-kv-缓存机制)
 - [第五章：DeepSeek-Harness 八节结构化压缩算法与数学模型](#第五章deepseek-harness-八节结构化压缩算法与数学模型)
@@ -85,7 +93,7 @@ graph TD
 | :--- | :--- | :--- | :--- |
 | **表现平面** | `weyra/main.py`<br>`weyra/tui/` | 命令行参数解析、原生流式渲染、Textual 卡片组件、TTY 终端协同 | **Pi Agent** (单输入源 TTY 协调器) |
 | **服务平面** | `weyra/service.py`<br>`weyra/events.py` | 统一会话生命周期调度、跨进程/线程异步发布订阅、双阶段审批路由 | **自主创新原创** |
-| **内核平面** | `weyra/core/loop.py`<br>`weyra/coding/agent.py` | 纯函数 ReAct 单步推进、双队列调度、状态单调演进、模型调用解耦 | **Pi Agent** (ReAct 极简微内核) |
+| **内核平面** | `weyra/core/loop.py`<br>`weyra/coding/agent.py` | 依赖注入的 ReAct 单步推进、双队列调度、状态单调演进、模型调用解耦 | **Pi Agent** (ReAct 极简微内核) |
 | **工具平面** | `weyra/tools.py`<br>`weyra/mcp_client.py` | 文件/系统工具、标准 Model Context Protocol (stdio) 客户端 | **DeepSeek-Harness** (工具沙箱) |
 | **上下文平面** | `weyra/core/context.py`<br>`weyra/output.py` | 容量阈值方程、8192 字符中间修剪、成对工具抗 400 拓扑清洗、KV 缓存对齐 | **DeepSeek-Harness** + **Pi Agent** |
 | **预算平面** | `weyra/core/state.py`<br>`weyra/pricing.py` | Fail-Closed 事前额度预留、原子回滚、事后 Usage 精确差额核销 | **DeepSeek-Harness** (预算守卫) |
@@ -94,7 +102,7 @@ graph TD
 
 ---
 
-## 第二章：Pi Agent 纯函数 ReAct 微内核与执行流
+## 第二章：Pi Agent 依赖注入的 ReAct 微内核与执行流
 
 ### 2.1 ReAct 纯函数执行循环
 Weyra 的核心智能体循环（`weyra/core/loop.py`）借鉴了 **Pi Agent** 的极简设计哲学：**将智能体的思考、规划、工具执行抽象为一个纯粹的状态机单步转移函数**。循环宿主 `LoopHost` 与具体的终端 UI 或网络协议完全解耦：
@@ -540,4 +548,4 @@ sequenceDiagram
 
 Weyra 的架构演进证明了一条深刻的工程真理：**优秀的自主智能体不仅取决于底层大模型的基座智商，更取决于支撑其长程运行的操作系统级内核体系**。
 
-通过将 **Pi Agent 的纯函数 ReAct 微内核、双队列与不可变树状事件日志**、**DeepSeek-Harness 的 8 节结构化压缩、中间修剪与 Fail-Closed 预算防御**、**Anthropic 的 4 阶段 Prompt Cache 前缀对齐** 以及 **顶会自进化技能与双盲仲裁** 严密交融，Weyra 打造了一座高可用、高确定性、低成本且自主生长的工业级智能体灯塔。
+通过将 **Pi Agent 的依赖注入的 ReAct 微内核、双队列与不可变树状事件日志**、**DeepSeek-Harness 的 8 节结构化压缩、中间修剪与 Fail-Closed 预算防御**、**Anthropic 的 4 阶段 Prompt Cache 前缀对齐** 以及 **顶会自进化技能与双盲仲裁** 严密交融，Weyra 打造了一座高可用、高确定性、低成本且自主生长的工业级智能体灯塔。

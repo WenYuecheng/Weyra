@@ -47,6 +47,9 @@ class Config:
 
     mcp_servers: dict[str, dict] = field(default_factory=dict)
     context_policy: dict = field(default_factory=dict)
+    tools: dict = field(default_factory=lambda: {"apply_patch": False})
+    goal_policy: dict = field(default_factory=lambda: {"max_continuations": 3, "max_stagnant_rounds": 2})
+    retry_policy: dict = field(default_factory=lambda: {"argument_retries": 1})
     inherited_purposes: frozenset[str] = frozenset()
     pricing: dict = field(default_factory=dict)
     _credentials: dict = field(default_factory=dict, repr=False, compare=False)
@@ -68,6 +71,9 @@ class Config:
             "pricing": self.pricing,
             "route_parameters": self.route_parameters,
             "skill_evolution": self.skill_evolution,
+            "tools": self.tools,
+            "goal_policy": self.goal_policy,
+            "retry_policy": self.retry_policy,
         }
 
     def build_runtime(self):
@@ -100,6 +106,9 @@ class Config:
         runtime.route_parameters = self.route_parameters
         runtime.fallback_parameters = self.fallback_parameters
         runtime.skill_evolution = dict(self.skill_evolution)
+        runtime.apply_patch_enabled = self.tools["apply_patch"]
+        runtime.goal_policy = dict(self.goal_policy)
+        runtime.argument_retries = self.retry_policy["argument_retries"]
         return runtime
 
 
@@ -181,8 +190,22 @@ def load_config(project, overrides=None):
     if path.exists() and not path.resolve().is_relative_to(project):
         raise ValueError("Configuration path escapes project")
     data = tomllib.loads(path.read_text()) if path.exists() else {}
-    if set(data) - {"providers", "routes", "fallbacks", "mcp", "context_policy", "pricing", "skill_evolution"}:
+    if set(data) - {"providers", "routes", "fallbacks", "mcp", "context_policy", "pricing", "skill_evolution", "tools", "goal_policy", "retry_policy"}:
         raise ValueError("Unknown configuration section")
+    sections = {}
+    for section, defaults in {"tools": {"apply_patch": False}, "goal_policy": {"max_continuations": 3, "max_stagnant_rounds": 2}, "retry_policy": {"argument_retries": 1}}.items():
+        value = data.get(section, {})
+        if not isinstance(value, dict) or set(value) - set(defaults):
+            raise ValueError("Invalid " + section)
+        value = {**defaults, **value}
+        for key, item in value.items():
+            if key == "apply_patch":
+                valid = type(item) is bool
+            else:
+                valid = type(item) is int and item >= (0 if key == "argument_retries" else 1)
+            if not valid:
+                raise ValueError("Invalid " + section + "." + key)
+        sections[section] = value
     providers = {name: dict(value) for name, value in data.get("providers", {}).items()}
     routes = {name: dict(value) for name, value in data.get("routes", {}).items()}
     dotenv_path = project / ".env"
@@ -353,6 +376,7 @@ def load_config(project, overrides=None):
         for route, parsed in zip(values, fallbacks[purpose])
     }
     config = Config(
+        **sections,
         providers=normalized,
         routes={purpose: models.get(purpose, models["main"]) for purpose in PURPOSES
                 if purpose != "skill_judge" or purpose in models},

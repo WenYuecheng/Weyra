@@ -1,0 +1,1165 @@
+{
+  "version": "final-skill-v1",
+  "design_note": "Three-arm heldout cohort: 24 new tasks, eight per family, balanced across four coverage types. Each family has four separate development and four validation cases. Expected artifacts remain host-side.",
+  "arms": [
+    "old_no_feedback",
+    "old_direct_feedback",
+    "adapted_skill"
+  ],
+  "heldout": [
+    {
+      "id": "ev-field_notes-1",
+      "family": "evidence",
+      "coverage": "new_requirement",
+      "prompt": "Read the brief and evidence table. For the requested claims `arrival` then `operator`, create result.json as a JSON array in that order. Each item must be an object with claim, value, source, and note fields. Use the authoritative source for conflicts and state when an item has no support.",
+      "files": {
+        "case/brief.md": "Prepare a fact sheet for the listed claims. Keep each claim separate.\n",
+        "evidence/field_log.csv": "claim,source,authority,date,value\narrival,dispatch,3,2026-04-02,08:10\narrival,gatebook,2,2026-04-04,08:25\noperator,dispatch,3,2026-04-02,M. Chen\n"
+      },
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "expected_artifacts": {
+        "result.json": "[\n  {\n    \"claim\": \"arrival\",\n    \"value\": \"08:10\",\n    \"source\": \"dispatch\",\n    \"note\": \"Highest authority; later gatebook disagrees.\"\n  },\n  {\n    \"claim\": \"operator\",\n    \"value\": \"M. Chen\",\n    \"source\": \"dispatch\",\n    \"note\": \"Only supplied source.\"\n  }\n]"
+      },
+      "correction": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values."
+    },
+    {
+      "id": "ev-field_notes-2",
+      "family": "evidence",
+      "coverage": "new_requirement",
+      "prompt": "Read the brief and evidence table. For the requested claims `arrival` then `operator`, create result.json as a JSON array in that order. Each item must be an object with claim, value, source, and note fields. Use the authoritative source for conflicts and state when an item has no support.",
+      "files": {
+        "case/brief.md": "Prepare a fact sheet for the listed claims. Keep each claim separate.\n",
+        "evidence/field_log.csv": "claim,source,authority,date,value\narrival,dispatch,3,2026-04-02,09:20\narrival,gatebook,2,2026-04-04,09:40\noperator,dispatch,3,2026-04-02,R. Diaz\n"
+      },
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "expected_artifacts": {
+        "result.json": "[\n  {\n    \"claim\": \"arrival\",\n    \"value\": \"09:20\",\n    \"source\": \"dispatch\",\n    \"note\": \"Highest authority; later gatebook disagrees.\"\n  },\n  {\n    \"claim\": \"operator\",\n    \"value\": \"R. Diaz\",\n    \"source\": \"dispatch\",\n    \"note\": \"Only supplied source.\"\n  }\n]"
+      },
+      "correction": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values."
+    },
+    {
+      "id": "ev-vendor_bulletins-1",
+      "family": "evidence",
+      "coverage": "old_ability",
+      "prompt": "Read all files. Write result.json as a JSON object with a rows array. Each row must be an object with claim, value, source, and uncertainty fields. For lot and status, where sources conflict choose authority first, then date. Include a concise uncertainty field.",
+      "files": {
+        "request.txt": "Return a short evidence register in result.json.\n",
+        "sources/vendor-a.json": "{\"id\":\"vendor-a\",\"authority\":1,\"date\":\"2026-03-01\",\"facts\":{\"lot\":\"L-81\",\"status\":\"released\"}}",
+        "sources/audit.json": "{\"id\":\"audit\",\"authority\":4,\"date\":\"2026-02-20\",\"facts\":{\"lot\":\"L-81\",\"status\":\"quarantined\"}}"
+      },
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "expected_artifacts": {
+        "result.json": "{\n  \"rows\": [\n    {\n      \"claim\": \"lot\",\n      \"value\": \"L-81\",\n      \"source\": \"audit\",\n      \"uncertainty\": \"\"\n    },\n    {\n      \"claim\": \"status\",\n      \"value\": \"quarantined\",\n      \"source\": \"audit\",\n      \"uncertainty\": \"vendor-a disagrees\"\n    }\n  ]\n}"
+      },
+      "correction": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values."
+    },
+    {
+      "id": "ev-vendor_bulletins-2",
+      "family": "evidence",
+      "coverage": "old_ability",
+      "prompt": "Read all files. Write result.json as a JSON object with a rows array. Each row must be an object with claim, value, source, and uncertainty fields. For lot and status, where sources conflict choose authority first, then date. Include a concise uncertainty field.",
+      "files": {
+        "request.txt": "Return a short evidence register in result.json.\n",
+        "sources/vendor-a.json": "{\"id\":\"vendor-a\",\"authority\":1,\"date\":\"2026-03-01\",\"facts\":{\"lot\":\"C-42\",\"status\":\"review\"}}",
+        "sources/audit.json": "{\"id\":\"audit\",\"authority\":4,\"date\":\"2026-02-20\",\"facts\":{\"lot\":\"C-42\",\"status\":\"held\"}}"
+      },
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "expected_artifacts": {
+        "result.json": "{\n  \"rows\": [\n    {\n      \"claim\": \"lot\",\n      \"value\": \"C-42\",\n      \"source\": \"audit\",\n      \"uncertainty\": \"\"\n    },\n    {\n      \"claim\": \"status\",\n      \"value\": \"held\",\n      \"source\": \"audit\",\n      \"uncertainty\": \"vendor-a disagrees\"\n    }\n  ]\n}"
+      },
+      "correction": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values."
+    },
+    {
+      "id": "ev-unreported_measurement-1",
+      "family": "evidence",
+      "coverage": "exception",
+      "prompt": "Create result.json as a JSON array with one object per requested claim, in this order: window, temperature, supervisor. Each object must contain claim, value, source, and note fields. Use only the memo and records. Represent unsupported values as unknown with source null and explain the absence.",
+      "files": {
+        "memo.md": "The requested observation window is 12:00–13:00.\n",
+        "records.tsv": "topic\tsource\tauthority\tvalue\nwindow\toperator-note\t2\t12:00–13:00\n"
+      },
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "expected_artifacts": {
+        "result.json": "[\n  {\n    \"claim\": \"window\",\n    \"value\": \"12:00–13:00\",\n    \"source\": \"operator-note\",\n    \"note\": \"Supported by the supplied record.\"\n  },\n  {\n    \"claim\": \"temperature\",\n    \"value\": \"unknown\",\n    \"source\": null,\n    \"note\": \"No temperature evidence supplied.\"\n  },\n  {\n    \"claim\": \"supervisor\",\n    \"value\": \"unknown\",\n    \"source\": null,\n    \"note\": \"No supervisor evidence supplied.\"\n  }\n]"
+      },
+      "correction": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values."
+    },
+    {
+      "id": "ev-unreported_measurement-2",
+      "family": "evidence",
+      "coverage": "exception",
+      "prompt": "Create result.json as a JSON array with one object per requested claim, in this order: window, temperature, supervisor. Each object must contain claim, value, source, and note fields. Use only the memo and records. Represent unsupported values as unknown with source null and explain the absence.",
+      "files": {
+        "memo.md": "The requested observation window is 14:00–15:00.\n",
+        "records.tsv": "topic\tsource\tauthority\tvalue\nwindow\tshift-log\t2\t14:00–15:00\n"
+      },
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "expected_artifacts": {
+        "result.json": "[\n  {\n    \"claim\": \"window\",\n    \"value\": \"14:00–15:00\",\n    \"source\": \"shift-log\",\n    \"note\": \"Supported by the supplied record.\"\n  },\n  {\n    \"claim\": \"temperature\",\n    \"value\": \"unknown\",\n    \"source\": null,\n    \"note\": \"No temperature evidence supplied.\"\n  },\n  {\n    \"claim\": \"supervisor\",\n    \"value\": \"unknown\",\n    \"source\": null,\n    \"note\": \"No supervisor evidence supplied.\"\n  }\n]"
+      },
+      "correction": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values."
+    },
+    {
+      "id": "ev-dated_authority_tie-1",
+      "family": "evidence",
+      "coverage": "mixed",
+      "prompt": "Use all source notes and write result.json as a JSON array with two objects, ordered package then seal. Each object must contain claim, value, source, and note fields, with a note describing the tie-break or lack of conflict.",
+      "files": {
+        "task.md": "Create a traceable answer for two claims.\n",
+        "evidence/one.txt": "source: intake\nauthority: 3\ndate: 2026-05-09\nclaim: package\nvalue: 4 boxes\n",
+        "evidence/two.txt": "source: signed-count\nauthority: 3\ndate: 2026-05-11\nclaim: package\nvalue: 5 boxes\n",
+        "evidence/three.txt": "source: signed-count\nauthority: 3\ndate: 2026-05-11\nclaim: seal\nvalue: intact\n"
+      },
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "expected_artifacts": {
+        "result.json": "[\n  {\n    \"claim\": \"package\",\n    \"value\": \"5 boxes\",\n    \"source\": \"signed-count\",\n    \"note\": \"Equal authority; selected the later dated source.\"\n  },\n  {\n    \"claim\": \"seal\",\n    \"value\": \"intact\",\n    \"source\": \"signed-count\",\n    \"note\": \"Supported by this source.\"\n  }\n]"
+      },
+      "correction": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values."
+    },
+    {
+      "id": "ev-dated_authority_tie-2",
+      "family": "evidence",
+      "coverage": "mixed",
+      "prompt": "Use all source notes and write result.json as a JSON array with two objects, ordered package then seal. Each object must contain claim, value, source, and note fields, with a note describing the tie-break or lack of conflict.",
+      "files": {
+        "task.md": "Create a traceable answer for two claims.\n",
+        "evidence/one.txt": "source: intake\nauthority: 3\ndate: 2026-06-02\nclaim: package\nvalue: 7 crates\n",
+        "evidence/two.txt": "source: signed-count\nauthority: 3\ndate: 2026-06-04\nclaim: package\nvalue: 8 crates\n",
+        "evidence/three.txt": "source: signed-count\nauthority: 3\ndate: 2026-06-04\nclaim: seal\nvalue: broken\n"
+      },
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "expected_artifacts": {
+        "result.json": "[\n  {\n    \"claim\": \"package\",\n    \"value\": \"8 crates\",\n    \"source\": \"signed-count\",\n    \"note\": \"Equal authority; selected the later dated source.\"\n  },\n  {\n    \"claim\": \"seal\",\n    \"value\": \"broken\",\n    \"source\": \"signed-count\",\n    \"note\": \"Supported by this source.\"\n  }\n]"
+      },
+      "correction": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values."
+    },
+    {
+      "id": "mf-regional_roster-1",
+      "family": "multi_file",
+      "coverage": "new_requirement",
+      "prompt": "Create outputs/active.txt with active names from both CSV files, alphabetically, one per line. Create outputs/counts.json with active totals by region. Preserve all inputs. Write counts.json as a JSON object mapping each region to an integer count.",
+      "files": {
+        "input/north.csv": "name,region,status\n\"Ari, Jr.\",north,active\nBo,north,hold\n",
+        "input/south.csv": "name,region,status\nCy,south,active\nDe,south,active\n"
+      },
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "validators": [
+        "preserve_inputs",
+        "expected_files"
+      ],
+      "expected_artifacts": {
+        "outputs/active.txt": "Ari, Jr.\nCy\nDe\n",
+        "outputs/counts.json": "{\"north\":1,\"south\":2}"
+      },
+      "correction": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files."
+    },
+    {
+      "id": "mf-regional_roster-2",
+      "family": "multi_file",
+      "coverage": "new_requirement",
+      "prompt": "Create outputs/active.txt with active names from both CSV files, alphabetically, one per line. Create outputs/counts.json with active totals by region. Preserve all inputs. Write counts.json as a JSON object mapping each region to an integer count.",
+      "files": {
+        "input/north.csv": "name,region,status\nUma,north,active\nVic,north,hold\n",
+        "input/south.csv": "name,region,status\nWes,south,active\nYen,south,active\n"
+      },
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "validators": [
+        "preserve_inputs",
+        "expected_files"
+      ],
+      "expected_artifacts": {
+        "outputs/active.txt": "Uma\nWes\nYen\n",
+        "outputs/counts.json": "{\"north\":1,\"south\":2}"
+      },
+      "correction": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files."
+    },
+    {
+      "id": "mf-invoice_reconcile-1",
+      "family": "multi_file",
+      "coverage": "old_ability",
+      "prompt": "Create reconciled.csv with invoice,total,paid,balance columns in the original invoice order. Format money to two decimals. Do not omit partially paid invoices. The CSV header must be exactly invoice,total,paid,balance.",
+      "files": {
+        "invoices/jan.csv": "invoice,total\nI-12,45.00\nI-13,20.00\n",
+        "payments.csv": "invoice,paid\nI-12,45.00\nI-13,10.00\n"
+      },
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "validators": [
+        "preserve_inputs",
+        "expected_files"
+      ],
+      "expected_artifacts": {
+        "reconciled.csv": "invoice,total,paid,balance\nI-12,45.00,45.00,0.00\nI-13,20.00,10.00,10.00\n"
+      },
+      "correction": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files."
+    },
+    {
+      "id": "mf-invoice_reconcile-2",
+      "family": "multi_file",
+      "coverage": "old_ability",
+      "prompt": "Create reconciled.csv with invoice,total,paid,balance columns in the original invoice order. Format money to two decimals. Do not omit partially paid invoices. The CSV header must be exactly invoice,total,paid,balance.",
+      "files": {
+        "invoices/jan.csv": "invoice,total\nJ-21,64.00\nJ-22,28.00\n",
+        "payments.csv": "invoice,paid\nJ-21,64.00\nJ-22,14.00\n"
+      },
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "validators": [
+        "preserve_inputs",
+        "expected_files"
+      ],
+      "expected_artifacts": {
+        "reconciled.csv": "invoice,total,paid,balance\nJ-21,64.00,64.00,0.00\nJ-22,28.00,14.00,14.00\n"
+      },
+      "correction": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files."
+    },
+    {
+      "id": "mf-retention_exception-1",
+      "family": "multi_file",
+      "coverage": "exception",
+      "prompt": "Create export/keys.txt containing keys where keep is true, ordered by ascending rank and then key. Create export/summary.json with retained and omitted counts. Keep the source JSON unchanged. Write summary.json as a JSON object with integer fields retained and omitted.",
+      "files": {
+        "data/records.json": "{\"rows\":[{\"key\":\"a\",\"keep\":true,\"rank\":2},{\"key\":\"b\",\"keep\":false,\"rank\":1},{\"key\":\"c\",\"keep\":true,\"rank\":1}]}",
+        "README.txt": "Keep rows marked true. Sort by rank then key.\n"
+      },
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "validators": [
+        "preserve_inputs",
+        "expected_files"
+      ],
+      "expected_artifacts": {
+        "export/keys.txt": "c\na\n",
+        "export/summary.json": "{\"retained\":2,\"omitted\":1}"
+      },
+      "correction": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files."
+    },
+    {
+      "id": "mf-retention_exception-2",
+      "family": "multi_file",
+      "coverage": "exception",
+      "prompt": "Create export/keys.txt containing keys where keep is true, ordered by ascending rank and then key. Create export/summary.json with retained and omitted counts. Keep the source JSON unchanged. Write summary.json as a JSON object with integer fields retained and omitted.",
+      "files": {
+        "data/records.json": "{\"rows\":[{\"key\":\"d\",\"keep\":true,\"rank\":2},{\"key\":\"e\",\"keep\":false,\"rank\":1},{\"key\":\"f\",\"keep\":true,\"rank\":1}]}",
+        "README.txt": "Keep rows marked true. Sort by rank then key.\n"
+      },
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "validators": [
+        "preserve_inputs",
+        "expected_files"
+      ],
+      "expected_artifacts": {
+        "export/keys.txt": "f\nd\n",
+        "export/summary.json": "{\"retained\":2,\"omitted\":1}"
+      },
+      "correction": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files."
+    },
+    {
+      "id": "mf-mixed_catalog-1",
+      "family": "multi_file",
+      "coverage": "mixed",
+      "prompt": "Create catalog.json with active rows only. Trim names, lowercase SKU values, parse price as a number, and sort by SKU. Also create count.txt with the number of exported rows. Write catalog.json as an array of objects with sku, name, and numeric price fields.",
+      "files": {
+        "source/items.tsv": "sku\tname\tprice\tactive\nX2\tCable\t5\t1\nX1\t Adapter \t3.5\t1\nX3\tCase\t7\t0\n",
+        "rules.md": "Trim names, lowercase SKU values, include active rows only, order by SKU.\n"
+      },
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "validators": [
+        "preserve_inputs",
+        "expected_files"
+      ],
+      "expected_artifacts": {
+        "catalog.json": "[{\"sku\":\"x1\",\"name\":\"Adapter\",\"price\":3.5},{\"sku\":\"x2\",\"name\":\"Cable\",\"price\":5}]",
+        "count.txt": "2\n"
+      },
+      "correction": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files."
+    },
+    {
+      "id": "mf-mixed_catalog-2",
+      "family": "multi_file",
+      "coverage": "mixed",
+      "prompt": "Create catalog.json with active rows only. Trim names, lowercase SKU values, parse price as a number, and sort by SKU. Also create count.txt with the number of exported rows. Write catalog.json as an array of objects with sku, name, and numeric price fields.",
+      "files": {
+        "source/items.tsv": "sku\tname\tprice\tactive\nQ2\tMug\t12\t1\nQ1\t Notebook \t9\t1\nQ3\tLamp\t6\t0\n",
+        "rules.md": "Trim names, lowercase SKU values, include active rows only, order by SKU.\n"
+      },
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "validators": [
+        "preserve_inputs",
+        "expected_files"
+      ],
+      "expected_artifacts": {
+        "catalog.json": "[{\"sku\":\"q1\",\"name\":\"Notebook\",\"price\":9},{\"sku\":\"q2\",\"name\":\"Mug\",\"price\":12}]",
+        "count.txt": "2\n"
+      },
+      "correction": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files."
+    },
+    {
+      "id": "ex-client_update-1",
+      "family": "expression",
+      "coverage": "new_requirement",
+      "prompt": "Write a concise customer update using the source notes. Say what changed, the current status, and the next update time. Keep the tone calm and direct. Save the response in result.json as a JSON object with one string field named text.",
+      "files": {
+        "notes.md": "Account: Mira Solis\nShipment: 48 cartons\nOriginal arrival: Tuesday\nRevised arrival: Thursday\nCause: a rail closure near Brno\nNext update: Wednesday at 16:00 CET\n",
+        "request.txt": "Write a concise customer update using the source notes. Say what changed, the current status, and the next update time. Keep the tone calm and direct.\n"
+      },
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "correction": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "checks": {
+        "required_substrings": [
+          "Mira Solis",
+          "48",
+          "Tuesday",
+          "Thursday",
+          "Brno",
+          "Wednesday",
+          "16:00 CET"
+        ],
+        "exact_quotes": [],
+        "prohibited_phrases": [
+          "I am an AI language model",
+          "It is important to note that"
+        ]
+      },
+      "expected_artifacts": {
+        "result.json": "{\n  \"text\": \"Hi Mira Solis, the rail closure near Brno has moved your 48 cartons from Tuesday to Thursday. They are still in transit. I will send the next update Wednesday at 16:00 CET.\"\n}"
+      }
+    },
+    {
+      "id": "ex-client_update-2",
+      "family": "expression",
+      "coverage": "new_requirement",
+      "prompt": "Turn the dispatch facts into a brief message for the buyer. Preserve the distinction between an estimate and a confirmed delivery. Save the response in result.json as a JSON object with one string field named text.",
+      "files": {
+        "dispatch.json": "{\"buyer\":\"Nolan Price\",\"order\":\"PO-773\",\"confirmed_status\":\"packed\",\"estimated_delivery\":\"2026-11-06\",\"estimate_is_not_guaranteed\":true,\"units\":16}\n",
+        "request.txt": "Turn the dispatch facts into a brief message for the buyer. Preserve the distinction between an estimate and a confirmed delivery.\n"
+      },
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "correction": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "checks": {
+        "required_substrings": [
+          "Nolan Price",
+          "PO-773",
+          "2026-11-06",
+          "16"
+        ],
+        "exact_quotes": [],
+        "prohibited_phrases": [
+          "I am an AI language model",
+          "It is important to note that"
+        ]
+      },
+      "expected_artifacts": {
+        "result.json": "{\n  \"text\": \"Hi Nolan Price, order PO-773 is packed. The current estimated delivery is 2026-11-06 for 16 units; that date is an estimate, not a confirmed delivery.\"\n}"
+      }
+    },
+    {
+      "id": "ex-incident_digest-1",
+      "family": "expression",
+      "coverage": "old_ability",
+      "prompt": "Write a short internal incident digest for the operations channel. State the timeline, impact, and unresolved question without assigning blame. Save the response in result.json as a JSON object with one string field named text.",
+      "files": {
+        "incident.csv": "event,time,detail\nalert,09:12,queue delay began\nmitigation,09:26,worker pool increased by 4\nrecovery,09:41,queue returned to baseline\nimpact,unknown,no confirmed customer loss\nquestion,open,root cause not yet verified\n",
+        "request.txt": "Write a short internal incident digest for the operations channel. State the timeline, impact, and unresolved question without assigning blame.\n"
+      },
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "correction": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "checks": {
+        "required_substrings": [
+          "09:12",
+          "09:26",
+          "4",
+          "09:41"
+        ],
+        "exact_quotes": [],
+        "prohibited_phrases": [
+          "I am an AI language model",
+          "It is important to note that"
+        ]
+      },
+      "expected_artifacts": {
+        "result.json": "{\n  \"text\": \"At 09:12 the queue began to fall behind. Operations increased the worker pool by 4 at 09:26, and the queue returned to baseline at 09:41. No customer loss is confirmed; the root cause remains unverified.\"\n}"
+      }
+    },
+    {
+      "id": "ex-incident_digest-2",
+      "family": "expression",
+      "coverage": "old_ability",
+      "prompt": "Create a handoff note for the next support shift. Preserve what was checked, what remains unknown, and the exact case identifier. Save the response in result.json as a JSON object with one string field named text.",
+      "files": {
+        "handoff.txt": "Case: CS-9081\nChecked: account access restored at 10:05 UTC\nObserved: two failed sync attempts\nKnown impact: one invoice delayed\nUnknown: whether retry will complete\nOwner: Jae Kim\n",
+        "request.txt": "Create a handoff note for the next support shift. Preserve what was checked, what remains unknown, and the exact case identifier.\n"
+      },
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "correction": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "checks": {
+        "required_substrings": [
+          "CS-9081",
+          "10:05 UTC",
+          "two",
+          "one",
+          "Jae Kim"
+        ],
+        "exact_quotes": [],
+        "prohibited_phrases": [
+          "I am an AI language model",
+          "It is important to note that"
+        ]
+      },
+      "expected_artifacts": {
+        "result.json": "{\n  \"text\": \"CS-9081: Account access was restored at 10:05 UTC. Two sync attempts failed and one invoice is delayed. The retry outcome is still unknown. Jae Kim owns the follow-up.\"\n}"
+      }
+    },
+    {
+      "id": "ex-quote_reply-1",
+      "family": "expression",
+      "coverage": "exception",
+      "prompt": "Write a respectful reply to the customer. Include one direct quotation from their message exactly, including punctuation, and do not promise a refund. Save the response in result.json as a JSON object with one string field named text.",
+      "files": {
+        "customer.txt": "Customer: Lena Ortiz\nMessage: \"The seal was broken when the parcel arrived.\"\nOrder: OR-441\nInspection: replacement review in progress\nRefund decision: not made\n",
+        "request.txt": "Write a respectful reply to the customer. Include one direct quotation from their message exactly, including punctuation, and do not promise a refund.\n"
+      },
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "correction": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "checks": {
+        "required_substrings": [
+          "Lena Ortiz",
+          "OR-441"
+        ],
+        "exact_quotes": [
+          "The seal was broken when the parcel arrived."
+        ],
+        "prohibited_phrases": [
+          "I am an AI language model",
+          "It is important to note that"
+        ]
+      },
+      "expected_artifacts": {
+        "result.json": "{\n  \"text\": \"Hi Lena Ortiz, I’m sorry the parcel arrived in that condition. You wrote, “The seal was broken when the parcel arrived.” We have started a replacement review for order OR-441; no refund decision has been made yet.\"\n}"
+      }
+    },
+    {
+      "id": "ex-quote_reply-2",
+      "family": "expression",
+      "coverage": "exception",
+      "prompt": "Prepare a short acknowledgement for the project lead. Include the quoted source sentence exactly, retain its attribution, and distinguish the report from a verified finding. Save the response in result.json as a JSON object with one string field named text.",
+      "files": {
+        "review.md": "Reviewer: Tomas Ilyin\nReported sentence: \"The cache cleared after the second restart.\"\nVerification: restart logs are incomplete\nBuild: 2.8.14\nNext check: 15:30 UTC\n",
+        "request.txt": "Prepare a short acknowledgement for the project lead. Include the quoted source sentence exactly, retain its attribution, and distinguish the report from a verified finding.\n"
+      },
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "correction": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "checks": {
+        "required_substrings": [
+          "Tomas Ilyin",
+          "2.8.14",
+          "15:30 UTC"
+        ],
+        "exact_quotes": [
+          "The cache cleared after the second restart."
+        ],
+        "prohibited_phrases": [
+          "I am an AI language model",
+          "It is important to note that"
+        ]
+      },
+      "expected_artifacts": {
+        "result.json": "{\n  \"text\": \"Tomas Ilyin reported, “The cache cleared after the second restart.” This has not been verified because the restart logs are incomplete. The build is 2.8.14, and the next check is at 15:30 UTC.\"\n}"
+      }
+    },
+    {
+      "id": "ex-mixed_summary-1",
+      "family": "expression",
+      "coverage": "mixed",
+      "prompt": "Write a short leadership summary from the notes. Explain the result and next step, preserve the caveat, and do not turn the forecast into a commitment. Save the response in result.json as a JSON object with one string field named text.",
+      "files": {
+        "weekly.json": "{\"week\":\"W42\",\"completed\":27,\"target\":30,\"blocker\":\"vendor certificate\",\"forecast\":\"target may be reached by Friday\",\"certainty\":\"conditional on certificate arriving by Thursday 12:00 UTC\",\"lead\":\"Asha Rao\"}\n",
+        "request.txt": "Write a short leadership summary from the notes. Explain the result and next step, preserve the caveat, and do not turn the forecast into a commitment.\n"
+      },
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "correction": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "checks": {
+        "required_substrings": [
+          "Asha Rao",
+          "W42",
+          "27",
+          "30",
+          "Friday",
+          "Thursday",
+          "12:00 UTC"
+        ],
+        "exact_quotes": [],
+        "prohibited_phrases": [
+          "I am an AI language model",
+          "It is important to note that"
+        ]
+      },
+      "expected_artifacts": {
+        "result.json": "{\n  \"text\": \"Asha Rao’s team completed 27 of 30 planned items in W42. The vendor certificate is the blocker. The team may reach the target by Friday only if the certificate arrives by Thursday 12:00 UTC; this remains a forecast, not a commitment.\"\n}"
+      }
+    },
+    {
+      "id": "ex-mixed_summary-2",
+      "family": "expression",
+      "coverage": "mixed",
+      "prompt": "Turn the field report into a vivid but factual two-sentence update for the project journal. Retain the measured values and the uncertainty about the cause. Save the response in result.json as a JSON object with one string field named text.",
+      "files": {
+        "field-report.txt": "Site: Delta Pier\nDate: 2026-10-18\nWind: 22 km/h\nWater level: 1.4 m\nObserved: 3 panels shifted east\nCause: not determined\nNext inspection: 2026-10-20\n",
+        "request.txt": "Turn the field report into a vivid but factual two-sentence update for the project journal. Retain the measured values and the uncertainty about the cause.\n"
+      },
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "validators": [
+        "preserve_inputs",
+        "structure_and_facts"
+      ],
+      "correction": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "checks": {
+        "required_substrings": [
+          "Delta Pier",
+          "2026-10-18",
+          "22 km/h",
+          "1.4 m",
+          "2026-10-20"
+        ],
+        "exact_quotes": [],
+        "prohibited_phrases": [
+          "I am an AI language model",
+          "It is important to note that"
+        ]
+      },
+      "expected_artifacts": {
+        "result.json": "{\n  \"text\": \"At Delta Pier on 2026-10-18, wind measured 22 km/h as the water stood at 1.4 m. Three panels had shifted east; the cause is undetermined, and the next inspection is set for 2026-10-20.\"\n}"
+      }
+    }
+  ],
+  "families": {
+    "evidence": {
+      "feedback": "For every claim, cite only a source supplied in the files. Prefer the source with the highest stated authority; when authority ties, prefer the most recent dated source. If evidence is absent, mark the claim unknown and state that limitation. Preserve claim order and do not infer missing values.",
+      "initial_skill": "Read all supplied evidence before answering. Keep claims separate, use sources, and avoid unsupported facts.",
+      "rubric": "Check that the result answers every requested claim, cites an actual supporting source, handles conflicts by the stated authority and date rules, and marks unsupported claims unknown. Reward clear traceability and concise uncertainty.",
+      "development": [
+        {
+          "id": "ev-dev-1",
+          "family": "evidence",
+          "coverage": "maintenance",
+          "prompt": "Write result.json as one JSON object with string fields claim, value, and source. Set claim to the requested identifier `code`. If unsupported, use unknown for value and null for source.",
+          "files": {
+            "brief.md": "Answer the claim code for maintenance case 1.\n",
+            "sources.txt": "source: ledger-1\nauthority: 1\nvalue: REF-D1\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "expected_artifacts": {
+            "result.json": "{\"claim\": \"code\", \"value\": \"REF-D1\", \"source\": \"ledger-1\"}"
+          }
+        },
+        {
+          "id": "ev-dev-2",
+          "family": "evidence",
+          "coverage": "maintenance",
+          "prompt": "Write result.json as one JSON object with string fields claim, value, and source. Set claim to the requested identifier `code`. If unsupported, use unknown for value and null for source.",
+          "files": {
+            "brief.md": "Answer the claim code for maintenance case 2.\n",
+            "sources.txt": "source: ledger-2\nauthority: 2\nvalue: REF-D2\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "expected_artifacts": {
+            "result.json": "{\"claim\": \"code\", \"value\": \"REF-D2\", \"source\": \"ledger-2\"}"
+          }
+        },
+        {
+          "id": "ev-dev-3",
+          "family": "evidence",
+          "coverage": "maintenance",
+          "prompt": "Write result.json as one JSON object with string fields claim, value, and source. Set claim to the requested identifier `code`. If unsupported, use unknown for value and null for source.",
+          "files": {
+            "brief.md": "Answer the claim code for maintenance case 3.\n",
+            "sources.txt": "source: ledger-3\nauthority: 3\nvalue: REF-D3\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "expected_artifacts": {
+            "result.json": "{\"claim\": \"code\", \"value\": \"REF-D3\", \"source\": \"ledger-3\"}"
+          }
+        },
+        {
+          "id": "ev-dev-4",
+          "family": "evidence",
+          "coverage": "maintenance",
+          "prompt": "Write result.json as one JSON object with string fields claim, value, and source. Set claim to the requested identifier `code`. If unsupported, use unknown for value and null for source.",
+          "files": {
+            "brief.md": "Answer the claim code for maintenance case 4.\n",
+            "sources.txt": "source: ledger-4\nauthority: 1\nvalue: REF-D4\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "expected_artifacts": {
+            "result.json": "{\"claim\": \"code\", \"value\": \"REF-D4\", \"source\": \"ledger-4\"}"
+          }
+        }
+      ],
+      "validation": [
+        {
+          "id": "ev-val-1",
+          "family": "evidence",
+          "coverage": "maintenance",
+          "prompt": "Write result.json as one JSON object with string fields claim, value, and source. Set claim to the requested identifier `code`. If unsupported, use unknown for value and null for source.",
+          "files": {
+            "brief.md": "Answer the claim code for maintenance case 1.\n",
+            "sources.txt": "source: ledger-1\nauthority: 1\nvalue: REF-V1\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "expected_artifacts": {
+            "result.json": "{\"claim\": \"code\", \"value\": \"REF-V1\", \"source\": \"ledger-1\"}"
+          }
+        },
+        {
+          "id": "ev-val-2",
+          "family": "evidence",
+          "coverage": "maintenance",
+          "prompt": "Write result.json as one JSON object with string fields claim, value, and source. Set claim to the requested identifier `code`. If unsupported, use unknown for value and null for source.",
+          "files": {
+            "brief.md": "Answer the claim code for maintenance case 2.\n",
+            "sources.txt": "source: ledger-2\nauthority: 2\nvalue: REF-V2\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "expected_artifacts": {
+            "result.json": "{\"claim\": \"code\", \"value\": \"REF-V2\", \"source\": \"ledger-2\"}"
+          }
+        },
+        {
+          "id": "ev-val-3",
+          "family": "evidence",
+          "coverage": "maintenance",
+          "prompt": "Write result.json as one JSON object with string fields claim, value, and source. Set claim to the requested identifier `code`. If unsupported, use unknown for value and null for source.",
+          "files": {
+            "brief.md": "Answer the claim code for maintenance case 3.\n",
+            "sources.txt": "source: ledger-3\nauthority: 3\nvalue: REF-V3\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "expected_artifacts": {
+            "result.json": "{\"claim\": \"code\", \"value\": \"REF-V3\", \"source\": \"ledger-3\"}"
+          }
+        },
+        {
+          "id": "ev-val-4",
+          "family": "evidence",
+          "coverage": "maintenance",
+          "prompt": "Write result.json as one JSON object with string fields claim, value, and source. Set claim to the requested identifier `code`. If unsupported, use unknown for value and null for source.",
+          "files": {
+            "brief.md": "Answer the claim code for maintenance case 4.\n",
+            "sources.txt": "source: ledger-4\nauthority: 1\nvalue: REF-V4\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "expected_artifacts": {
+            "result.json": "{\"claim\": \"code\", \"value\": \"REF-V4\", \"source\": \"ledger-4\"}"
+          }
+        }
+      ]
+    },
+    "multi_file": {
+      "feedback": "Inspect every source file and create each requested output file at its specified path. Preserve source files. Apply row filters, field mapping, normalization, and ordering exactly as requested. Do not create extra files.",
+      "initial_skill": "Inspect the project files before changing them. Preserve originals and make only requested outputs.",
+      "rubric": "Check that every requested output exists, contains the correct selected and transformed records in the required order, and that all source files remain unchanged. Penalize missing, extra, or altered output files.",
+      "development": [
+        {
+          "id": "mu-dev-1",
+          "family": "multi_file",
+          "coverage": "maintenance",
+          "prompt": "Create selected.txt as plain text with one included code per line in input order. Leave source files unchanged.",
+          "files": {
+            "input/rows.csv": "code,include\nA1,yes\nB1,no\n",
+            "rules.txt": "Copy included codes, one per line. Preserve input.\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "expected_files"
+          ],
+          "expected_artifacts": {
+            "selected.txt": "A1\n"
+          }
+        },
+        {
+          "id": "mu-dev-2",
+          "family": "multi_file",
+          "coverage": "maintenance",
+          "prompt": "Create selected.txt as plain text with one included code per line in input order. Leave source files unchanged.",
+          "files": {
+            "input/rows.csv": "code,include\nA2,yes\nB2,no\n",
+            "rules.txt": "Copy included codes, one per line. Preserve input.\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "expected_files"
+          ],
+          "expected_artifacts": {
+            "selected.txt": "A2\n"
+          }
+        },
+        {
+          "id": "mu-dev-3",
+          "family": "multi_file",
+          "coverage": "maintenance",
+          "prompt": "Create selected.txt as plain text with one included code per line in input order. Leave source files unchanged.",
+          "files": {
+            "input/rows.csv": "code,include\nA3,yes\nB3,no\n",
+            "rules.txt": "Copy included codes, one per line. Preserve input.\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "expected_files"
+          ],
+          "expected_artifacts": {
+            "selected.txt": "A3\n"
+          }
+        },
+        {
+          "id": "mu-dev-4",
+          "family": "multi_file",
+          "coverage": "maintenance",
+          "prompt": "Create selected.txt as plain text with one included code per line in input order. Leave source files unchanged.",
+          "files": {
+            "input/rows.csv": "code,include\nA4,yes\nB4,no\n",
+            "rules.txt": "Copy included codes, one per line. Preserve input.\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "expected_files"
+          ],
+          "expected_artifacts": {
+            "selected.txt": "A4\n"
+          }
+        }
+      ],
+      "validation": [
+        {
+          "id": "mu-val-1",
+          "family": "multi_file",
+          "coverage": "maintenance",
+          "prompt": "Create selected.txt as plain text with one included code per line in input order. Leave source files unchanged.",
+          "files": {
+            "input/rows.csv": "code,include\nA1,yes\nB1,no\n",
+            "rules.txt": "Copy included codes, one per line. Preserve input.\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "expected_files"
+          ],
+          "expected_artifacts": {
+            "selected.txt": "A1\n"
+          }
+        },
+        {
+          "id": "mu-val-2",
+          "family": "multi_file",
+          "coverage": "maintenance",
+          "prompt": "Create selected.txt as plain text with one included code per line in input order. Leave source files unchanged.",
+          "files": {
+            "input/rows.csv": "code,include\nA2,yes\nB2,no\n",
+            "rules.txt": "Copy included codes, one per line. Preserve input.\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "expected_files"
+          ],
+          "expected_artifacts": {
+            "selected.txt": "A2\n"
+          }
+        },
+        {
+          "id": "mu-val-3",
+          "family": "multi_file",
+          "coverage": "maintenance",
+          "prompt": "Create selected.txt as plain text with one included code per line in input order. Leave source files unchanged.",
+          "files": {
+            "input/rows.csv": "code,include\nA3,yes\nB3,no\n",
+            "rules.txt": "Copy included codes, one per line. Preserve input.\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "expected_files"
+          ],
+          "expected_artifacts": {
+            "selected.txt": "A3\n"
+          }
+        },
+        {
+          "id": "mu-val-4",
+          "family": "multi_file",
+          "coverage": "maintenance",
+          "prompt": "Create selected.txt as plain text with one included code per line in input order. Leave source files unchanged.",
+          "files": {
+            "input/rows.csv": "code,include\nA4,yes\nB4,no\n",
+            "rules.txt": "Copy included codes, one per line. Preserve input.\n"
+          },
+          "rubric": "Follow the task exactly, use supplied data only, preserve input files, and create the requested output in the required format.",
+          "validators": [
+            "preserve_inputs",
+            "expected_files"
+          ],
+          "expected_artifacts": {
+            "selected.txt": "A4\n"
+          }
+        }
+      ]
+    },
+    "expression": {
+      "feedback": "Rewrite source material for the stated audience and purpose. Preserve every name, date, number, status, causal claim, and uncertainty. Quote supplied source text exactly when requested. Use plain, natural language and do not add generic filler or unsupported claims.",
+      "initial_skill": "Read the source material and the requested audience carefully. Preserve factual details, uncertainty, and any explicitly requested source language. Write clearly and directly.",
+      "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+      "development": [
+        {
+          "id": "ex-dev-1",
+          "family": "expression",
+          "coverage": "maintenance",
+          "prompt": "Write a brief status note for the warehouse team. Preserve exact counts and uncertainty. Save the note in result.json as a JSON object with one string field named text.",
+          "files": {
+            "source.txt": "Batch: D-1\nScanned: 11 crates\nLocated: 10 crates\nUnknown location: 1 crate\nCause: not checked\n",
+            "request.txt": "Write a brief status note for the warehouse team. Preserve exact counts and uncertainty.\n"
+          },
+          "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "checks": {
+            "required_substrings": [
+              "D-1",
+              "11",
+              "10",
+              "1"
+            ],
+            "exact_quotes": [],
+            "prohibited_phrases": [
+              "I am an AI language model",
+              "It is important to note that"
+            ]
+          },
+          "expected_artifacts": {
+            "result.json": "{\n  \"text\": \"Batch D-1: 10 of 11 crates are located; 1 crate has an unknown location. The cause has not been checked.\"\n}"
+          }
+        },
+        {
+          "id": "ex-dev-2",
+          "family": "expression",
+          "coverage": "maintenance",
+          "prompt": "Write a brief status note for the warehouse team. Preserve exact counts and uncertainty. Save the note in result.json as a JSON object with one string field named text.",
+          "files": {
+            "source.txt": "Batch: D-2\nScanned: 12 crates\nLocated: 11 crates\nUnknown location: 1 crate\nCause: not checked\n",
+            "request.txt": "Write a brief status note for the warehouse team. Preserve exact counts and uncertainty.\n"
+          },
+          "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "checks": {
+            "required_substrings": [
+              "D-2",
+              "12",
+              "11",
+              "1"
+            ],
+            "exact_quotes": [],
+            "prohibited_phrases": [
+              "I am an AI language model",
+              "It is important to note that"
+            ]
+          },
+          "expected_artifacts": {
+            "result.json": "{\n  \"text\": \"Batch D-2: 11 of 12 crates are located; 1 crate has an unknown location. The cause has not been checked.\"\n}"
+          }
+        },
+        {
+          "id": "ex-dev-3",
+          "family": "expression",
+          "coverage": "maintenance",
+          "prompt": "Write a brief status note for the warehouse team. Preserve exact counts and uncertainty. Save the note in result.json as a JSON object with one string field named text.",
+          "files": {
+            "source.txt": "Batch: D-3\nScanned: 13 crates\nLocated: 12 crates\nUnknown location: 1 crate\nCause: not checked\n",
+            "request.txt": "Write a brief status note for the warehouse team. Preserve exact counts and uncertainty.\n"
+          },
+          "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "checks": {
+            "required_substrings": [
+              "D-3",
+              "13",
+              "12",
+              "1"
+            ],
+            "exact_quotes": [],
+            "prohibited_phrases": [
+              "I am an AI language model",
+              "It is important to note that"
+            ]
+          },
+          "expected_artifacts": {
+            "result.json": "{\n  \"text\": \"Batch D-3: 12 of 13 crates are located; 1 crate has an unknown location. The cause has not been checked.\"\n}"
+          }
+        },
+        {
+          "id": "ex-dev-4",
+          "family": "expression",
+          "coverage": "maintenance",
+          "prompt": "Write a brief status note for the warehouse team. Preserve exact counts and uncertainty. Save the note in result.json as a JSON object with one string field named text.",
+          "files": {
+            "source.txt": "Batch: D-4\nScanned: 14 crates\nLocated: 13 crates\nUnknown location: 1 crate\nCause: not checked\n",
+            "request.txt": "Write a brief status note for the warehouse team. Preserve exact counts and uncertainty.\n"
+          },
+          "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "checks": {
+            "required_substrings": [
+              "D-4",
+              "14",
+              "13",
+              "1"
+            ],
+            "exact_quotes": [],
+            "prohibited_phrases": [
+              "I am an AI language model",
+              "It is important to note that"
+            ]
+          },
+          "expected_artifacts": {
+            "result.json": "{\n  \"text\": \"Batch D-4: 13 of 14 crates are located; 1 crate has an unknown location. The cause has not been checked.\"\n}"
+          }
+        }
+      ],
+      "validation": [
+        {
+          "id": "ex-val-1",
+          "family": "expression",
+          "coverage": "maintenance",
+          "prompt": "Write a concise partner-facing update. Keep the target date conditional and retain the quoted phrase exactly. Save the note in result.json as a JSON object with one string field named text.",
+          "files": {
+            "source.txt": "Partner: Vale Studio 1\nItems: 5 proofs\nTarget: 2026-12-10\nCondition: approval by 2026-12-08\nQuote: \"Ready for a final look.\"\n",
+            "request.txt": "Write a concise partner-facing update. Keep the target date conditional and retain the quoted phrase exactly.\n"
+          },
+          "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "checks": {
+            "required_substrings": [
+              "Vale Studio 1",
+              "5",
+              "2026-12-10",
+              "2026-12-08"
+            ],
+            "exact_quotes": [
+              "Ready for a final look."
+            ],
+            "prohibited_phrases": [
+              "I am an AI language model",
+              "It is important to note that"
+            ]
+          },
+          "expected_artifacts": {
+            "result.json": "{\n  \"text\": \"Hello Vale Studio 1, we have 5 proofs ready for review. Our target is 2026-12-10, provided approval arrives by 2026-12-08. The source describes them as “Ready for a final look.”\"\n}"
+          }
+        },
+        {
+          "id": "ex-val-2",
+          "family": "expression",
+          "coverage": "maintenance",
+          "prompt": "Write a concise partner-facing update. Keep the target date conditional and retain the quoted phrase exactly. Save the note in result.json as a JSON object with one string field named text.",
+          "files": {
+            "source.txt": "Partner: Vale Studio 2\nItems: 6 proofs\nTarget: 2026-12-11\nCondition: approval by 2026-12-09\nQuote: \"Ready for a final look.\"\n",
+            "request.txt": "Write a concise partner-facing update. Keep the target date conditional and retain the quoted phrase exactly.\n"
+          },
+          "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "checks": {
+            "required_substrings": [
+              "Vale Studio 2",
+              "6",
+              "2026-12-11",
+              "2026-12-09"
+            ],
+            "exact_quotes": [
+              "Ready for a final look."
+            ],
+            "prohibited_phrases": [
+              "I am an AI language model",
+              "It is important to note that"
+            ]
+          },
+          "expected_artifacts": {
+            "result.json": "{\n  \"text\": \"Hello Vale Studio 2, we have 6 proofs ready for review. Our target is 2026-12-11, provided approval arrives by 2026-12-09. The source describes them as “Ready for a final look.”\"\n}"
+          }
+        },
+        {
+          "id": "ex-val-3",
+          "family": "expression",
+          "coverage": "maintenance",
+          "prompt": "Write a concise partner-facing update. Keep the target date conditional and retain the quoted phrase exactly. Save the note in result.json as a JSON object with one string field named text.",
+          "files": {
+            "source.txt": "Partner: Vale Studio 3\nItems: 7 proofs\nTarget: 2026-12-12\nCondition: approval by 2026-12-10\nQuote: \"Ready for a final look.\"\n",
+            "request.txt": "Write a concise partner-facing update. Keep the target date conditional and retain the quoted phrase exactly.\n"
+          },
+          "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "checks": {
+            "required_substrings": [
+              "Vale Studio 3",
+              "7",
+              "2026-12-12",
+              "2026-12-10"
+            ],
+            "exact_quotes": [
+              "Ready for a final look."
+            ],
+            "prohibited_phrases": [
+              "I am an AI language model",
+              "It is important to note that"
+            ]
+          },
+          "expected_artifacts": {
+            "result.json": "{\n  \"text\": \"Hello Vale Studio 3, we have 7 proofs ready for review. Our target is 2026-12-12, provided approval arrives by 2026-12-10. The source describes them as “Ready for a final look.”\"\n}"
+          }
+        },
+        {
+          "id": "ex-val-4",
+          "family": "expression",
+          "coverage": "maintenance",
+          "prompt": "Write a concise partner-facing update. Keep the target date conditional and retain the quoted phrase exactly. Save the note in result.json as a JSON object with one string field named text.",
+          "files": {
+            "source.txt": "Partner: Vale Studio 4\nItems: 8 proofs\nTarget: 2026-12-13\nCondition: approval by 2026-12-11\nQuote: \"Ready for a final look.\"\n",
+            "request.txt": "Write a concise partner-facing update. Keep the target date conditional and retain the quoted phrase exactly.\n"
+          },
+          "rubric": "Judge whether the writing fits the requested audience and purpose, preserves all names, dates, numbers, statuses, causal claims and uncertainty, and reproduces required source quotations exactly. Prefer clear, natural prose with no unsupported additions or generic filler. Do not require a particular wording or JSON whitespace.",
+          "validators": [
+            "preserve_inputs",
+            "structure_and_facts"
+          ],
+          "checks": {
+            "required_substrings": [
+              "Vale Studio 4",
+              "8",
+              "2026-12-13",
+              "2026-12-11"
+            ],
+            "exact_quotes": [
+              "Ready for a final look."
+            ],
+            "prohibited_phrases": [
+              "I am an AI language model",
+              "It is important to note that"
+            ]
+          },
+          "expected_artifacts": {
+            "result.json": "{\n  \"text\": \"Hello Vale Studio 4, we have 8 proofs ready for review. Our target is 2026-12-13, provided approval arrives by 2026-12-11. The source describes them as “Ready for a final look.”\"\n}"
+          }
+        }
+      ]
+    }
+  }
+}

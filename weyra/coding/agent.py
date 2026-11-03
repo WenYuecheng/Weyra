@@ -35,7 +35,7 @@ from weyra.memory import MemoryStore
 from weyra.skills import SkillStore
 from weyra.frontmatter import atomic, reject_symlinks
 from weyra.mcp_client import MCPManager
-from weyra.core.state import Budget, Goal, RunContext
+from weyra.core.state import Budget, RunContext
 from weyra.session import SessionStore
 from weyra.core.tools import ToolRuntime
 from weyra.tools import install_builtin_tools
@@ -75,6 +75,7 @@ class CodingAgent(AgentLoop):
         system=None,
         max_steps=40,
         task_token_limit=None,
+        goal_policy=None,
         enable_memory=True,
         enable_evolution=None,
         evolution_validation_gate=None,
@@ -148,6 +149,7 @@ class CodingAgent(AgentLoop):
         self.runtime = runtime
         self._system_override = system
         self.depth, self.max_steps = depth, max_steps
+        self.goal_policy = dict(goal_policy or getattr(runtime, "goal_policy", {}) or {})
         self.task_token_limit = task_token_limit
         self.permission_mode, self.confirm = permission_mode, confirm
         self.budget = budget if budget is not None else Budget(maintenance_limit=20000)
@@ -174,6 +176,7 @@ class CodingAgent(AgentLoop):
                 confirm,
                 scheduler=shared_tools.scheduler if shared_tools else None,
             )
+            self.tools.apply_patch_enabled = getattr(runtime, "apply_patch_enabled", False)
             install_builtin_tools(self.tools, self.jobs)
             if evolution_config.get('validation_manifest'):
                 self.tools.private_paths.add(Path(evolution_config['validation_manifest']).resolve())
@@ -184,21 +187,15 @@ class CodingAgent(AgentLoop):
             self._active_task = None
             self._running = False
             self._closed = False
-            self._queues = {"steering": [], "follow_up": []}
+            recovered = {'latest': {'goal': self.session.goal_state(), 'model_change': self.session.model_state()}, 'queues': self.session.input_queue_state()}
+            self._queues = copy.deepcopy(recovered["queues"])
             self._background: set[asyncio.Task] = set()
             self._pending_window = self.session.latest("pending_window")
-            self.goal = None
-            saved_goal = self.session.latest("goal")
-            if saved_goal:
-                self.goal = Goal(**saved_goal)
-            for record in self.session.chain():
-                if record["kind"] == "input_queued":
-                    item = record["data"]
-                    self._queues.setdefault(item["kind"], []).append(copy.deepcopy(item))
-                elif record["kind"] == "input_consumed":
-                    for queue in self._queues.values():
-                        queue[:] = [item for item in queue if item["id"] != record["data"]["id"]]
-            saved_model = self.session.latest("model_change")
+            from weyra.goals import GoalService
+            self.goals = GoalService(self.session, self.goal_policy)
+            self.goal = self.goals.current()
+            self._goal_ref = self.goals.ref() if self.goal else None
+            saved_model = recovered["latest"].get("model_change")
             if saved_model:
                 from weyra.contracts import ModelInfo
 
@@ -563,9 +560,14 @@ class CodingAgent(AgentLoop):
                 }
                 if not evidence or not all(item in observed for item in evidence):
                     raise ValueError("Completion requires IDs of successful observed tool results")
-                self.goal.state = "complete"
-            self.goal.todos = args["todos"]
-            self._save_goal()
+            from weyra.goals import GoalRef
+            expected = GoalRef(args['goal_id'], args['revision'])
+            candidate = copy.deepcopy(self.goal)
+            candidate.todos = args['todos']
+            if args.get('complete'):
+                candidate.state, candidate.armed = 'completed', False
+            self.goal = self.goals.update(expected, candidate)
+            self._goal_ref = self.goals.ref()
             return asdict(self.goal)
 
         add(
@@ -658,8 +660,10 @@ class CodingAgent(AgentLoop):
         add("exit_plan_mode", "Request user approval for execution", {}, [], execute_mode)
         add(
             "goal_update",
-            "Update progress of an explicitly established user goal",
+            "Update an established goal using goal_id and revision from the current goal state",
             {
+                "goal_id": text,
+                "revision": {"type": "integer", "minimum": 1},
                 "todos": {
                     "type": "array",
                     "items": {
@@ -672,7 +676,7 @@ class CodingAgent(AgentLoop):
                 "complete": {"type": "boolean"},
                 "evidence": {"type": "array", "items": {"type": "string"}},
             },
-            ["todos"],
+            ["goal_id", "revision", "todos"],
             goal_update,
         )
 
@@ -817,17 +821,13 @@ class CodingAgent(AgentLoop):
             raise RuntimeError("Wait for skill maintenance before switching branches")
         self.session.branch(record_id)
         self.children.drain_results()
-        self._pending_window = self.session.latest("pending_window")
-        value = self.session.latest("goal")
-        self.goal = Goal(**value) if value else None
-        self._queues = {"steering": [], "follow_up": []}
-        for record in self.session.chain():
-            if record["kind"] == "input_queued":
-                item = record["data"]
-                self._queues[item["kind"]].append(copy.deepcopy(item))
-            elif record["kind"] == "input_consumed":
-                for queue in self._queues.values():
-                    queue[:] = [item for item in queue if item["id"] != record["data"]["id"]]
+        recovered = {'latest': {'pending_window': self.session.latest('pending_window'), 'goal': self.session.goal_state()}, 'queues': self.session.input_queue_state()}
+        self._pending_window = recovered["latest"].get("pending_window")
+        from weyra.goals import GoalService
+        self.goals = GoalService(self.session, self.goal_policy)
+        self.goal = self.goals.current()
+        self._goal_ref = self.goals.ref() if self.goal else None
+        self._queues = copy.deepcopy(recovered["queues"])
         self.context_manager = ContextManager(
             ContextSessionBridge(self.session),
             self.runtime.resolve("main"),
