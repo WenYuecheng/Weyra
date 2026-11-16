@@ -30,7 +30,10 @@ from .runtime_state import Budget
 from .session import SessionStore
 
 # 支持的标准化运维命令集合
-COMMANDS = {"demo", "eval", "check-config", "sessions", "export-session", "import-session"}
+COMMANDS = {"demo", "check-config", "sessions", "export-session", "import-session"}
+# Evaluation is optional local tooling, absent from the public application release.
+if Path(__file__).with_name("evaluation.py").is_file():
+    COMMANDS.add("eval")
 
 
 def parser():

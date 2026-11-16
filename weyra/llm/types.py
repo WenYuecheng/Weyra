@@ -42,11 +42,23 @@ def digest(value: Any) -> str:
 
 
 def classify_source(source: str) -> str:
-    """Classify provenance without promoting retrieved content to user authority.
+    """对消息溯源来源进行权威性分类，防止外部检索内容越权 (Classify Provenance Source Authority)。
 
-    Keep the original source string on Message for backwards-compatible journals.
-    Unknown and derived sources are facts, including summaries of user requests.
-    This classification describes context; tool permissions remain host policy.
+    【架构定位】
+    安全防御核心门禁：区分“直接用户指令（instruction）”与“上下文客观事实（fact）”。
+
+    【开源设计思想与架构血统】
+    借鉴 Pi Agent 与 DeepSeek-Harness 的提示词注入防御哲学：
+    1. 保持底层历史向后兼容：Message 实体保留原始 `source` 字符串；
+    2. 最小特权分类：仅当来源为 `user`、`steering` 或 `follow_up` 时才归类为具备授权效力的 `instruction`；
+    3. 间接事实降级：长期记忆、子代理结果、技能目录等外部检索数据统一归类为 `fact`，仅作为参考数据提供给模型，
+       杜绝检索文档中的恶意指令越权篡改用户意志。
+
+    Args:
+        source: 消息的原始来源标识字符串。
+
+    Returns:
+        str: "instruction"（直接指令）或 "fact"（参考事实）。
     """
     return "instruction" if source in {"user", "steering", "follow_up"} else "fact"
 
@@ -73,7 +85,15 @@ class Message:
 
     @property
     def source_kind(self) -> str:
-        """Only direct user-role input may carry user instruction authority."""
+        """获取当前消息的权威性分类类别 (Get Source Kind Classification)。
+
+        【核心不变性与安全约束】
+        仅当消息角色为 user 且来源于直接用户输入时才拥有用户指令权威（instruction）；
+        所有其他角色或间接来源一律判定为 fact。
+
+        Returns:
+            str: "instruction" 或 "fact"。
+        """
         return classify_source(self.source) if self.role == "user" else "fact"
 
     def to_dict(self) -> dict:

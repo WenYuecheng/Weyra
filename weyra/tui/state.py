@@ -21,7 +21,12 @@ from weyra.service import StateSnapshot
 
 @dataclass
 class UIState:
-    """Reactive snapshot of UI presentation state."""
+    """TUI 客户端只读响应式展示状态快照 (Reactive Snapshot of UI Presentation State)。
+
+    【架构定位】
+    维护终端前端的纯展示状态（会话 ID、当前活动模型、活动状态、预算计量及待审批状态），
+    由后端权威事件驱动单向刷新。
+    """
 
     project_path: Path = field(default_factory=Path.cwd)
     project_name: str = ""
@@ -56,7 +61,11 @@ class UIState:
         )
 
     def apply_snapshot(self, snapshot: StateSnapshot) -> None:
-        """Update reactive state fields from an authoritative backend snapshot."""
+        """从后端权威 StateSnapshot 快照全量刷新响应式状态字段 (Update State from Authoritative Snapshot)。
+
+        Args:
+            snapshot: 服务端下发的全量状态快照对象。
+        """
         self.session_id = snapshot.session.get("session_id", self.session_id)
         self.permission_mode = snapshot.permission_mode
         self.activity = snapshot.activity
@@ -76,19 +85,23 @@ class UIState:
         bg = snapshot.background
         self.active_tool_count = bg.get("active_tools_count", 0)
 
-        # Pending approvals
+        # 提取未决审批请求
         if snapshot.pending_approvals:
             self.pending_approval = snapshot.pending_approvals[0]
         else:
             self.pending_approval = None
 
     def apply_event(self, event: AppEvent) -> None:
-        """Reduce transient event updates into presentation state."""
+        """根据瞬态领域事件对展示状态执行单向 Reducer 归约 (Reduce Event into Presentation State)。
+
+        Args:
+            event: 领域应用事件对象 AppEvent。
+        """
         kind = event.kind
         data = event.data
 
         if kind == "state_changed":
-            # StateSnapshot dict payload
+            # StateSnapshot 字典载荷状态同步
             if "session" in data and "budget" in data:
                 self.session_id = data.get("session", {}).get("session_id", self.session_id)
                 self.permission_mode = data.get("permission_mode", self.permission_mode)
@@ -133,7 +146,11 @@ class UIState:
                 self.activity = "executing_tools"
 
     def record_input(self, text: str) -> None:
-        """Add non-empty input to traversal history."""
+        """将非空用户输入指令追加至终端历史遍历栈 (Record Input to History Stack)。
+
+        Args:
+            text: 用户输入的指令文本。
+        """
         cleaned = text.strip()
         if not cleaned:
             return

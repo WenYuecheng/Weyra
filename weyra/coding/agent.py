@@ -524,7 +524,7 @@ class CodingAgent(AgentLoop):
 
         async def compact(args, ctx):
             """延迟上下文压缩请求工具处理闭包 (Handler for compact_context)。"""
-            # Postpone publication until this tool batch has its matching results.
+            # 遵循 Pi Agent / DSH 批次完整性原则：推迟压缩发布，直至当前工具批次全部执行出具成对结果后再触发
             ctx.services["compact_requested"] = True
             return {"scheduled": "after_complete_tool_batch"}
 

@@ -1,4 +1,15 @@
-"""Compact identity and activity bar with Starship / Powerlevel10k pill aesthetic."""
+"""顶部身份、工作区、模型配置与运行遥测胶囊状态栏 (Powerlevel10k Status Bar)。
+
+【架构定位】
+位于 TUI 视口顶部的双行胶囊风格状态栏，第一行实时展示 Agent 品牌、工作区名称、当前会话短 ID 与生效模型；
+第二行展示实时执行活动状态（就绪/生成中/工具执行中/等待审批/压缩中等）、权限控制级别、已用 Token 数与费用遥测。
+
+【开源设计思想与架构血统】
+1. 借鉴 Starship / Powerlevel10k 现代终端 Prompt 美学：
+   - 采用多段高亮色块组合，信息密度极高且层次分明。
+2. 借鉴 DeepSeek-Harness 的实时用量与成本核算展示原则：
+   - 动态更新当前轮次的精确 token 消耗量与估算人民币金额（¥），为用户提供清晰透明的成本预算感知。
+"""
 
 from __future__ import annotations
 
@@ -31,7 +42,7 @@ class StatusBar(Static):
 
         width = max(20, self.content_size.width)
 
-        # ── Line 1: Brand, Workspace, Session, and Model ───────────────────
+        # ── 第一行：品牌、工作区名称、会话标识与当前模型 ───────────────────
         sid = state.session_id
         sid_short = sid if len(sid) < 18 else sid[:10] + "…"
 
@@ -56,7 +67,7 @@ class StatusBar(Static):
         line_1.append(spacer_1)
         line_1.append_text(right_1)
 
-        # ── Line 2: Activity Pill, Permission, and Telemetry ───────────────
+        # ── 第二行：活动胶囊状态、权限模式与资源消耗遥测 ───────────────
         activity_map = {
             "idle": ("● 就绪", "#10b981", "#0b0f19"),
             "generating": ("⠋ 生成中", "#fbbf24", "#0b0f19"),

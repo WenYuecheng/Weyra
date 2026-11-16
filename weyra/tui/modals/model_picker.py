@@ -1,4 +1,8 @@
-"""Model picker and route inspector modal."""
+"""模型路由与物理容量参数查看模态弹窗 (Model Routing & Parameter Inspector Modal)。
+
+【架构定位】
+提供当前运行时主模型、备用模型及各用途模型的上下文窗口与输出容量直观表格展示。
+"""
 
 from __future__ import annotations
 
@@ -12,7 +16,7 @@ from textual.widgets import Button, DataTable, Static
 
 
 class ModelPickerModal(ModalScreen[None]):
-    """Modal displaying configured model routes and parameters."""
+    """模型路由与参数配置查看对话框 (Model Route Inspector Dialog)。"""
 
     BINDINGS = [
         Binding("escape", "close", "关闭", priority=True),

@@ -94,7 +94,7 @@ def _error(exc: Exception) -> ModelError:
     code = str(
         getattr(exc, "code", None) or (detail.get("code", "") if isinstance(detail, dict) else "")
     ).lower()
-    # SDKs use different structured error shapes for context exhaustion.
+    # 各模型供应商 SDK 对上下文耗尽（Context Exhaustion）的报错结构各异，统一做多维度模式匹配
     message = str(exc).lower()
     overflow = any(
         term in message
@@ -125,7 +125,7 @@ def _error(exc: Exception) -> ModelError:
     else:
         kind = "invalid"
     result = ModelError(kind, status_code=status)
-    # Never persist vendor text or arbitrary error codes: either may contain credentials.
+    # 严禁持久化供应商原生报错文本或任意错误码：其中可能包含 API Key、密码或敏感凭据，必须实施白名单过滤
     safe_codes = {
         "invalid_request_error", "invalid_parameter", "rate_limit_exceeded",
         "context_length_exceeded", "context_window_exceeded", "max_context_length_exceeded",
@@ -269,10 +269,24 @@ SOURCE_RENDERING_VERSION = 1
 
 
 def rendered_message_content(message):
-    """Expose provenance for synthetic user-role facts without altering history.
+    """为合成的用户角色事实渲染溯源元数据前缀，保持历史记录不可变 (Render Sourced Message Content)。
 
-    Native assistant blocks and tool-result framing keep their protocol bytes.
-    Source classification never changes the host's tool permission policy.
+    【架构定位】
+    向模型提供透明的上下文溯源（Context Provenance）说明，同时保持底层消息历史物理不变。
+
+    【开源设计思想与架构血统】
+    借鉴 Pi Agent (`packages/agent/`) 与 DeepSeek-Harness (`packages/context/`) 的上下文真实性防御：
+    1. 区分直接指令与间接事实：直接用户输入（user / steering / follow_up）被判定为 `instruction`，保持原始文本不变；
+    2. 外部来源事实（如 memory, child, skill_catalog 等）虽以 user 角色注入上下文，
+       但必须显式渲染结构化安全包装提示：明确声明该来源为“上下文参考事实（Sourced context facts）”，
+       无法授予权限或覆盖直接的用户指令，防止间接提示词注入（Indirect Prompt Injection）；
+    3. 不改变宿主工具权限：该分类仅影响模型提示词渲染，宿主的工具权限裁决仍遵循独立策略。
+
+    Args:
+        message: 待渲染的原始 Message 消息对象。
+
+    Returns:
+        str: 针对外部来源结构化包装后的内容字符串，或原始消息内容。
     """
     source_kind = classify_source(message.source)
     if message.role != "user" or source_kind == "instruction":
@@ -354,11 +368,27 @@ class OpenAIProvider:
         self._credential_snapshot = False
 
     def native_identity(self, model: ModelInfo) -> dict[str, str]:
-        """Bind opaque native state to its transport, model and endpoint.
+        """计算并绑定当前传输驱动、模型规格与物理端点的原生身份标识 (Compute Native Transport Identity)。
 
-        Use the SDK client's effective endpoint when available, including injected
-        clients and SDK environment defaults. Credentials, queries and fragments
-        never enter the recorded identity; even the sanitized endpoint is hashed.
+        【架构定位】
+        为模型生成结果中的原生状态（如 Anthropic content blocks、DeepSeek 思考链签名）
+        建立不透明的传输绑定，防止不同模型或端点间复用原生中间状态引发协议错误。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/llm/`) 的端点指纹安全规范：
+        1. 基于 SDK 客户端实际解析生效的基础 URL（支持注入客户端与环境变量默认值）；
+        2. 敏感凭据脱敏安全：API 密钥、查询参数（Query Params）与 URL 锚点绝对不进入记录；
+        3. 端点哈希指纹：即使是规范化后的安全 URL 端点，也必须经过 SHA-256 哈希计算（`endpoint_fingerprint`），
+           杜绝内部网络拓扑泄露。
+
+        Args:
+            model: 目标模型元数据规格 ModelInfo。
+
+        Returns:
+            dict[str, str]: 包含 provider_id, protocol, model_id 与 endpoint_fingerprint 的字典。
+
+        Raises:
+            ModelError: 当服务商端点 URL 格式非法时抛出 "invalid" 错误。
         """
         client = self._client()
         endpoint = getattr(client, "base_url", None) or self.base_url
@@ -534,8 +564,8 @@ class OpenAIProvider:
                 "tool_calls": "tool_calls",
                 "content_filter": "error",
             }.get(finish, str(finish or "invalid"))
-            # Decode the whole batch before exposing any executable tool calls.
-            # Keep accounting separate: malformed JSON still consumed model tokens.
+            # 遵循原子解析原则：在对外暴露任何可执行工具调用前，先完成整批解析
+            # 严格区分用量核销：即使 JSON 畸形解析失败，模型生成的 Token 消耗仍然已经真实发生
             try:
                 calls = tuple(
                     ToolCall(item["id"], item["name"], _arguments(item["arguments"]))
@@ -923,7 +953,7 @@ def _anthropic_cache(kwargs, ttl="5m", static_system_prefix=None):
         else:
             system = [{"type": "text", "text": system}] if system else []
         kwargs["system"] = system
-    # Never replay stale cache controls from signed provider blocks.
+    # 严禁回放来自已签名供应商数据块的陈旧 cache_control 标记
     for message in kwargs["messages"]:
         for block in message["content"]:
             block.pop("cache_control", None)
@@ -934,7 +964,7 @@ def _anthropic_cache(kwargs, ttl="5m", static_system_prefix=None):
         system[-1]["cache_control"] = dict(marker)
     for message in kwargs["messages"][-(4 - min(len(system), 2)) :]:
         if message["content"]:
-            # Thinking and redacted-thinking signatures must remain byte for byte intact.
+            # 推理思考过程（thinking）及脱敏签名块必须保持逐字节完好，不可附加缓存标记
             eligible = [
                 b
                 for b in message["content"]
@@ -958,7 +988,7 @@ def _anthropic_cache(kwargs, ttl="5m", static_system_prefix=None):
         else:
             system = [{"type": "text", "text": system}] if system else []
         kwargs["system"] = system
-    # Never replay stale cache controls from signed provider blocks.
+    # 严禁回放来自已签名供应商数据块的陈旧 cache_control 标记
     for message in kwargs["messages"]:
         for block in message["content"]:
             block.pop("cache_control", None)
@@ -969,7 +999,7 @@ def _anthropic_cache(kwargs, ttl="5m", static_system_prefix=None):
         system[-1]["cache_control"] = dict(marker)
     for message in kwargs["messages"][-(4 - min(len(system), 2)) :]:
         if message["content"]:
-            # Thinking and redacted-thinking signatures must remain byte for byte intact.
+            # 推理思考过程（thinking）及脱敏签名块必须保持逐字节完好，不可附加缓存标记
             eligible = [
                 b
                 for b in message["content"]

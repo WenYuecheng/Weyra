@@ -1,4 +1,17 @@
-"""Message widgets for User prompts, streamed Assistant answers, and System notices."""
+"""交互消息气泡、20 FPS 节流流式回复组件与赛博风格系统通知横幅 (TUI Message Widgets)。
+
+【架构定位】
+负责用户 Prompt 气泡 (UserMessageWidget)、模型 Markdown 回复流 (AssistantMessageWidget)
+以及系统上下文压缩/重试通知 (SystemNoticeWidget) 的终端富文本渲染。
+
+【开源设计思想与架构血统】
+1. 借鉴 Pi Agent 与 BearCode 的终端美学：
+   - 用户提示词采用 Starship / Powerlevel10k 胶囊分段风格，强化交互身份区隔。
+2. 借鉴 DeepSeek-Harness 的终端节流渲染引擎 (Throttled Stream Flush)：
+   - LLM 生成的 token 以高频（如数十毫秒每 token）到达，若每个 delta 均同步触发全量 Markdown 重排，
+     将导致终端帧率严重骤降卡死；
+   - 本模块内置 50ms（20 FPS）定时缓冲区冲刷机制，极大降低终端布局开销，兼顾流畅度与性能。
+"""
 
 from __future__ import annotations
 
@@ -9,7 +22,11 @@ from textual.widgets import Markdown, Static
 
 
 class UserMessageWidget(Static):
-    """User prompt widget with Starship / Powerlevel10k pill aesthetic."""
+    """用户提示词气泡组件 (Starship / Powerlevel10k Pill Aesthetic User Bubble)。
+
+    【架构定位】
+    以独特的赛博风格胶囊徽章呈现用户输入的任务与指令。
+    """
 
     def __init__(self, content: str, *, no_color: bool = False, **kwargs) -> None:
         """初始化用户消息气泡组件。"""
@@ -29,7 +46,11 @@ class UserMessageWidget(Static):
 
 
 class AssistantMessageWidget(Vertical):
-    """Assistant message container with throttled (50ms/20fps) Markdown streaming."""
+    """助手流式 Markdown 回复卡片组件 (Throttled 20 FPS Assistant Stream Container)。
+
+    【架构定位】
+    承载大模型生成的正式回答文本，集成 50ms/20 FPS 节流缓冲区与 Markdown 异步重排。
+    """
 
     def __init__(self, initial_text: str = "", *, no_color: bool = False, **kwargs) -> None:
         """初始化助手流式回复组件（内置 50ms/20fps 节流渲染）。"""
@@ -77,7 +98,11 @@ class AssistantMessageWidget(Vertical):
             self._markdown.update(self._rendered_text or ("(无回复内容)" if self._is_finished else "…"))
 
     def append_text(self, delta: str) -> None:
-        """Buffer streamed text delta and throttled-render."""
+        """缓冲接收流式输出增量并按节流阈值触发渲染 (Buffer Delta & Throttled Render)。
+
+        Args:
+            delta: 模型流式输出的文本增量片段。
+        """
         if self._is_finished:
             return
         self._buffer.append(delta)
@@ -95,7 +120,11 @@ class AssistantMessageWidget(Vertical):
         self._render_markdown()
 
     def finish(self, final_text: str | None = None) -> None:
-        """Finalize message stream, immediately flushing all remaining text."""
+        """终结流式回复输出并立即排空缓冲区完成最终 Markdown 渲染 (Finalize Stream & Flush Buffer)。
+
+        Args:
+            final_text: 可选的全量最终文本（若提供则直接覆盖并清空缓冲区）。
+        """
         self._is_finished = True
         if final_text is not None:
             self._rendered_text = final_text
@@ -109,7 +138,11 @@ class AssistantMessageWidget(Vertical):
 
 
 class SystemNoticeWidget(Static):
-    """System banner for compaction, retry resets, or warnings in BearCode cyber style."""
+    """系统通知与压缩告警横幅组件 (Cyberpunk Style System Notice Banner)。
+
+    【架构定位】
+    以高可见度色彩横幅展示上下文压缩 (Compaction)、权限审批提示或重试告警。
+    """
 
     def __init__(self, title: str, message: str, *, kind: str = "info", no_color: bool = False, **kwargs) -> None:
         """初始化系统通知与压缩横幅组件。"""

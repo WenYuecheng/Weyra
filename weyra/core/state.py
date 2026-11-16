@@ -460,21 +460,68 @@ class Goal:
     blocker_reason: str = ""
 
     def __post_init__(self):
+        """标准化目标状态别名并根据 active 状态初始化自主执行就绪锁 (Armed Lock)。"""
         self.state = {"complete": "completed", "stopped": "blocked"}.get(self.state, self.state)
         self.armed = self.state == "active"
 
     @classmethod
     def restore(cls, data):
-        """Restore durable intent without authorizing fresh autonomous work."""
+        """从持久化快照数据恢复目标对象但默认处于未就绪状态 (Restore Durable Goal Snapshot)。
+
+        【架构定位】
+        在会话断点恢复或状态投影时，从已持久化的事件或字典恢复 Goal 领域对象。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/goal/`) 的恢复安全准则：
+        恢复持久化目标意图时，绝不自动赋予其自主执行授权（`goal.armed = False`）。
+        防止进程重启后在未经用户确认或上层调度介入的情况下意外触发后台多轮自主运行。
+
+        【核心不变性与安全约束】
+        仅过滤包含在 dataclass 字段中的合法键值；强行将 `armed` 置为 False。
+
+        Args:
+            data: 持久化的目标属性字典。
+
+        Returns:
+            Goal: 恢复完成但未激活自主执行的目标实例。
+        """
         goal = cls(**{key: value for key, value in data.items() if key in cls.__dataclass_fields__})
         goal.armed = False
         return goal
 
     def revise(self, objective: str):
+        """修订目标描述内容并重置自主演进状态 (Revise Goal Objective & Restart Loop)。
+
+        【架构定位】
+        当用户或规划器修正高阶目标时调用。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/goal/`) 的修订语义：
+        更新目标描述文本，递增 revision，重置继续轮次与停滞计数，重新激活目标（armed=True）。
+
+        Args:
+            objective: 修订后的全新目标描述字符串。
+        """
         self.objective = objective
         self.restart()
 
     def resume(self):
+        """从暂停或被阻断状态恢复目标的自主执行能力 (Resume Goal Autonomous Execution)。
+
+        【架构定位】
+        当人工排除了外部阻塞因素（如补充了预算或审批了权限）后重新激活目标。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/goal/`) 状态机：
+        将状态变迁为 "active" 并设置 `armed = True`，递增修订版本号。
+
+        【核心不变性与安全约束】
+        1. 已标记为 "completed" 的终态目标严禁恢复（抛出 ValueError('invalid_goal_transition')）；
+        2. 达到最大自发轮次（continuations >= 3）的目标禁止直接恢复（抛出 ValueError('goal_limit_reached')）。
+
+        Raises:
+            ValueError: 违反状态转移规则或已达到轮次上限时抛出。
+        """
         if self.state == 'completed':
             raise ValueError('invalid_goal_transition')
         if self.continuations >= 3:
@@ -483,20 +530,71 @@ class Goal:
         self.state, self.armed = 'active', True
 
     def restart(self):
+        """重置目标的全部演进与停滞计数器重新开始 (Restart Goal Execution Counters)。
+
+        【架构定位】
+        将目标状态重置为全新的起始状态，清空历史停滞和继续轮次。
+
+        【核心不变性与安全约束】
+        递增 revision；清空 continuations 与 stagnant_rounds；清空 progress 哈希；激活 armed 与 active。
+        """
         self.revision += 1
         self.continuations = self.stagnant_rounds = 0
         self.progress = ''
         self.state, self.armed = 'active', True
 
     def pause(self):
+        """暂停当前目标的自主推进行为 (Pause Goal Autonomous Continuation)。
+
+        【架构定位】
+        主动挂起目标自发循环，等待人工干预或后续恢复。
+
+        【核心不变性与安全约束】
+        将 state 置为 "paused"，卸除 armed 状态（False），递增 revision。
+        """
         self.state, self.armed = "paused", False
         self.revision += 1
 
     def complete(self):
+        """将当前目标标记为已顺利完成终态 (Mark Goal as Completed)。
+
+        【架构定位】
+        所有待办项（todos）均执行完毕或业务上确认完成时流转为终态。
+
+        【核心不变性与安全约束】
+        将 state 置为 "completed"，卸除 armed 状态（False），递增 revision。终态后不可再 resume。
+        """
         self.state, self.armed = "completed", False
         self.revision += 1
 
     def should_continue(self, progress: str, *, max_continuations=3, max_stagnant_rounds=2) -> bool:
+        """评估目标是否具备自主进入下一轮迭代的条件 (Evaluate Stagnation & Continuation Conditions)。
+
+        【架构定位】
+        自主目标推进的核心断路决策器（Circuit Breaker），基于产物哈希与完成度判定。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/goal/`, `packages/todo/`) 的死循环熔断防御机制：
+        1. 待办完成检测：若 `todos` 非空且所有条目均已完成（`done=True`），自动调用 `complete()` 并终止；
+        2. 无待办项防护：若 `todos` 为空，说明无明确规划路径，直接终止；
+        3. 停滞断路检测：比对传入的 `progress` 哈希与上次记录。若哈希未变则 `stagnant_rounds` 累加，
+           达到 `max_stagnant_rounds`（默认 2）时触发 `no-progress` 熔断；
+        4. 轮次上限断路：若连续自主执行达到 `max_continuations`（默认 3）触发 `round-limit` 熔断；
+        5. 熔断处理：自动标记为 `blocked` 并记录相应的 `blocker_code` 与 `blocker_reason`。
+
+        【核心不变性与安全约束】
+        1. 必须在 `active` 且 `armed` 状态下才允许判断；
+        2. 一旦触发熔断，立即修改 state 为 "blocked" 并卸除 armed；
+        3. 评估通过时递增 `continuations` 并更新 `progress` 缓存。
+
+        Args:
+            progress: 本轮观测到的工具产物与变更的确定性摘要哈希。
+            max_continuations: 允许的最大连续自主轮次（默认 3）。
+            max_stagnant_rounds: 允许的最大连续无进展停滞轮次（默认 2）。
+
+        Returns:
+            bool: 若允许继续推进返回 True，否则返回 False。
+        """
         if self.state != "active" or not self.armed:
             return False
         if self.todos and all(item.get("done") for item in self.todos):

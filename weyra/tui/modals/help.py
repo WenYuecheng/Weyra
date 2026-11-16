@@ -1,4 +1,8 @@
-"""Help and shortcut cheat-sheet modal."""
+"""快捷键速查与斜杠命令帮助手册模态弹窗 (Help & Cheat Sheet Modal)。
+
+【架构定位】
+为终端用户提供键盘快捷键映射与全部内置斜杠命令的快速查阅面板。
+"""
 
 from __future__ import annotations
 
@@ -14,7 +18,7 @@ from weyra.tui.commands import TUI_COMMANDS
 
 
 class HelpModal(ModalScreen[None]):
-    """Modal displaying Weyra TUI keyboard shortcuts and slash commands."""
+    """全量快捷键与斜杠命令速查展示弹窗 (Keyboard Shortcuts & Slash Commands Modal)。"""
 
     BINDINGS = [
         Binding("escape", "close", "关闭", priority=True),

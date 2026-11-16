@@ -1,4 +1,8 @@
-"""Skill viewer and version rollback modal."""
+"""已注册技能目录查看与版本回滚模态弹窗 (Skill Registry & Version Rollback Modal)。
+
+【架构定位】
+连接 SkillEvolution 演化存储，展示所有内置与演化生成的技能，支持审查与版本安全回滚。
+"""
 
 from __future__ import annotations
 
@@ -12,7 +16,7 @@ from textual.widgets import Button, DataTable, Static
 
 
 class SkillViewerModal(ModalScreen[tuple[str, str] | None]):
-    """Modal displaying project skill catalog with optional version rollback."""
+    """技能目录查看与版本回滚模态对话框 (Skill Viewer & Rollback Modal Dialog)。"""
 
     BINDINGS = [
         Binding("escape", "close", "关闭", priority=True),

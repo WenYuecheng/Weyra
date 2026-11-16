@@ -340,7 +340,7 @@ class ChildManager:
             return self._view(record)
         if child is None:
             raise ValueError("Child did not initialize")
-        # Resolve historical task handles to the currently active turn of this child.
+        # 将历史任务句柄解析为该子智能体当前活跃的最新轮次
         active = next(
             (
                 item
@@ -368,7 +368,7 @@ class ChildManager:
         record = self._tasks[task_id]
         if record["result"] is not None:
             return self._view(record)
-        # Mark durably before cancellation so a provider ignoring cancellation cannot publish a late answer.
+        # 在发起协程取消前先持久化标记 cancelled，严防忽略取消的供应商发布延迟回复污染父会话
         self._finish(record, "cancelled", unresolved=["Child turn was cancelled"])
         record["task"].cancel()
         child = record["child"]
@@ -399,7 +399,7 @@ class ChildManager:
         Returns:
             list[dict]: 待确认的子智能体交付物结果列表。
         """
-        # Production consumers acknowledge delivery only with the parent message commit.
+        # 生产消费端仅在父消息正式提交时确认交付 (Acknowledge Delivery)
         if hasattr(self.parent.session, "pending_child_results"):
             return self.parent.session.pending_child_results()
         results, self._results = self._results, []

@@ -37,7 +37,12 @@ from weyra.tui.widgets import ChatView, EditorArea, FooterBar, PromptEditor, Sta
 
 
 class WeyraTUIApp(App[None]):
-    """Textual TUI for Weyra evolvable coding agent."""
+    """基于 Textual 的自适应高保真终端交互应用 (Textual Fullscreen Terminal App)。
+
+    【架构定位】
+    Weyra 的富终端展示层主程序，编排状态栏、滚动消息卡片流、多行编辑器与交互模态弹窗。
+    遵循 Presenter Purity 原则，所有状态通过 `WeyraAppService` 进行单向流转与快照同步。
+    """
 
     CSS_PATH = "theme.tcss"
     TITLE = "Weyra Agent"
@@ -122,21 +127,21 @@ class WeyraTUIApp(App[None]):
         self.ui_state.apply_snapshot(snapshot)
         self.status_bar.update_status(self.ui_state)
 
-        # Subscribe to event stream
+        # 订阅服务层异步事件流
         snapshot, self._subscription = await self.service.subscribe("tui_main")
         self.ui_state.apply_snapshot(snapshot)
         self._through_seq = snapshot.through_seq
         self._generation = snapshot.session_generation
         self._event_task = asyncio.create_task(self._listen_events())
 
-        # Load session history if present, otherwise show welcome banner
+        # 若存在历史会话记录则加载重构，否则展示欢迎面板
         history = await self.service.get_history()
         if history.cards:
             self.chat_view.load_history_cards(history.cards)
         else:
             self.chat_view.show_welcome(self.ui_state.project_name)
 
-        # Set initial focus on editor
+        # 将焦点初始化在底部输入编辑框
         self.editor_area.editor.focus()
 
     async def _listen_events(self) -> None:
@@ -322,12 +327,12 @@ class WeyraTUIApp(App[None]):
             self.editor_area.set_submitting(False)
             return
 
-        # Handle slash commands locally or route to service
+        # 本地拦截处理斜杠命令或路由下发至服务层
         if text.startswith("/"):
             await self._handle_slash_command(text)
             return
 
-        # Regular prompt submission
+        # 普通用户 Prompt 异步提交
         try:
             req_id = f"sub_{new_id()}"
             receipt = await self.service.submit(text, client_request_id=req_id)
@@ -372,7 +377,7 @@ class WeyraTUIApp(App[None]):
         elif cmd in {"/exit", "/quit"}:
             await self.action_exit_app()
         else:
-            # Delegate to service
+            # 委托至服务层执行命令
             req_id = f"cmd_{new_id()}"
             res = await self.service.execute_command(line, client_request_id=req_id)
             if res.ok:
@@ -471,7 +476,7 @@ class WeyraTUIApp(App[None]):
                 # Reload history
                 self.ui_state.apply_snapshot(snapshot)
                 self.status_bar.update_status(self.ui_state)
-                # Clear and reload chat view
+                # 清空视口并重载重构会话历史卡片流
                 await self.chat_view.reset()
                 history = await self.service.get_history()
                 if history.cards:
@@ -591,7 +596,7 @@ class WeyraTUIApp(App[None]):
             self.set_timer(2.0, lambda: self.footer_bar.set_hint(None))
             return
 
-        # Empty draft & idle -> exit
+        # 编辑框草稿为空且当前处于空闲就绪状态 -> 退出应用
         await self.action_exit_app()
 
     async def action_exit_app(self) -> None:

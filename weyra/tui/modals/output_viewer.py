@@ -1,4 +1,8 @@
-"""Fullscreen paginated viewer for large tool outputs and artifacts."""
+"""大体积工具输出与工件全屏分页查看模态弹窗 (Fullscreen Paginated Artifact Viewer Modal)。
+
+【架构定位】
+为长篇工具执行结果或文件工件提供支持行号与 PageUp/PageDown 翻页的全屏查看器。
+"""
 
 from __future__ import annotations
 
@@ -15,7 +19,7 @@ from weyra.presentation import OutputPage, paginate_text
 
 
 class OutputViewerModal(ModalScreen[None]):
-    """Fullscreen modal to inspect full tool outputs and artifacts with pagination."""
+    """大输出全屏分页查看器对话框 (Fullscreen Paginated Output Viewer Dialog)。"""
 
     BINDINGS = [
         Binding("escape", "close", "关闭", priority=True),

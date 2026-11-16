@@ -1,4 +1,9 @@
-"""Approval modal for sensitive tool execution."""
+"""高危敏感工具执行人机确认审批模态弹窗 (Sensitive Tool Execution Approval Modal)。
+
+【架构定位】
+遵循 DeepSeek-Harness 两阶段审批规范：高危副作用操作拦截时弹出，默认将焦点强制锁定在“拒绝”按钮上，
+防止用户意外回车批准破坏性命令。
+"""
 
 from __future__ import annotations
 
@@ -13,9 +18,10 @@ from textual.widgets import Button, Static
 
 
 class ApprovalModal(ModalScreen[bool]):
-    """Modal dialog prompting user approval for sensitive tool operations.
+    """敏感工具操作人机确认审批模态对话框 (Approval Modal Dialog)。
 
-    Default focus is strictly on Reject.
+    【核心不变性与安全约束】
+    焦点强制默认锁定在“拒绝（Reject）”按钮上，彻底防御连击回车导致的误授权。
     """
 
     BINDINGS = [
@@ -81,7 +87,7 @@ class ApprovalModal(ModalScreen[bool]):
 
     def on_mount(self) -> None:
         """组件挂载时将焦点默认锁定在拒绝按钮上，防止误回车批准。"""
-        # Default focus MUST be on Reject to prevent accidental approvals
+        # 安全防范原则：默认焦点必须置于“拒绝”按钮，防止用户敲击回车意外误批准敏感操作
         self.query_one("#btn-reject", Button).focus()
 
     def action_reject(self) -> None:

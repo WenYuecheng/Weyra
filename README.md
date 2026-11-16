@@ -1,113 +1,172 @@
 <div align="center">
 
-当前步骤、工具准入、独立投影及目标 CAS 语义见 [DSH 架构改造说明](docs/DSH_STEP_ARCHITECTURE.md)。数据库为 v2；/goal resume 保留进度，/goal restart 显式重置。
-
-
 # Weyra
 
 ### 面向持续任务与技能演进的轻量 Python Agent Harness
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Validation-pytest-green.svg)](docs/BENCHMARKS.md)
-[![Interface](https://img.shields.io/badge/UI-CLI%20%7C%20Textual%20TUI-purple.svg)](docs/USER_GUIDE.md)
+[![CI](https://github.com/WenYuecheng/Weyra/actions/workflows/ci.yml/badge.svg)](https://github.com/WenYuecheng/Weyra/actions/workflows/ci.yml)
+[![Interface](https://img.shields.io/badge/UI-CLI%20%7C%20Textual%20TUI-purple.svg)](#实际运行截图)
 
-**可追溯执行 · 缓存友好上下文 · 请求前预算治理 · 验证驱动技能更新**
+**可追溯执行 · 长上下文管理 · 请求前预算治理 · 验证驱动技能更新**
 
 </div>
 
-Weyra 把模型推理、工具执行、会话状态和技能演进组织成一套可以持续运行、检查与扩展的工程系统。它融合 Pi、DeepSeek Harness、Hermes 的设计思路，并将 WikiSkill、SkillOpt 的经验积累与技能优化方法落地到原生 Python 异步运行时。
+Weyra 将模型推理、工具执行、会话状态和技能演进组织成可持续运行的 Python Agent 系统。终端界面提供对话、工具卡片、权限审批和会话管理；后端负责执行循环、模型协议适配、上下文压缩、预算记账和持久化。
 
-项目的核心价值是让长程任务拥有完整的运行闭环：每次模型调用有预算约束，每次工具操作有权限检查，每段历史有持久化记录，每次技能更新有验证依据。清晰的 `llm → core → coding → service → UI` 分层适合个人 Agent、编码助手与领域应用的二次开发。
+界面层由 **流式 CLI 和 Textual TUI** 构成，通过 `WeyraAppService` 与后端交互。所有界面、应用服务和运行时源码均包含在本仓库中，可在本地安装运行。
+
+## 实际运行截图
+
+以下图片来自本仓库 Textual 应用的实际运行，通过临时工作区完成文件读取、写入审批与会话持久化后导出。演示使用预设模型响应，无需 API 密钥；工具操作、服务事件和界面交互由真实应用执行。
+
+### 主界面
+
+支持多行输入、斜杠命令推荐、状态栏及快捷键导航。
+
+![Weyra 实际运行主界面](docs/screenshots/01-welcome.png)
+
+### 文件读取与工具结果
+
+在输入区提交任务后，后端读取演示工作区的 `README.md`，界面展示工具执行结果和 Markdown 回复。
+
+![文件读取、工具卡片与回复](docs/screenshots/02-tool-workflow.png)
+
+### 写入审批
+
+默认权限模式下，创建 `notes.md` 前弹出审批窗口，展示工具名称和参数；批准后才实际写入文件。
+
+![文件写入前的实际审批窗口](docs/screenshots/03-approval.png)
+
+### 会话管理
+
+按 `F2` 或 `Ctrl+P` 打开会话列表，查看消息数、当前会话及更新时间，也可新建会话。
+
+![持久化会话管理界面](docs/screenshots/04-sessions.png)
+
+<details>
+<summary>查看快捷键与命令帮助截图</summary>
+
+![快捷键和命令帮助面板](docs/screenshots/05-help.png)
+
+</details>
 
 ## 核心能力
 
-- **恢复与来源治理**：版本化领域投影、显式目标恢复、只读冷会话查询与严格 reasoning 回放；可配置多文件 patch，默认关闭。见 [运行说明](docs/P1_RUNTIME_GUIDE.md)。
-- **步骤执行一致性**：故障切换先验证目标模型容量；工具声明与执行绑定同一步骤注册集合，重载或撤销后拒绝旧调用。
-- **完整执行内核**：模型与工具循环、有限重试、取消传播、工具调用配对修复，以及 steering / follow-up 双队列。
-- **长上下文工程**：结构化检查点压缩、Usage Anchor 动态校准、工具大结果中间剪枝与全文产物外置；稳定提示词前缀支持服务端缓存复用。
-- **持久化会话树**：SQLite WAL 与追加式事件日志保存消息、调用和账本；支持恢复、分支、派生及上下文清空。
-- **工具执行治理**：JSON Schema 参数校验、项目路径检查、读写协调和审批后策略重检；MCP 服务需显式信任。
-- **请求前预算治理**：Token、调用次数及人民币预算预留；按返回 Usage 结算，未知消耗保守记账，父子任务共享预算约束。
-- **验证驱动的技能更新**：将经验、知识与技能分开组织；每次最多 1 个候选、2 个开发与 2 个独立验证样本，共用维护预算并缓存旧版输出。原题修复与独立验证分开报告，验证严格改善才发布，保留版本快照和回滚记录。
-- **多协议与双界面**：OpenAI-compatible、Anthropic-compatible 模型适配，流式 CLI 与 Textual TUI，以及可嵌入的 Python 服务接口。
-
-## 工程结果
-
-| 场景 | 结果 | 对应价值 |
-| --- | --- | --- |
-| Polyglot Python / JavaScript 64 题累计反馈修复 | **50/64，78.1%**；Python **28/32，87.5%** | 展示受预算约束的工具执行与测试反馈闭环 |
-| 对 35 道待修复题继续运行 | **新增通过 21 题，60.0%** | 通过失败反馈持续推进任务 |
-| 技能定位配对评测：24 个任务、各重复两次 | **54.2% → 83.3%**；14 胜、0 负、34 平 | 改善技能选择与不匹配任务的弃权决策 |
-
-Polyglot 结果采用累计保留与多轮修复协议，主输出上限为 4096 token，配置主模型 `DeepSeek-V4.1-Flash` 和备用路由；累计费用按配置费率保守估算约 ¥49.49，平均约 ¥0.77/题。协议、子集范围和结果摘要见 [评测说明](docs/BENCHMARKS.md) 与 [公开证据](docs/evidence/README.md)。
-
-## 系统结构
-
-```mermaid
-flowchart TD
-    UI["CLI / Textual TUI"] --> Service["应用服务与事件流"]
-    Service --> Coding["CodingAgent 领域装配"]
-    Coding --> Core["AgentHarness 与执行循环"]
-    Core --> LLM["模型协议与用途路由"]
-    Core --> Tools["权限检查与工具调度"]
-    Coding --> Context["上下文投影与检查点压缩"]
-    Coding --> Skills["技能检索与验证驱动更新"]
-    Coding --> Store["SQLite 会话树与预算账本"]
-```
-
-目录：`weyra/llm` 负责协议，`weyra/core` 负责执行契约，`weyra/coding` 装配领域能力，`weyra/service.py` 提供应用服务，`weyra/tui` 提供终端界面。核心测试位于 `tests/`，离线示例位于 `examples/`。
+- **执行循环**：模型调用、工具执行、有限重试、取消传播，以及 steering / follow-up 双队列。
+- **工具治理**：JSON Schema 参数校验、项目路径检查、读写协调、审批后策略重检，以及可选的多文件 patch。
+- **长上下文管理**：结构化检查点压缩、Usage Anchor 动态校准、工具大结果中间剪枝和全文产物外置。
+- **会话与任务恢复**：SQLite WAL、追加式事件日志、会话树与独立领域投影，支持恢复、分支和派生。
+- **预算管理**：模型请求前预留 Token、调用次数及费用，按返回 Usage 结算，父子任务共享预算约束。
+- **技能演进**：技能发现、检索、版本快照、验证门禁与回滚。自动演进默认关闭，开启时需要自行提供独立裁判和验证集。
+- **模型接入**：OpenAI-compatible 与 Anthropic-compatible 协议，按主任务、压缩、记忆和演进等用途配置路由。
+- **应用接口**：`WeyraAppService` 提供提交、取消、状态快照、历史查询和事件订阅，可嵌入自己的 Python 应用。
 
 ## 快速上手
 
-Python 3.11+，推荐 macOS / Linux。
+需要 Python 3.11+，推荐 macOS / Linux。
 
 ```bash
+git clone https://github.com/WenYuecheng/Weyra.git
+cd Weyra
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e '.[dev,tui]'
-
-# 无需密钥，体验真实本地工具链和预设模型响应
-weyra demo --scenario analysis --offline --project /tmp/weyra-analysis
-weyra demo --scenario writing --offline --project /tmp/weyra-writing
-weyra eval --offline --project /tmp/weyra-eval
+python -m pip install -e '.[tui]'
 ```
 
-配置真实模型：
+### 无密钥体验
+
+```bash
+# 流式 CLI：执行真实文件读取并输出结果
+weyra --demo --project /tmp/weyra-cli-demo
+
+# 全屏 TUI：在终端中启动后输入任务
+weyra --demo --ui tui --project /tmp/weyra-tui-demo
+
+# 多步骤离线场景
+weyra demo --scenario analysis --offline --project /tmp/weyra-analysis
+weyra demo --scenario writing --offline --project /tmp/weyra-writing
+
+# Python 应用服务示例
+python -m examples.sdk_service
+```
+
+TUI 离线模式启动后，可输入“读取 `.weyra/demo-fixture.txt` 并报告结果”体验一次完整工具调用。离线响应是固定脚本；持续自由对话需要配置真实模型。
+
+### 接入真实模型
 
 ```bash
 cp weyra.example.toml weyra.toml
 cp .env.example .env
-# 在 .env 中填写密钥；按实际端点配置 weyra.toml
+# 在 .env 中填写密钥，在 weyra.toml 中配置端点和模型容量
 weyra check-config --project .
-weyra --project .
+
+# 启动交互界面，或直接执行一次任务
 weyra --project . --ui tui
 weyra "阅读项目并总结核心执行链路" --project .
 ```
 
-常用指令：`/cost` 查看费用与计费依据；`/plan on|off` 切换计划权限；`/compact` 压缩上下文；`/clear` 清空活动上下文并保留历史与账本；`/branch`、`/fork` 管理会话；`/skills` 与 `/skill-rollback` 管理技能。权限模式和 Shell 执行范围见 [使用指南](docs/USER_GUIDE.md)。
+配置模板默认使用 DeepSeek 的 OpenAI 兼容协议。接入其他端点时，修改 `providers` 的 `protocol`、`base_url`、`api_key_env`，以及 `routes.main` 的模型、上下文容量和输出上限。密钥存放在 `.env`，个人路由存放在 `weyra.toml`，两者均被忽略。模板详见 [weyra.example.toml](weyra.example.toml) 和 [.env.example](.env.example)。
 
-## 验证与开发
+### 常用操作
 
-```bash
-python -m pytest -q
-ruff check .
-python -m build
-python scripts/verify_package.py
-python -m examples.sdk_service
+| 操作 | 入口 |
+| --- | --- |
+| 发送 / 换行 | `Enter` / `Shift+Enter` |
+| 查看帮助 | `F1` 或 `/help` |
+| 管理会话 | `F2`、`Ctrl+P` 或 `/sessions` |
+| 查看技能 | `F3`、`Ctrl+K` 或 `/skills` |
+| 查看模型路由 | `F4` 或 `/models` |
+| 用量与费用 | `/usage`、`/cost` |
+| 计划权限模式 | `/plan on`、`/plan off` |
+| 压缩 / 清空活动上下文 | `/compact` / `/clear` |
+| 分支 / 派生 | `/branch`、`/fork` |
+| 目标恢复 / 重新开始 | `/goal resume` / `/goal restart` |
+| 取消任务 / 清空草稿 / 退出 | `Ctrl+C`，根据当前状态执行 |
+
+默认权限模式会对需要授权的操作发起审批。会话数据库、记忆、技能版本及工具产物在目标工程的 `.weyra/` 下生成。
+
+## 代码结构
+
+```text
+weyra/
+├── llm/                 模型协议、类型与目录
+├── core/                执行循环、步骤、上下文、工具准入与预算
+├── coding/              编程领域装配及生命周期
+├── service.py           应用服务、状态快照与事件订阅
+├── session.py           SQLite 会话树与持久化
+├── goals.py             持续任务目标与恢复
+├── skills.py            技能发现、检索与加载
+├── skill_evolution.py   技能候选、版本和回滚
+├── skill_judge.py       独立验证门禁
+├── tui/                 Textual 界面、组件、弹窗和主题
+├── ui.py                流式 CLI 展示
+└── main.py              应用启动入口
+examples/                离线场景及 Python 服务示例
+scripts/                 源码运行检查与截图复现
 ```
 
-离线演示验证运行链路；在线任务能力与性能按对应协议评测。测试数量随版本变化，以当前完整测试输出为准。
+调用链为 `CLI / TUI → WeyraAppService → CodingAgent → AgentHarness → 模型 / 工具`。会话、目标、技能与预算通过后端服务协调，界面消费事件与状态快照。
 
-## 文档与来源
+## 安装验证与截图复现
 
-- [架构与执行链路](docs/ARCHITECTURE.md)
-- [架构深度演进与高频技术答辩指南](docs/INTERVIEW_DEFENSE.md)
-- [框架借鉴与项目贡献](docs/FRAMEWORK_COMPARISON.md)
-- [技能演进机制](docs/SKILL_EVOLUTION.md)
-- [评测结果与协议](docs/BENCHMARKS.md)
-- [使用指南](docs/USER_GUIDE.md)、[CLI / TUI](docs/CLI_TUI_REFERENCE.md)
-- [Python API](docs/API_REFERENCE.md)、[配置参考](docs/CONFIGURATION_REFERENCE.md)
-- [论文与实现映射](paper/README.md)、[贡献指南](CONTRIBUTING.md)
+```bash
+python -m pip install -e '.[dev,tui]'
+python -m ruff check weyra scripts/verify_source.py scripts/capture_readme.py
+python scripts/verify_source.py
+python -m build
 
-WikiSkill 和 SkillOpt 的引用采用其 2026 年 arXiv 版本。框架机制的来源与 Weyra 的集成贡献分别说明；接口组件、保留的 DSH 提示词及其第三方版权与 MIT 许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。Weyra 采用 [MIT License](LICENSE)。
+# 重新运行界面并生成 README 的 PNG 截图
+python -m pip install -e '.[tui,screenshots]'
+python -m playwright install chromium
+python scripts/capture_readme.py
+```
+
+CI 检查源码、CLI、离线演示、TUI 与应用服务，并构建和安装应用包。运行检查使用临时目录，无需仓库外的数据或在线模型。
+
+## 发布内容与许可
+
+当前发布目录包含完整应用界面、后端运行时、安装配置、使用示例及 README 截图。评测套件、评测数据与结果、个人材料、本地数据库、会话记录、私有配置和密钥均不纳入当前版本的发布文件；`.gitignore` 以目录白名单控制后续提交。
+
+Weyra 参考 Pi、DeepSeek Harness、Hermes 的运行时设计，并结合技能知识组织与验证驱动更新机制。适配接口和保留的 DeepSeek Harness 检查点提示词，其版权与许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。项目采用 [MIT License](LICENSE)。

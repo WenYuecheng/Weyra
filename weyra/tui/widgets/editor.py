@@ -1,4 +1,17 @@
-"""Multi-line editor with Enter send, Shift+Enter newline, slash command recommendations, and draft protection."""
+"""多行交互式提示词编辑器、斜杠命令智能补全推荐与用户草稿防丢失保护系统 (Interactive Prompt Editor & Draft Guard)。
+
+【架构定位】
+终端界面 (TUI) 的核心用户输入门面，集成了多行文本编辑、Enter/Shift+Enter 发送/换行控制、
+斜杠命令（Slash Command）实时下拉筛选推荐、临时草稿快照暂存与输入历史游标回溯。
+
+【开源设计思想与架构血统】
+1. 借鉴 Pi Agent (`packages/tui/`) 的轻量级交互协议：
+   - Enter 发送，Shift+Enter/Alt+Enter 换行，支持终端常见的 Ctrl+J 多行编辑。
+   - 快速输入 "/" 时自动匹配推荐候选集，避免用户手动记忆全部命令语法。
+2. 借鉴 DeepSeek-Harness 的终端鲁棒性原则（Input Safety & Draft Protection）：
+   - 当用户正在输入长篇代码任务时，若点击快捷 "/" 触发命令，原长篇输入将被封装为 `SavedDraft`
+     原子暂存。用户若按 Esc 取消，立即无损还原选区与光标，杜绝丢失长文本的用户痛点。
+"""
 
 from __future__ import annotations
 
@@ -18,7 +31,12 @@ from weyra.tui.commands import TUICommand, match_commands
 
 @dataclass
 class SavedDraft:
-    """Snapshot of a user's prompt draft before entering temporary slash command mode."""
+    """用户临时草稿快照数据类 (Prompt Draft Snapshot)。
+
+    【架构定位】
+    在用户触发临时斜杠命令时，保存当前正在编辑的提示词文本、光标位置与历史游标，
+    确保在用户取消或执行完临时操作后能够无损恢复现场。
+    """
 
     text: str
     selection: Any
@@ -27,11 +45,20 @@ class SavedDraft:
 
 
 class CommandRecommendationList(OptionList):
-    """Dropdown list showing matching slash commands."""
+    """斜杠命令下拉匹配推荐列表组件 (Slash Command Recommendation Dropdown)。
+
+    【架构定位】
+    展示当前匹配到的斜杠命令候选集，支持键盘上下方向键循环滚动与 Tab/Enter 键快速补全。
+    """
 
 
 class PromptEditor(TextArea):
-    """Customized TextArea with Enter send, Shift+Enter newline, and autocomplete."""
+    """定制化多行提示词输入文本域组件 (Customized Multi-line Prompt Editor)。
+
+    【架构定位】
+    Weyra TUI 的主力文本编辑控件，继承自 Textual TextArea，重载了快捷键绑定与光标动作，
+    实现 Enter 提交、Shift+Enter 换行、Tab 补全与历史记录切换。
+    """
 
     BINDINGS = [
         Binding("enter", "submit_prompt", "发送", priority=True),
@@ -47,7 +74,11 @@ class PromptEditor(TextArea):
     ]
 
     class Submitted(TMessage):
-        """Dispatched on Enter or Ctrl+S."""
+        """提示词或斜杠命令提交事件 (Prompt Submission Event)。
+
+        【架构定位】
+        当用户在编辑框中敲击 Enter 或 Ctrl+S 且文本非空时派发，驱动底层 AgentLoop 开始新轮次执行。
+        """
 
         def __init__(self, text: str) -> None:
             """初始化提交消息事件。"""
@@ -124,7 +155,12 @@ class PromptEditor(TextArea):
 
 
 class EditorArea(Vertical):
-    """Bottom editor container holding PromptEditor, header button, hints, and command recommendations."""
+    """底部多功能输入区复合容器 (Composite Bottom Input Container)。
+
+    【架构定位】
+    装配多行编辑框 (PromptEditor)、快捷斜杠按钮、提示词语法标签与命令推荐列表，
+    统一调度草稿保护、命令补全与输入历史栈。
+    """
 
     DEFAULT_HINT = (
         "[bold #00f2fe]╭─[/] [bold black on #00f2fe] ⚡ PROMPT [/] "
@@ -145,7 +181,7 @@ class EditorArea(Vertical):
         )
         self.status_label = Static(hint_text, id="editor-status")
         self.slash_button = Button("⚡ /", id="btn-quick-slash")
-        # Every click must refocus the editor, including rapid repeat clicks.
+        # 每次点击必须重新聚焦编辑框，支持连续快速重复点击
         self.slash_button.active_effect_duration = 0
 
         self._history: list[str] = []
@@ -333,7 +369,11 @@ class EditorArea(Vertical):
         self.hide_recommendations()
 
     def on_paste(self, event: events.Paste) -> None:
-        """Prevent paste event from bubbling to App where it would be re-forwarded to focused editor."""
+        """拦截并阻止粘贴事件向上冒泡至 App 顶层以防止内容二次重复输入 (Deduplicated Paste Guard)。
+
+        Args:
+            event: Textual 终端粘贴事件。
+        """
         event.stop()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -378,18 +418,23 @@ class EditorArea(Vertical):
         self._is_submitting = False
         if success:
             self.append_history(submitted_text)
-            # A delayed response must never erase edits made after submission.
+            # 延迟响应绝不能抹除提交后用户正在输入的新内容 (Draft Protection)
             if self.editor.text == submitted_text:
                 if self.has_saved_draft:
                     self.restore_draft()
                 else:
                     self.clear()
         else:
-            # Leave editor content and draft intact so user can modify or press Esc
+            # 失败时完整保留编辑框内容与暂存草稿，方便用户修改重试或按 Esc 恢复
             pass
 
     def history_prev(self) -> None:
-        """Navigate backwards in input history."""
+        """回溯并切换到上一条输入历史记录 (Navigate To Previous Input History)。
+
+        【开源设计思想与架构血统】
+        参考 GNU Readline / Zsh 与 Pi Agent 终端交互习惯：
+        首次向上翻动时，将当前编辑中的文本存入 `_current_draft`，方便向下翻回时恢复现场。
+        """
         if not self._history:
             return
         if self._history_cursor == -1:
@@ -400,7 +445,12 @@ class EditorArea(Vertical):
         self.set_text(self._history[self._history_cursor])
 
     def history_next(self) -> None:
-        """Navigate forwards in input history."""
+        """向前并切换到下一条输入历史记录 (Navigate To Next Input History)。
+
+        【开源设计思想与架构血统】
+        参考 GNU Readline / Zsh 终端交互习惯：
+        当光标回到最新一条之后，自动恢复之前暂存的未提交输入 `_current_draft`。
+        """
         if not self._history or self._history_cursor == -1:
             return
         if self._history_cursor < len(self._history) - 1:

@@ -210,7 +210,7 @@ class CodingLifecycle:
                     if m.source == "memory"
                 }
                 injected = 0
-                # Reserve the actual input budget, including the rest of this request.
+                # 预留实际输入上下文预算：严防记忆条目注水导致当前请求超出模型上下文窗口 (借鉴 DSH 预算硬隔离)
                 request = self.context_manager.request(self.tools.declarations())
 
                 remaining = max(
@@ -290,12 +290,29 @@ class CodingLifecycle:
         self._goal_ref = self.goals.ref()
         self.session.add_message(Message('user', 'Current goal reference: ' + canonical(asdict(self._goal_ref)), source='goal'))
 
-    def change_goal(self, operation, expected=None):
+    def change_goal(self, operation: str, expected=None):
+        """驱动当前任务目标执行事务性状态转移操作 (Mutate Current Goal State Machine)。
+
+        【架构定位】
+        负责在领域生命周期层调用 GoalService 演进宏观目标状态（如暂停、恢复、重启或终结）。
+
+        Args:
+            operation: 目标状态机操作标识（如 'resume', 'pause', 'complete', 'restart'）。
+            expected: 预期的目标基准版本引用（若为 None 则默认取当前版本）。
+
+        Returns:
+            Goal: 演进后的新版本目标实体对象。
+        """
         self.goal = self.goals.mutate(expected or self.goals.ref(), operation)
         self._goal_ref = self.goals.ref()
         return self.goal
 
-    def _save_goal(self):
+    def _save_goal(self) -> None:
+        """将当前内存中的目标实体修订状态持久化保存至会话日志。
+
+        【核心不变性】
+        通过 GoalService 在独占事务内校验版本并递增 revision，同步刷新本地 `_goal_ref` 缓存。
+        """
         self.goal = self.goals.update(self._goal_ref, self.goal)
         self._goal_ref = self.goals.ref()
 
@@ -418,7 +435,7 @@ class CodingLifecycle:
             self.session.append("environment", self._environment_snapshot(), True)
             await self._knowledge(prompt, ctx)
             if capture := ctx.services.get("replay_capture"):
-                # Memory/child results arriving this turn are factual replay inputs.
+                # 本轮到达的记忆回显或子智能体产物，作为客观重放输入录入重放快照上下文
                 from weyra.llm.providers import rendered_message_content
                 extra = []
                 for message in self.session.project():
@@ -605,7 +622,30 @@ class CodingLifecycle:
 
     @staticmethod
     def _progress_value(value):
-        # Operational metadata cannot establish meaningful work progress.
+        """清洗工具返回数据或待办清单中的易失性运维元数据 (Sanitize Progress Value)。
+
+        【架构定位】
+        从工具执行结构化结果或待办状态中剥离与业务实质进展无关的易失性元数据，
+        用于目标推进断路器（Stagnation Breaker）的确定性进展哈希计算。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/goal/`, `packages/todo/`) 的自主推进设计：
+        易失性标识符（如 call_id, task_id, timestamp, duration 等）在每轮调用中均会自然变化，
+        若将这些元数据纳入进展哈希比对，将导致智能体即使没有产生实质业务产物也会被判定为“产生进展”，
+        进而绕过停滞断路检测。因此必须通过过滤敏感键与递归清洗确保业务进展的真实性。
+
+        【核心不变性与安全约束】
+        1. 排除所有在 volatile 集合中命名的元数据字段，以及所有以 `_id` 结尾的字段；
+        2. 递归遍历字典与列表结构，并对包含 JSON 字符串的字段尝试反序列化深层清洗；
+        3. 纯函数转换，绝不就地修改原始入参对象。
+
+        Args:
+            value: 待清洗的原始产物或数据结构（支持 dict, list, tuple, json-str 等）。
+
+        Returns:
+            Any: 清除所有易失性元数据后的确定性数据结构。
+        """
+        # 易失性运维元数据（时间戳、任务ID、耗时）不能作为实质性业务进展判断依据，必须剔除
         volatile = {"id", "call_id", "task_id", "request_id", "turn_id", "timestamp",
                     "created_at", "updated_at", "started_at", "ended_at", "duration",
                     "elapsed", "output_ref", "evidence"}
@@ -623,7 +663,26 @@ class CodingLifecycle:
                 return CodingLifecycle._progress_value(parsed)
         return value
 
-    def _goal_budget_available(self):
+    def _goal_budget_available(self) -> bool:
+        """检查当前运行环境的剩余预算是否允许开启新的目标自主演进轮次 (Check Goal Budget Availability)。
+
+        【架构定位】
+        目标自主演进的门禁防线，在每一轮自主决定是否继续前进行严格的物理额度判定。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/guard/`) 的 Fail-Closed 预算闭环防御：
+        在启动下一轮全自动模型与工具调用前，预先核算模型调用次数、Token 总数（含飞行中预扣额）
+        以及资金消耗（CNY）。任何一项达到配置上限立即拒绝自主继续，防止多步自治发生费用击穿。
+
+        【核心不变性与安全约束】
+        1. 物理调用次数硬限：`calls < call_limit`；
+        2. Token 硬限：`total_tokens + pending_tokens < token_limit`；
+        3. 资金总额硬限：`total_cost_cny < cost_limit_cny`；
+        4. 任意一项超标立即返回 False。
+
+        Returns:
+            bool: 若预算充裕返回 True，否则返回 False。
+        """
         budget = self.context.budget
         return not (
             (budget.call_limit is not None and budget.calls >= budget.call_limit)
@@ -632,6 +691,29 @@ class CodingLifecycle:
         )
 
     async def _continue_goal(self) -> bool:
+        """评估并驱动当前自治任务目标进入下一轮自发迭代 (Evaluate & Advance Autonomous Goal Round)。
+
+        【架构定位】
+        负责在单步工具调用完毕后，驱动宏观任务目标（Goal）检查当前完成度并决定是否自发驱动下一轮交互。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/goal/`) 的目标自主推进器与死循环熔断机制：
+        1. 自治安全防线：若用户队列中有即时插话（steering）或排队任务（follow_up），放弃自主继续，让位于用户交互；
+        2. 异步子代理排干：自动等待正在执行的子智能体任务完成，并吸收回流产物（`_accept_child_results`）；
+        3. 预算用尽熔断：若预算耗尽，将目标标记为 `blocked` 并设置 `budget-exhausted` 阻塞原因；
+        4. 确定性进展计算：汇聚本轮已观测到的所有工具成功产物与子任务结果，经过 `_progress_value` 清洗后
+           生成全局 `digest`，输入 `goal.should_continue` 评估停滞状态；
+        5. 提示注入：若目标允许继续，向会话历史追加包含最新目标状态的系统指导消息驱动下一步思考。
+
+        【核心不变性与安全约束】
+        1. 必须检验 `goal.armed` 与 `goal.state == "active"`，非激活状态不可自主继续；
+        2. 目标版本发生变更（`revision` 不一致）时立即中断；
+        3. 自主继续受 `max_continuations`（默认 3）与 `max_stagnant_rounds`（默认 2）严格约束；
+        4. 每次状态变迁必须通过 `_save_goal` 持久化落盘。
+
+        Returns:
+            bool: 若目标决定继续推进返回 True，若目标完结、停滞或阻断返回 False。
+        """
         goal, ctx = self.goal, self.context
         if goal is None or not goal.armed or goal.state != "active":
             return False
@@ -650,7 +732,7 @@ class CodingLifecycle:
             active = [item for item in self.children.list() if item["state"] in {"pending", "running"}]
             if not active:
                 break
-            # Waiting is part of the current round, never a continuation.
+            # 子智能体等待属于当前轮次内的协调等待，绝不计入目标 continuation 推进次数
             await self.children.wait(active[0]["task_id"], timeout=0.05)
         self._accept_child_results()
         observed = set()

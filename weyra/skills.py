@@ -67,7 +67,7 @@ class SkillStore:
         self.project_skills = self.root / '.weyra' / 'skills'
         self.skill_dirs = [self.project_skills]
         self.skill_dirs += [Path(x).resolve() for x in skill_dirs] if skill_dirs is not None else [Path.home() / '.weyra' / 'skills']
-        # Read old Weyra locations without moving or overwriting user files.
+        # 向下兼容读取旧版 Weyra 技能存放路径，绝不移动或覆写用户已有代码或文件
         self.skill_dirs.append(self.root / 'skills')
 
     def _snapshot(self, p):
@@ -101,7 +101,23 @@ class SkillStore:
         )
 
     def capture_catalog(self):
-        """Return immutable snapshots, rejecting ambiguous duplicate skill names."""
+        """扫描所有已配置技能目录生成全局不可变的技能快照字典 (Capture Immutable Skill Catalog)。
+
+        【架构定位】
+        负责发现并解析所有技能源目录中的 `SKILL.md`，构建不可变映射字典。
+
+        【核心不变性与安全约束】
+        1. 按照优先顺序扫描技能目录（项目级 > 全局级 > 遗留目录）；
+        2. 同一目录内严禁同名技能冲突（发现重复同名技能立即抛出 ValueError）；
+        3. 跨目录去重遵循 setdefault 规则（优先采用高优先级目录的版本）；
+        4. 返回 MappingProxyType 只读封装，杜绝外部就地篡改。
+
+        Returns:
+            MappingProxyType: 映射技能名称至 SkillSnapshot 不可变对象的只读字典。
+
+        Raises:
+            ValueError: 当同一源目录中存在重复的技能名称定义时抛出。
+        """
         result = {}
         for directory in self.skill_dirs:
             local_names = set()
@@ -181,7 +197,7 @@ class SkillStore:
         for skill in catalog.values():
             aliases = skill.metadata.get('aliases', ())
             if isinstance(aliases, str):
-                # The lightweight frontmatter reader preserves unquoted JSON lists.
+                # 轻量级 frontmatter 读取器容错解析未加引号的 JSON 列表格式别名
                 try:
                     import json
                     aliases = json.loads(aliases)
@@ -199,7 +215,27 @@ class SkillStore:
         return result(self.search(query, limit=len(catalog), catalog=catalog), 'lexical')
 
     def read_resource(self, snapshot, relative_path):
-        """Read a pinned resource only if its location and bytes still match."""
+        """安全读取并校验技能快照中绑定的静态资源文件内容 (Read Cryptographically Pinned Resource)。
+
+        【架构定位】
+        为技能提供可信的辅助脚本、配置或模板文件读取。
+
+        【核心不变性与安全约束】
+        1. 符号链接防御：核验目标文件及其父目录严禁为软链接；
+        2. 目录边界沙箱：断言文件严格位于技能快照所在目录内；
+        3. 强哈希一致性（Anti-Drift）：重新计算物理文件 SHA-256 并比对快照中记录的指纹，
+           若文件被外部篡改，立即抛出 ValueError('Resource drift detected') 阻断执行。
+
+        Args:
+            snapshot: 拥有该资源的技能快照对象 SkillSnapshot。
+            relative_path: 相对技能目录的资源相对路径。
+
+        Returns:
+            str: 校验合规的 UTF-8 资源文本内容。
+
+        Raises:
+            ValueError: 当路径逃逸、资源不在声明清单中或内容哈希漂移时抛出。
+        """
         reject_symlinks(snapshot.path.parent / relative_path)
         p = (snapshot.path.parent / relative_path).resolve()
         if (

@@ -13,7 +13,14 @@ from dataclasses import dataclass, field
 
 @dataclass(frozen=True)
 class TUICommand:
-    """Metadata for a TUI-supported slash command."""
+    """TUI 支持的交互式斜杠命令元数据结构体 (TUI Slash Command Metadata)。
+
+    Attributes:
+        name: 命令标准主标识（以 '/' 起始，如 "/help"）。
+        args_usage: 命令参数使用说明（如 "<name> <version>"）。
+        description: 命令功能的简明中文描述。
+        aliases: 可选的命令别名元组。
+    """
 
     name: str
     args_usage: str
@@ -50,7 +57,14 @@ TUI_COMMANDS: tuple[TUICommand, ...] = (
 
 
 def match_commands(query: str) -> list[TUICommand]:
-    """Match commands by canonical name or alias prefix."""
+    """根据输入前缀检索匹配的斜杠命令补全列表 (Prefix Match Slash Commands)。
+
+    Args:
+        query: 用户当前输入的文本（必须以 '/' 开头）。
+
+    Returns:
+        list[TUICommand]: 匹配到的命令对象列表。
+    """
     if not query.startswith("/"):
         return []
     prefix = query.strip()

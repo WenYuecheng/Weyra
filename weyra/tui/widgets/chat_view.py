@@ -1,4 +1,4 @@
-"""Scrollable chat container with smart auto-scroll pinning and history reconstruction."""
+"""自适应滚动消息流容器、智能贴底锁定与历史卡片重构引擎 (Chat View Container)。"""
 
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ LOGO_HARNESS = r"""
 
 
 class ChatView(VerticalScroll):
-    """Vertical scroll container for messages, tools, and thoughts."""
+    """用于承载消息流、思考链和工具卡片的垂直可滚动容器 (Chat View Scroll Container)。"""
 
     class PinChanged(Message):
         """视图滚动是否贴底锁定状态变更事件。"""
@@ -63,12 +63,25 @@ class ChatView(VerticalScroll):
         self.post_message(self.PinChanged(self._auto_scroll_pinned))
 
     def check_auto_scroll(self) -> None:
-        """Scroll to bottom only if currently pinned."""
+        """检查滚动位置并在贴底状态下自动锁定滚动至最底部 (Auto-scroll Pin Guard)。
+
+        【架构定位】
+        负责在界面新增流式字符或子组件后维持智能贴底体验。
+
+        【开源设计思想与架构血统】
+        参考 Pi Agent (`packages/tui/`) 的流式滚动钉子机制 (Scroll Pinning)：
+        当用户未手动向上翻阅历史消息时，实时流式内容自动推拉屏幕至底端；
+        一旦用户向上滚轮查看历史，自动解除钉住，防止打断阅读体验。
+        """
         if self._auto_scroll_pinned:
             self.call_after_refresh(self.scroll_end, animate=False)
 
     def jump_to_bottom(self) -> None:
-        """Explicitly re-pin and jump to bottom."""
+        """强制重置贴底锁定状态并瞬间滚动至视口最底部 (Jump To Bottom & Pin)。
+
+        【架构定位】
+        响应用户点击跳到底部快捷操作或新任务击发。
+        """
         self._auto_scroll_pinned = True
         self.scroll_end(animate=False)
         self.post_message(self.PinChanged(True))
@@ -82,7 +95,14 @@ class ChatView(VerticalScroll):
         await self.remove_children()
 
     def show_welcome(self, project_name: str) -> None:
-        """Render the BearCode cyberpunk dashboard welcome banner."""
+        """渲染带有工作区规格与快捷命令指南的赛博朋克风格欢迎面板 (Render Cyberpunk Welcome Dashboard)。
+
+        【架构定位】
+        在会话初始化且无历史上下文时展示工作区身份、底层模型与操作指南。
+
+        Args:
+            project_name: 当前加载的工作区目录名或工程标识。
+        """
         if self.no_color:
             t = Table.grid()
             t.add_row(Align.center("WEYRA - EVOLVABLE CODING AGENT HARNESS"))
@@ -167,7 +187,17 @@ class ChatView(VerticalScroll):
         self.mount(Static(panel, id="welcome-banner"))
 
     def add_user_message(self, text: str) -> UserMessageWidget:
-        """Mount a user prompt message."""
+        """在消息流中挂载新的用户提示词卡片并自动滚动 (Mount User Message Bubble)。
+
+        【架构定位】
+        将用户输入的原始 Prompt 或命令包装为气泡组件挂载至视口容器。
+
+        Args:
+            text: 用户输入的提示词正文。
+
+        Returns:
+            UserMessageWidget: 挂载完成的用户消息组件实例。
+        """
         for banner in self.query("#welcome-banner"):
             banner.remove()
         widget = UserMessageWidget(text, no_color=self.no_color)
@@ -176,7 +206,17 @@ class ChatView(VerticalScroll):
         return widget
 
     def start_assistant_message(self, initial_text: str = "") -> AssistantMessageWidget:
-        """Mount and return a new assistant message widget."""
+        """挂载并返回一个新的活跃助手流式消息容器 (Mount Streamed Assistant Message)。
+
+        【架构定位】
+        用于承载模型回复正文的流式 Markdown 渲染。
+
+        Args:
+            initial_text: 初始文本内容（默认为空）。
+
+        Returns:
+            AssistantMessageWidget: 挂载的活跃助手消息组件。
+        """
         widget = AssistantMessageWidget(initial_text, no_color=self.no_color)
         self._active_assistant = widget
         self.mount(widget)
@@ -197,7 +237,21 @@ class ChatView(VerticalScroll):
             self.check_auto_scroll()
 
     def start_thinking(self, initial_text: str = "") -> ThinkingCardWidget:
-        """Mount thinking card for genuine reasoning tokens."""
+        """挂载模型链式思考卡片以承载实时推理 Token (Mount DeepSeek-R1 CoT Thinking Card)。
+
+        【架构定位】
+        为模型的思考过程（Thinking / Reasoning Content）提供独立的折叠展示区域。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness 对 DeepSeek-R1 真实推理流的呈现理念：
+        将推理内容与正式回答物理解耦，默认可折叠收起，避免冗长思考链污染交互主视口。
+
+        Args:
+            initial_text: 初始思考文本。
+
+        Returns:
+            ThinkingCardWidget: 挂载的模型推理卡片组件。
+        """
         widget = ThinkingCardWidget(initial_text, no_color=self.no_color)
         self._active_thinking = widget
         self.mount(widget)
@@ -218,7 +272,23 @@ class ChatView(VerticalScroll):
             self.check_auto_scroll()
 
     def start_tool(self, call_id: str, name: str, arguments: dict[str, Any]) -> ToolCardWidget:
-        """Mount a new running tool card."""
+        """挂载一个新的运行中工具调用折叠卡片 (Mount Tool Execution Card)。
+
+        【架构定位】
+        展示工具分发状态、调用参数及运行耗时。
+
+        【开源设计思想与架构血统】
+        参考 DeepSeek-Harness (`packages/deliverables/`) 的工具展示规范，
+        在执行期间实时向用户反馈正在被调用的工具名称与入参。
+
+        Args:
+            call_id: 工具调用的唯一标识 ID。
+            name: 工具名称。
+            arguments: 工具调用实参字典。
+
+        Returns:
+            ToolCardWidget: 挂载的工具调用卡片组件。
+        """
         widget = ToolCardWidget(
             call_id,
             name,
@@ -241,12 +311,24 @@ class ChatView(VerticalScroll):
         preview: dict[str, Any] | None = None,
         artifact_path: str | None = None,
     ) -> None:
-        """Complete an existing tool card or create completed card."""
+        """更新已有工具卡片的执行终态或重构已完成的历史工具卡片 (Complete Tool Execution Card)。
+
+        【架构定位】
+        将工具执行的输出、耗时、状态及代码差异 (Unified Diff) 回填到卡片中。
+
+        Args:
+            call_id: 工具调用唯一标识。
+            status: 执行终态（'success' / 'failed' / 'denied' 等）。
+            result: 工具执行结果文本。
+            duration: 工具执行耗时（秒）。
+            preview: 结构化预览字典（可能包含 diff、stats 等元数据）。
+            artifact_path: 大文件产物落盘路径（若输出发生截断时提供）。
+        """
         widget = self._active_tools.pop(call_id, None)
         if widget is not None:
             widget.complete(status, result, duration, preview, artifact_path)
         else:
-            # Reconstruct from event
+            # 若活跃卡片已被析构则根据事件快照重构工具卡片
             widget = ToolCardWidget(
                 call_id,
                 "tool",
@@ -260,13 +342,33 @@ class ChatView(VerticalScroll):
         self.check_auto_scroll()
 
     def add_notice(self, title: str, message: str, kind: str = "info") -> None:
-        """Mount system notice."""
+        """向消息流中挂载系统级通知横幅 (Mount System Notice Banner)。
+
+        【架构定位】
+        展示上下文压缩、重试告警或运行时错误等系统级别事件。
+
+        Args:
+            title: 通知标题。
+            message: 通知正文详情。
+            kind: 通知类型（'info', 'warning', 'error', 'compaction'）。
+        """
         widget = SystemNoticeWidget(title, message, kind=kind, no_color=self.no_color)
         self.mount(widget)
         self.check_auto_scroll()
 
     def load_history_cards(self, cards: list[dict[str, Any]]) -> None:
-        """Consume the actual DisplayCard schema emitted by the service."""
+        """消费服务层导出的 DisplayCard 领域卡片序列重构历史视口 (Reconstruct Viewport from Display Cards)。
+
+        【架构定位】
+        会话恢复或切换时，将纯领域事件或快照投影生成的 DisplayCard 数组无损映射为 TUI 组件树。
+
+        【开源设计思想与架构血统】
+        参考 DeepSeek-Harness 的纯投影架构（Presenter Purity）：
+        UI 层严禁反向解析复杂的底层 Session 日志，而是消费服务层标准化的 `DisplayCard` 投影模型。
+
+        Args:
+            cards: 服务层投影生成的卡片数据字典列表。
+        """
         for card in cards:
             kind = card.get("kind")
             content = card.get("content", card.get("text", ""))

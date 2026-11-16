@@ -804,7 +804,29 @@ class SessionStore:
             return bool(changed)
 
     def business_chain(self):
-        """Return supported events for recovery while preserving raw history."""
+        """沿当前会话因果树回溯并过滤校验业务可恢复事件链条 (Filter Business Chain for Recovery)。
+
+        【架构定位】
+        为崩溃自愈与状态恢复提供经过 Schema 校验的有效因果事件序列。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/session/`) 的业务事件准入与向前兼容协议：
+        1. 物理历史只追加留存：底层数据库中保留所有原始落盘事件（哪怕是未来版本写入的高版本事件）；
+        2. 业务视图安全过滤：读取每个事件关联的 `event_metadata` 版本与 `ignorable` 标记，
+           调用 `validate_event` 进行动态准入校验。合规或允许忽略的事件被接纳，
+           未知且非忽略的非法事件直接阻断抛出异常，防止损坏的数据污染恢复逻辑。
+
+        【核心不变性与安全约束】
+        1. 沿当前叶节点回溯至根节点，保持严格因果序；
+        2. 绝不修改或物理删除任何原始数据；
+        3. 遇到非法事件声明抛出 `SessionError`。
+
+        Returns:
+            list[dict]: 经过版本校验合规的标准化业务事件列表。
+
+        Raises:
+            SessionError: 当事件版本声明非法或必选事件校验失败时抛出。
+        """
         supported = []
         for record in self.chain():
             metadata = self._db.execute('SELECT version,ignorable FROM event_metadata WHERE session_id=? AND event_id=?', (self.session_id, record['id'])).fetchone()
@@ -880,6 +902,30 @@ class SessionStore:
         return [Message.from_dict(item) for item in self.messages_state(leaf)]
 
     def _unit_state(self, key, leaf=None):
+        """按指定领域投影单元计算并缓存状态增量视图 (Compute Incremental Domain Projection Unit State)。
+
+        【架构定位】
+        领域状态投影的单一调度中心，连接不可变事件溯源日志与领域内存模型。
+
+        【开源设计思想与架构血统】
+        深度借鉴 DeepSeek-Harness (`packages/session/`) 的独立版本化投影单元规范：
+        1. 细粒度投影单元隔离：将庞大的全局状态拆解为 'messages', 'model', 'queues', 'goal', 'children', 'latest'
+           独立纯函数 Reducer 单元（`UNITS[key]`），各单元独立维护 `state_version`；
+        2. 检查点与增量水线加速 (Watermark Acceleration)：从 `projection_units` 表读取预先落盘的最新检查点，
+           核验版本、叶子节点、事件水线序号及 SHA-256 校验和（checksum）。校验通过后仅对水位之后的增量事件执行 `unit.apply`，
+           实现 O(增量) 的极速状态重构；
+        3. 内存双重防御：向调用方返回 `deepcopy` 深拷贝对象，彻底阻断外部对底层投影缓存的非法就地修改。
+
+        Args:
+            key: 投影单元标识（如 'messages', 'model', 'queues', 'goal', 'children', 'latest'）。
+            leaf: 可选的目标叶节点 ID，默认使用当前最新 `self.leaf`。
+
+        Returns:
+            Any: 目标单元的当前深拷贝领域投影状态。
+
+        Raises:
+            SessionError: 当事件链路损坏或祖先指针形成环路时抛出。
+        """
         from copy import deepcopy
         unit = UNITS[key]
         with self._lock:
@@ -925,26 +971,105 @@ class SessionStore:
             return deepcopy(state)
 
     def messages_state(self, leaf=None):
+        """获取当前活跃链路投影的结构化消息字典序列 (Get Messages Projection State)。
+
+        【架构定位】
+        负责提炼用于传递给语言模型推理的上下文消息状态。
+
+        Args:
+            leaf: 可选的目标叶节点 ID。
+
+        Returns:
+            list[dict]: 结构化消息字典列表。
+        """
         return self._unit_state('messages', leaf)
 
     def model_state(self, leaf=None):
+        """获取当前活跃链路投影的模型路由与配置状态 (Get Model Route Projection State)。
+
+        【架构定位】
+        负责提炼当前生效的主模型、备用模型及上下文参数配置。
+
+        Args:
+            leaf: 可选的目标叶节点 ID。
+
+        Returns:
+            dict | None: 模型配置字典，若未显式变更则返回 None。
+        """
         return self._unit_state('model', leaf)
 
     def input_queue_state(self, leaf=None):
+        """获取当前会话双交互队列的待处理输入状态 (Get Input Queues Projection State)。
+
+        【开源设计思想与架构血统】
+        基于 Pi Agent 双队列架构投影，返回 steering 与 follow_up 队列中尚未被持久化消费的条目。
+
+        Args:
+            leaf: 可选的目标叶节点 ID。
+
+        Returns:
+            dict[str, list[dict]]: 包含 "steering" 和 "follow_up" 待决输入项的字典。
+        """
         return self._unit_state('queues', leaf)
 
     def goal_state(self, leaf=None):
+        """获取当前会话宏观自治目标的状态机快照 (Get Autonomous Goal Projection State)。
+
+        【开源设计思想与架构血统】
+        对标 DeepSeek-Harness `packages/goal/` 状态机，投影目标意图、修订版本与待办进度。
+
+        Args:
+            leaf: 可选的目标叶节点 ID。
+
+        Returns:
+            dict | None: 目标属性字典，若未设定目标则返回 None。
+        """
         return self._unit_state('goal', leaf)
 
     def child_delivery_state(self, leaf=None):
+        """获取子智能体异步任务及投递成果的投影状态 (Get Child Deliveries Projection State)。
+
+        【架构定位】
+        追踪所有委派给子智能体的后台任务生命周期与结果状态。
+
+        Args:
+            leaf: 可选的目标叶节点 ID。
+
+        Returns:
+            dict[str, dict]: 映射 task_id 至子任务状态和交付物字典的集合。
+        """
         return self._unit_state('children', leaf)
 
     def domain_state(self, leaf=None):
-        """Compatibility assembly; narrow readers never construct this object."""
+        """组合装配遗留兼容的全量领域状态聚合字典 (Assemble Composite Domain State for Compatibility)。
+
+        【架构定位】
+        为兼容旧版一次性消费全量状态的调用方提供的装配接口。
+
+        【设计建议】
+        遵循 DSH 细粒度接口隔离原则：高频只读组件应优先调用专用的 `messages_state`、`goal_state` 等单一接口，
+        避免不必要的全量深拷贝开销。
+
+        Args:
+            leaf: 可选的目标叶节点 ID。
+
+        Returns:
+            dict[str, Any]: 聚合了 latest, queues, children, messages 的全量复合状态字典。
+        """
         return {key: self._unit_state(key, leaf) for key in ('latest','queues','children','messages')}
 
     def save_projection_checkpoint(self):
-        """Save independently versioned units; retain legacy aggregate caches."""
+        """将各领域投影单元的计算状态与高水位序号持久化存盘 (Persist Projection Unit Checkpoints)。
+
+        【架构定位】
+        在事务或定期落盘点，将所有单元的当前状态增量检查点写入 `projection_units` 表，
+        加速后续进程启动与长会话回放。
+
+        【核心不变性与安全约束】
+        1. 在单一独占事务内操作；
+        2. 持久化记录包含 unit, state_version, leaf, watermark, checkpointed state 与 checksum；
+        3. 采用 INSERT OR REPLACE 保持单会话单单元最新检查点唯一性。
+        """
         for key, unit in UNITS.items():
             state = self._unit_state(key)
             cache = self._projection_cache[key]

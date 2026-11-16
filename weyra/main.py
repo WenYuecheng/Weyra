@@ -308,7 +308,7 @@ async def run(args):
             runtime = load_config(project, override).build_runtime()
         path = session_path(project, args.resume) if args.resume else None
 
-        # Determine whether to launch TUI
+        # 判断是否启动 Textual TUI 交互界面
         use_tui = False
         if args.prompt is None and (not args.demo or args.ui == "tui"):
             if args.ui == "tui":
@@ -355,7 +355,7 @@ async def run(args):
             )
             return await run_tui_async(service, ascii_only=args.no_icons)
 
-        # One-shot prompts have no competing input consumer; EOF denies approvals.
+        # 单次 Prompt 模式无竞争输入消费者；标准输入到达 EOF 时直接驳回未决审批
         inputs.start()
 
         from .ui import StreamDisplay
@@ -414,7 +414,7 @@ def main(argv=None):
         print(f"Weyra model request failed ({exc.kind})", file=sys.stderr)
         return 1
     except (ValueError, FileNotFoundError) as exc:
-        # Configuration validation messages contain field names, never SDK payloads.
+        # 配置校验错误信息仅输出配置字段名，绝不泄露 SDK 请求载荷或敏感信息
         print(
             f"Weyra configuration/input error ({type(exc).__name__}); check configuration, explicit context limits, and session identifier.",
             file=sys.stderr,

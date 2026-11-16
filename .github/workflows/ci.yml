@@ -18,11 +18,17 @@ jobs:
           python-version: '3.11'
       - name: Install development tools
         run: python -m pip install '.[dev,tui]'
-      - name: Test
-        run: python -m pytest -q
       - name: Lint
         run: python -m ruff check .
+      - name: Verify application and terminal interface offline
+        run: python scripts/verify_source.py
       - name: Build wheel and source distribution
         run: python -m build
-      - name: Verify clean package install and offline commands
-        run: python scripts/verify_package.py
+      - name: Install built application and check dependencies
+        run: |
+          python -m venv /tmp/weyra-installed
+          /tmp/weyra-installed/bin/python -m pip install dist/*.whl
+          /tmp/weyra-installed/bin/python -m pip check
+          cd /tmp
+          /tmp/weyra-installed/bin/weyra --help
+          /tmp/weyra-installed/bin/weyra --demo --project /tmp/weyra-demo

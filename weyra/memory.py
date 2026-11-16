@@ -199,12 +199,28 @@ class MemoryStore:
         """
         self._background.discard(task)
         if not task.cancelled():
-            # Timed-out work has no waiting caller to retrieve its exception.
+            # 超时后后台任务已无上层调用者等待接收异常，主动调用 task.exception() 消费异常防止 asyncio 未处理告警
             task.exception()
 
     @staticmethod
     async def _drain(tasks):
-        """Let paid request settlement finish even if the owning waiter is cancelled again."""
+        """排干并安全等待后台任务完成结算，即使用户协程被再次取消 (Drain Background Tasks Safely)。
+
+        【架构定位】
+        确保模型调用的 Token 消耗核销与资源释放即使在外部取消时也必须执行完毕。
+
+        【核心不变性与安全约束】
+        使用 `asyncio.shield` 屏蔽取消信号直至所有任务收尾完成；若曾收到取消信号，在排干后重新抛出 `CancelledError`。
+
+        Args:
+            tasks: 需排干的异步任务集合。
+
+        Returns:
+            list: 任务执行结果列表。
+
+        Raises:
+            asyncio.CancelledError: 若等待期间曾收到取消信号则在排干后抛出。
+        """
         pending = asyncio.gather(*tasks, return_exceptions=True)
         cancelled = False
         while not pending.done():
@@ -217,18 +233,21 @@ class MemoryStore:
         return pending.result()
 
     def cancel_pending(self):
-        """Immediately request cancellation; close() also waits for durable settlement."""
+        """向所有当前挂起的后台记忆精选任务派发取消信号 (Cancel All Pending Selection Tasks)。
+
+        Returns:
+            tuple: 发送了取消信号的任务元组。
+        """
         tasks = tuple(task for task in self._background if not task.done())
         for task in tasks:
             task.cancel()
         return tasks
 
     async def close(self):
-        """Drain every selector before the owning session writer or provider closes.
+        """优雅关闭记忆仓库并排干所有挂起中的模型选择任务 (Close Store & Drain Background Selectors)。
 
-        Normal recall deadlines never wait for an uncooperative backend. Such
-        tasks remain owned here until their adapter's bounded request finishes,
-        or shutdown cancels and drains them. Their late result is never injected.
+        【设计原则】
+        关闭标志置为 True；对所有后台任务发送取消并调用 `_drain` 确保完全终结，防止关闭后悬挂写句柄。
         """
         self._closed = True
         await self._drain(self.cancel_pending())
@@ -249,7 +268,25 @@ class MemoryStore:
         )
 
     async def recall_entries(self, query, selector=None, timeout=8):
-        """Pin selection to the versions offered to the selector, with complete wrappers."""
+        """执行记忆快照锁定与语义精选，输出带完整 XML 包装的条目列表 (Recall Sourced Memory Entries)。
+
+        【开源设计思想与架构血统】
+        结合 Hermes 语义记忆与 DSH 上下文预算控制：
+        1. 版本锁定与快照隔离：精选基于调用时的快照版本，防止精选期间外部文件变动导致版本漂移；
+        2. 异步精选与超时熔断：若提供 `selector`，最多等待 8 秒模型精排；超时自动取消任务并安全降级；
+        3. 字节预算硬防护：单条条目正文硬性截断于 4096 字节内，会话注入累计不超过 60KiB，且最多注入 5 条。
+
+        Args:
+            query: 用户查询文本。
+            selector: 可选的模型语义精选回调函数。
+            timeout: 精选超时时间（秒，上限 8 秒）。
+
+        Returns:
+            list[dict]: 包含元数据与 wrapped XML 字符串的记忆条目字典列表。
+
+        Raises:
+            RuntimeError: 当 MemoryStore 已处于关闭状态时抛出。
+        """
         if self._closed:
             raise RuntimeError("MemoryStore is closed")
         selected = self.search(query)
@@ -278,7 +315,7 @@ class MemoryStore:
         result = []
         total = 0
         for record in selected[:5]:
-            # JSON encoding prevents identifiers from breaking the wrapper.
+            # 严防 XML 注入：使用 json.dumps 对属性标识进行安全转义，防止破坏外层包裹标签
             opening = (
                 "<memory id="
                 + json.dumps(record["id"], ensure_ascii=False)

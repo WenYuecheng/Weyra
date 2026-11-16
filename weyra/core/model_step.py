@@ -146,10 +146,25 @@ def copy_request(request: PreparedRequest, **changes) -> PreparedRequest:
 
 
 async def switch_model(host, model, ctx, tools):
-    """Admit a destination against its capacity before committing a route change.
+    """在正式提交模型路由变更前，严格针对目标模型的容量视窗执行准入评估与自愈压缩。
 
-    Compression uses the current model/runtime. Durable reductions survive a
-    refused switch; the effective route and policy remain unchanged on failure.
+    【架构定位】
+    动态容灾故障转移与模型切换的核心保护门禁。
+    确保切换后的目标模型物理视窗能够安全容纳当前历史消息，若超压则自动调度上下文压缩。
+
+    【核心不变性与安全约束】
+    1. 准入安全优先：若目标模型即使经全量压缩后仍无法容纳当前上下文，坚决拒绝切换并保留原路由与策略；
+    2. 压缩复用保护：在评估期间产生的持久化上下文压缩成果在会话树中永久保留，即使切换失败也不会丢失精简收益；
+    3. 事务性激活：在 `with manager.session.transaction():` 独占事务内原子更新主路由与会话事件。
+
+    Args:
+        host: 包含 context_manager 与 runtime 的智能体宿主。
+        model: 拟切换的目标模型 ModelInfo 规格。
+        ctx: 轮次执行上下文。
+        tools: 当前激活的工具声明列表。
+
+    Raises:
+        ContextOverflow: 当目标模型视窗不足以接纳当前上下文时抛出，保留原路由。
     """
     manager = host.context_manager
     host.runtime.registry.get(model.provider_id)
@@ -159,7 +174,8 @@ async def switch_model(host, model, ctx, tools):
     threshold = candidate.threshold
     declarations = tools if model.supports_tools else ()
 
-    def fits():
+    def fits() -> bool:
+        """测算当前上下文是否完全处于候选模型的安全触发阈值与物理窗口内。"""
         measured = candidate._measure(manager.session.project(), declarations)
         size = measured["estimated_input_tokens"]
         return size < threshold and size + candidate._reserved_output <= model.context_window

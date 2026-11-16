@@ -322,7 +322,7 @@ def resolve_context_policy(config=None, model=None, reserved_output=None):
         if "retain_ratio" in entry:
             merged.pop("retain_tokens", None)
         merged.update(entry)
-        # Explicit global max wins over a changed per-model headroom.
+        # 显式全局最大上限优先级高于单个模型的 headroom 变更 (借鉴 DSH 策略优先级)
         if (
             "headroom_tokens" in entry
             and data.get("max_tokens") is None
@@ -459,7 +459,7 @@ class ContextManager:
         """从当前 ModelRuntime 动态同步模型特定的请求参数与最新容量策略。"""
         parameters_for = getattr(runtime, "parameters_for", None)
         if parameters_for:
-            # Support lightweight runtimes exposing only parameters_for(purpose).
+            # 兼容仅暴露 parameters_for(purpose) 的轻量级模型运行时
             signature = inspect.signature(parameters_for)
             try:
                 signature.bind("main", self.model)
@@ -509,8 +509,15 @@ class ContextManager:
         self.system, self.version = system, version
 
     @property
-    def measurement(self):
-        """Detached pressure provenance for context displays and cache diagnostics."""
+    def measurement(self) -> dict:
+        """获取用于前端视窗展示与缓存诊断的脱敏上下文容量测算快照。
+
+        【架构定位】
+        暴露当前活跃视窗内估算的输入 Token 数、系统静态基线尺寸、动态资源大小以及高水位压力的安全不可变快照。
+
+        Returns:
+            dict: 确定性格式的脱敏测算数据字典。
+        """
         return json.loads(canonical(self._measurement))
 
     def _visible_messages(self, messages):
@@ -666,8 +673,7 @@ class ContextManager:
                 anchor.get("source_rendering_version") != SOURCE_RENDERING_VERSION
                 and any(message.role == "user" and message.source_kind == "fact" for message in anchor_messages)
             ):
-                # Old usage measured unwrapped synthetic user text. It cannot
-                # calibrate a new projection containing provenance envelopes.
+                # 旧版用量记录测量的是未包裹的合成文本，无法准确校准包含溯源信封的新投影视图
                 continue
             historical = [
                 m.to_dict()
@@ -686,9 +692,7 @@ class ContextManager:
                 }
             )
             delta = heuristic - anchor_heuristic
-            # New content retains the conservative heuristic. When pruning an
-            # overestimated history, discount removed tokens at the observed
-            # ratio, so calibration cannot subtract more than was measured.
+            # 新增内容保留保守启发式估算。在裁剪高估的历史时，按观测比例折减删除的 token，确保校准值不超出实际测得用量
             calibrated_delta = delta
             if delta < 0 and tokens < anchor_heuristic:
                 calibrated_delta = math.ceil(delta * tokens / anchor_heuristic)
@@ -866,7 +870,7 @@ class ContextManager:
             ContextOverflow: 当配置的专属摘要模型无法从模型目录中解析定位时抛出。
         """
         if self.policy.summarization_provider:
-            # Explicit exact target is resolved through the runtime's public model catalog.
+            # 显式精确目标通过运行时的公开模型目录解析
             provider, name = self.policy.summarization_provider, self.policy.summarization_model
             for candidate in getattr(runtime, "routes", {}).values():
                 if (candidate.provider_id, candidate.model_id) == (provider, name):
@@ -875,7 +879,7 @@ class ContextManager:
             if resolve_model:
                 return resolve_model(provider, name)
             raise ContextOverflow("Configured summarization provider/model is unavailable")
-        # DSH defaults to the latest routed model; experimental modes retain the old alias.
+        # 借鉴 DSH 路由规范：默认使用当前生效的目标模型路由，实验模式保留历史别名
         if self.summary_mode != "dsh_checkpoint" or "compression" not in getattr(
             runtime, "inherited_purposes", set()
         ):
@@ -953,8 +957,7 @@ class ContextManager:
         """
         if attempts["attempts"] >= attempts["limit"]:
             raise ModelError("attempt_limit", "Compression physical attempt limit reached")
-        # ModelRuntime spends this shared budget on every physical retry. Lightweight
-        # runtimes without that API are charged once for their complete call.
+        # ModelRuntime 在每次物理重试中消费共享预算；无重试 API 的轻量运行时单次核销
         if "attempt_budget" in inspect.signature(runtime.complete).parameters:
             try:
                 return await runtime.complete(request, context, attempt_budget=attempts)
@@ -1001,7 +1004,7 @@ class ContextManager:
         })
         if size + expanded > request.model.context_window:
             raise ContextOverflow("Expanded summary output reservation exceeds model capacity")
-        # Shared across every component and segment in this compaction operation.
+        # 在本次压缩操作的所有组件与分段中共享统一上下文
         attempts["output_expanded"] = True
         context.check_cancelled()
         request = PreparedRequest(
@@ -1042,7 +1045,7 @@ class ContextManager:
             raise ContextOverflow("Summary output limit exceeds selected model capacity")
         if self._summary_fits(model, messages):
             return await self._summarize_once(runtime, context, messages, attempts)
-        # Bounded extension: raw interaction groups stay intact; merges retain their coverage.
+        # 有界扩展：原子交互组保持成对完整，合并保留完整覆盖范围
         original_ids = [m.id for m in messages]
         positions = {raw: index for index, raw in enumerate(original_ids)}
         coverage = {m.id: [m.id] for m in messages}
@@ -1226,7 +1229,7 @@ class ContextManager:
             except ValueError:
                 if correction:
                     raise
-                # Repeat the strict schema without reusing untrusted malformed output.
+                # 重新下发严格 Schema，严禁复用不受信的畸形输出
                 request = PreparedRequest(
                     model, instruction + " Format correction: return the complete JSON schema requested.",
                     request.messages, purpose="compression",
@@ -1292,7 +1295,7 @@ class ContextManager:
             self._compression_turn = context.id
             self._compression_failures = 0
         if trigger != "manual" and self._compression_failures >= 2:
-            # The latch stops paid summaries, not deterministic free pruning.
+            # 熔断锁停止的是昂贵的付费摘要生成，而非确定性的免费修剪 (借鉴 DSH 熔断设计)
             return await self.reduce_large_results()
         attempts = {"attempts": 0, "limit": 8}
         record_start = len(self.session.records)
@@ -1304,7 +1307,7 @@ class ContextManager:
         if len(groups) < 2:
             return pruned
         tail, tokens = [], 0
-        # Overflow recovery keeps only the minimal balanced suffix regardless of regular K.
+        # 借鉴 DSH 8KiB/最小对齐安全后缀：溢出恢复无论常规保留轮数 K 为何，仅保留最小平衡后缀
         keep = 0 if trigger == "overflow" else self.retain
         while groups and (not tail or tokens < keep):
             group = groups.pop()

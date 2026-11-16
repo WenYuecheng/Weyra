@@ -1,4 +1,8 @@
-"""Session picker modal for listing, resuming, and creating sessions."""
+"""持久化历史会话查看、切换与新建模态弹窗 (Session Picker & Management Modal)。
+
+【架构定位】
+深度对标 Pi Agent 的 Session DAG 架构，呈现离线持久化会话列表，支持平滑切换历史分支或新建会话。
+"""
 
 from __future__ import annotations
 
@@ -14,7 +18,7 @@ from weyra.service import SessionSummary
 
 
 class SessionPickerModal(ModalScreen[str | None]):
-    """Modal dialog for session selection and creation with BearCode styling."""
+    """持久化历史会话管理与切换模态对话框 (Session Manager Modal Dialog)。"""
 
     BINDINGS = [
         Binding("escape", "cancel", "取消", priority=True),

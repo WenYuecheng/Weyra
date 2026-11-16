@@ -326,6 +326,18 @@ def install_builtin_tools(runtime, jobs):
         from .patch_tool import apply_patch
 
         async def patch(args, ctx):
+            """执行受界多文件统一补丁应用工具 (Apply Bounded Multi-file Patch Tool)。
+
+            【架构定位】
+            调用 patch_tool.apply_patch 实施前置 Dry-run 预检与原子落盘。
+
+            Args:
+                args: 包含 "input" 补丁文本的字典。
+                ctx: 当前运行上下文 RunContext。
+
+            Returns:
+                ToolResult: 执行结果与变更摘要。
+            """
             return await apply_patch(runtime, args, ctx)
 
         register("apply_patch", {"input": string}, ["input"], patch, "write")

@@ -214,7 +214,7 @@ def load_config(project, overrides=None):
     dotenv = dict(dotenv_values(dotenv_path, interpolate=False)) if dotenv_path.exists() else {}
     environment = dict(os.environ)
     override = {key: value for key, value in (overrides or {}).items() if value is not None}
-    # Resolve one layer at a time: provider-specific names win within a layer.
+    # 逐层解析配置：层内供应商专有字段优先生效 (Overrides > Env > Dotenv > File)
     main = routes.get("main", {})
     provider_id = (
         override.get("provider")
@@ -483,7 +483,7 @@ def check_config(project, overrides=None):
     config = load_config(project, overrides)
     runtime = config.build_runtime()
     main = runtime.resolve("main")
-    # Capacity metadata is actual capability; the context pressure reserve is request-local.
+    # 容量元数据代表模型物理硬上限；上下文压力预留属于请求级局部策略
     reserve = runtime.parameters_for("main").get("max_output_tokens", main.max_output_tokens)
     policy = resolve_context_policy(config.context_policy, main, reserved_output=reserve)
     summary_model = (

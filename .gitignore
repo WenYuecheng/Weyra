@@ -1,23 +1,71 @@
-.venv/
+# Public allowlist: application source and installation/documentation assets.
+# Other files remain local, including private research and evaluation material.
+/*
+!/.gitignore
+!/.env.example
+!/README.md
+!/LICENSE
+!/THIRD_PARTY_NOTICES.md
+!/MANIFEST.in
+!/pyproject.toml
+!/requirements.txt
+!/weyra.example.toml
+!/weyra/
+!/.github/
+!/docs/
+!/examples/
+!/scripts/
+
+/.github/*
+!/.github/workflows/
+/.github/workflows/*
+!/.github/workflows/ci.yml
+/docs/*
+!/docs/screenshots/
+/docs/screenshots/*
+!/docs/screenshots/*.png
+/examples/*
+!/examples/sdk_service.py
+!/examples/demo_tui.py
+!/examples/file_workflow.py
+!/examples/project_analysis.py
+!/examples/personalized_writing.py
+/scripts/*
+!/scripts/verify_source.py
+!/scripts/capture_readme.py
+
+# Only Python source and the terminal stylesheet may enter the runtime tree.
+/weyra/**/*
+!/weyra/**/
+!/weyra/**/*.py
+!/weyra/**/*.tcss
+
+# Optional local evaluation modules.
+/weyra/_benchmark_compat.py
+/weyra/evaluation.py
+/weyra/core_context.py
+/weyra/core_corpus.py
+/weyra/core_evaluation.py
+/weyra/core_scoring.py
+/weyra/final_campaign_report.py
+/weyra/final_delivery_eval.py
+/weyra/final_legacy_eval.py
+/weyra/final_skill_eval.py
+/weyra/finish_context_eval.py
+/weyra/finish_evaluation.py
+
 __pycache__/
 *.py[cod]
+*.egg-info/
 .pytest_cache/
 .ruff_cache/
-*.egg-info/
-build/
-dist/
 .weyra/
 .env
 .env.*
 !.env.example
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.log
 .DS_Store
-.idea/
-
-# Personal model routing and experiment state
-weyra.toml
-
-# Local review application metadata
-.workbuddy/
-
-# Source-only historical experiment outputs
-.benchmarks/results/

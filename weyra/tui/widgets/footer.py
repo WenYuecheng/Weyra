@@ -1,4 +1,9 @@
-"""Footer bar displaying dynamic shortcut badges and status tips."""
+"""终端底部快捷键指引与交互状态提示栏 (TUI Keybinding Footer Bar)。
+
+【架构定位】
+位于 TUI 视口最底部的常驻状态提示栏，采用高对比度色彩徽章展示常用全局快捷键映射（Enter、Shift+Enter、Ctrl+C、F1-F4），
+并支持在执行耗时任务或特殊模式下临时显示自定义操作提示。
+"""
 
 from __future__ import annotations
 
@@ -7,7 +12,11 @@ from textual.widgets import Static
 
 
 class FooterBar(Static):
-    """Bottom persistent shortcut reference bar with colorful key badges."""
+    """常驻底部快捷键徽章与交互指引栏组件 (Footer Shortcut Badge Bar)。
+
+    【架构定位】
+    以胶囊徽章样式渲染全局功能键映射，响应窗口宽度自适应截断，保证终端信息精炼可读。
+    """
 
     def __init__(self, *, no_color: bool = False, **kwargs) -> None:
         """初始化底部快捷键与提示状态栏。"""

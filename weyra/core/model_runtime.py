@@ -41,16 +41,43 @@ if TYPE_CHECKING:
 
 
 class PreparedModelCall:
-    """One request bound to a provider; retries retain the exact binding."""
+    """已绑定物理供应商且具备单步生命周期的模型请求句柄 (Prepared Model Call Handle)。
+
+    【架构定位】
+    作为物理推理请求与其对应的底层 Provider 实例的不可变绑定实体。
+    在重试与流式消费期间始终锁定该特定绑定，防止在同一次调用内发生非预期的提供商漂移。
+    """
 
     def __init__(self, runtime, request, provider):
+        """初始化已绑定的模型调用句柄。
+
+        Args:
+            runtime: 所属的 ModelRuntime 运行时实例。
+            request: 包含模型、提示词与超参数的 PreparedRequest 实例。
+            provider: 已解析并锁定的物理供应商驱动。
+        """
         self.runtime, self.request, self.provider = runtime, request, provider
 
     def stream(self, context, *, attempt_budget=None):
-        return self.runtime.stream(self.request, context, attempt_budget=attempt_budget,
-                                   _bound_provider=self.provider, _step_metadata={
-                                       'step_id': getattr(self, 'step_id', None),
-                                       'request_series_id': getattr(self, 'request_series_id', None)})
+        """流式发起当前已绑定句柄的物理推理调用。
+
+        Args:
+            context: 运行上下文。
+            attempt_budget: 可选的尝试配额字典。
+
+        Returns:
+            AsyncIterator[StreamEvent]: 模型流式事件生成器。
+        """
+        return self.runtime.stream(
+            self.request,
+            context,
+            attempt_budget=attempt_budget,
+            _bound_provider=self.provider,
+            _step_metadata={
+                "step_id": getattr(self, "step_id", None),
+                "request_series_id": getattr(self, "request_series_id", None),
+            },
+        )
 
 
 class ModelRuntime:
@@ -169,7 +196,17 @@ class ModelRuntime:
                 context.session.append("model_change", asdict(model), checkpoint=True)
 
     def prepare_call(self, request):
-        """Bind routing before inference without issuing I/O or reserving budget."""
+        """在实际推理前完成静态路由与超参数绑定，不触发任何网络 I/O 且不预扣预算。
+
+        【架构定位】
+        将逻辑请求与目标供应商物理驱动进行绑定，生成不可变的 PreparedModelCall 对象。
+
+        Args:
+            request: 原始 PreparedRequest 请求。
+
+        Returns:
+            PreparedModelCall: 已完成参数合并与驱动锁定的就绪调用句柄。
+        """
         configured = self.parameters_for(request.purpose, request.model)
         if configured:
             request = PreparedRequest(request.model, request.system, request.messages,
@@ -178,7 +215,25 @@ class ModelRuntime:
         return PreparedModelCall(self, request, self.registry.get(request.model.provider_id))
 
     async def stream(self, request, context, *, attempt_budget=None, _bound_provider=None, _step_metadata=None):
-        """Coordinate transient retries; callers reprepare overflow and failover requests."""
+        """协调瞬态异常重试、预算扣除与流式消费，处理网络与格式自愈重试。
+
+        【执行流程】
+        1. 合并路由默认超参数与请求参数；
+        2. 预算预留：在真实物理连接前原子调用 `context.budget.reserve()`；
+        3. 发起物理流式推理并捕获网络超时、限流与 JSON 参数反序列化异常；
+        4. 结算真实消耗：调用 `context.budget.settle()` 核销实际 Token 与金额；
+        5. 持久化记录：将请求与响应完整写入 SessionStore 事实日志。
+
+        Args:
+            request: 拟发送的模型请求信封。
+            context: 运行时上下文。
+            attempt_budget: 共享的物理重试配额字典。
+            _bound_provider: 可选的显式指定已绑定供应商。
+            _step_metadata: 可选的单步元数据（step_id 等）。
+
+        Returns:
+            AsyncIterator[StreamEvent]: 流式事件迭代器。
+        """
         configured = {} if _bound_provider is not None else self.parameters_for(request.purpose, request.model)
         if configured:
             request = PreparedRequest(
@@ -273,11 +328,9 @@ class ModelRuntime:
 
         price_data = self.pricing.get(f"{request.model.provider_id}/{request.model.model_id}")
         price = Price.from_dict(price_data) if price_data else None
-        # Keep pressure estimates separate from money. Providers can accept more
-        # input than the configured context window (e.g. full-source controls).
-        # A byte-tokenized text request cannot require more text tokens than its
-        # serialized UTF-8 bytes. Include all system/message/tool/provider data,
-        # plus conservative framing allowances, without changing the request.
+        # 上下文压力估算与资金预留解耦（借鉴 DSH 预算核销设计）：
+        # 供应商接收的实际输入可能超过配置窗口；按 UTF-8 字节计算上界，
+        # 并加上保守的结构边距，在不改变请求的前提下进行安全预留。
         source = {"system": request.system,
                   "messages": rendered_messages,
                   "tools": request.tools}

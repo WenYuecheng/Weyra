@@ -162,7 +162,34 @@ class SkillJudge:
                 temporary[0].cleanup()
 
     async def compare_many(self, tasks, old_outputs, candidate_outputs, context=None):
-        """Judge a bounded set with two shared, order-swapped requests."""
+        """批量执行多用例共享成对盲评与次序对换裁判 (Batch Order-Swapped Double-Blind Evaluation)。
+
+        【架构定位】
+        在包含 1~4 个受限测试用例的场景下，通过两次共享上下文的成对评测请求高效完成批量裁判。
+
+        【开源设计思想与架构血统】
+        借鉴 SOTA LLM-as-a-Judge 的批量成对比较策略：
+        1. 两次请求全量对调：第一轮请求 A=old, B=candidate；第二轮请求 A=candidate, B=old；
+        2. 结构化 JSON 强校验：模型必须以 `{cases: {case_id: {scores, winner, evidence}}}` 格式返回各 Case 的四维评判；
+        3. 归一化与一致性聚合：分别针对每个用例调用 `_normalize`，确保每个 Case 的胜者评判均通过一致性校验。
+
+        【核心不变性与安全约束】
+        1. 限制批量用例数为 1 到 4 个，且 case ID 必须全局唯一；
+        2. 严格受限于独立的 `skill_judge` 路由与预算上限；
+        3. 任何一轮解析失败或结论矛盾时，对应 Case 归一化为 `inconsistent` 并弃权。
+
+        Args:
+            tasks: 包含 id, prompt, rubric 等属性的测试任务字典列表（1~4项）。
+            old_outputs: 映射 case_id 至旧版本技能输出结果的字典。
+            candidate_outputs: 映射 case_id 至候选版本技能输出结果的字典。
+            context: 可选的运行上下文（包含预算与项目路径）。
+
+        Returns:
+            dict[str, dict]: 映射 case_id 至归一化裁判结果（含 scores, preferred, evidence）的字典。
+
+        Raises:
+            ValueError: 当任务列表为空、超过 4 个或包含重复 ID 时抛出。
+        """
         ids = [task["id"] for task in tasks]
         if not ids or len(ids) > 4 or len(set(ids)) != len(ids):
             raise ValueError("Batch requires one to four unique case IDs")
@@ -242,7 +269,7 @@ class SkillJudge:
                     "evidence": [], "model_approved": False}
         mapped, ev = [], []
         for index, item in enumerate(judgments):
-            # First request: A=old, B=candidate. Second request swaps those identities.
+            # 第一次请求：A=old, B=candidate；第二次请求交换身份防范位置偏见 (Position Bias)
             mapping = {"A": "old", "B": "candidate"} if index == 0 else {
                 "A": "candidate", "B": "old"}
             mapped_winner = "tie" if item["winner"] == "tie" else mapping[item["winner"]]
@@ -259,7 +286,7 @@ class SkillJudge:
                 criterion_totals[arm] += sum(item["scores"][alias].values())
         scores = {arm: criterion_totals[arm] / 2 for arm in scores}
         preferred = mapped[0] if mapped[0] == mapped[1] else "inconsistent"
-        # Every individual winner must agree with its declared criterion total.
+        # 保证一致性硬约束：各个裁决者的获胜者标记必须与其分项指标总分一致
         for item in judgments:
             total_a, total_b = sum(item["scores"]["A"].values()), sum(item["scores"]["B"].values())
             expected = "tie" if total_a == total_b else "A" if total_a > total_b else "B"
@@ -347,15 +374,53 @@ class ConfiguredSkillGate:
         self.judge = SkillJudge(runtime, budget, session)
 
     def freeze(self, evidence):
+        """基于当前验证清单固化生成确定性的重放视窗测试集 (Freeze Deterministic Replay Window)。
+
+        【架构定位】
+        连接固定测试清单与离线重放视窗，将动态交互证据与清单内的测试用例（含 rubric）原子绑定。
+
+        Args:
+            evidence: 捕获的交互视窗与反馈证据字典。
+
+        Returns:
+            ReplayWindow: 固化后的确定性重放视窗实例。
+        """
         from .skill_replay import freeze_window
         cases = [{"rubric": self.manifest.get("rubric", ""), **case} for case in self.cases]
         return freeze_window(evidence, cases)
 
     async def evaluate(self, old, candidate, window, context=None):
+        """在重放视窗中执行技能基线版本与候选版本的对比评测 (Evaluate Versions in Replay Window)。
+
+        【架构定位】
+        委托底层 `skill_replay_gate.evaluate` 在确定性重放环境中度量新旧技能版本的表现。
+
+        Args:
+            old: 基线技能快照。
+            candidate: 候选技能快照。
+            window: 固化的重放视窗 ReplayWindow。
+            context: 可选的运行时上下文。
+
+        Returns:
+            dict: 评测报告字典。
+        """
         from .skill_replay_gate import evaluate
         return await evaluate(self, old, candidate, window, context)
 
     def saturated(self, old, window):
+        """检查基线技能在当前重放视窗中是否已达成饱和满分 (Check Baseline Saturation)。
+
+        【架构定位】
+        委托 `skill_replay_gate.saturated` 判定基线版本是否已完美解决当前视窗用例。
+        若基线已饱和，则避免无谓的重复演化。
+
+        Args:
+            old: 基线技能快照。
+            window: 固化的重放视窗 ReplayWindow。
+
+        Returns:
+            bool: 若基线技能已达成满分且无缺陷返回 True，否则返回 False。
+        """
         from .skill_replay_gate import saturated
         return saturated(self, old, window)
 
@@ -452,7 +517,7 @@ class ConfiguredSkillGate:
             agent._delegation_task_id = getattr(context, "budget_scope", None)
             agent.skills.skill_dirs = [agent.skills.project_skills]
             agent._refresh_project_rules = lambda: None
-            # Remove every capability outside the declared restricted set.
+            # 沙箱安全硬约束：从临时智能体中移除声明受限白名单之外的所有工具
             agent.tools.specs = {name: spec for name, spec in agent.tools.specs.items()
                                  if name in _ALLOWED_TOOLS}
             try:
@@ -514,9 +579,7 @@ class ConfiguredSkillGate:
                 artifacts_ok = exact_artifacts
             else:
                 artifacts_ok = task_artifacts if constraints.get("expected_semantic_artifacts") else exact_artifacts
-            # Input preservation and a complete run are hard integrity checks. Exact
-            # artifact matching determines task success, so a better candidate can
-            # move a case from fail to pass without adding a hard failure.
+            # 输入保留与完整运行为硬性完整性检查；精确产物匹配决定任务成败，候选版本可将用例从失败提升为通过但不得引发硬性失败
             if case.get("output_mode") == "text":
                 artifacts_ok = artifacts_ok and isinstance(final, str) and bool(final.strip())
             hard_checks.extend([
@@ -563,6 +626,11 @@ class ReviewedCallbackGate:
         self.judge = SkillJudge(runtime, budget, session)
 
     def _bounded_gate(self):
+        """获取或惰性构建有界门禁适配器实例 (Get or Lazily Build Bounded Skill Gate)。
+
+        Returns:
+            ConfiguredSkillGate: 绑定的门禁配置实例。
+        """
         gate = getattr(self, "_bounded", None)
         if gate is None:
             gate = ConfiguredSkillGate.__new__(ConfiguredSkillGate)
@@ -574,15 +642,42 @@ class ReviewedCallbackGate:
         return gate
 
     def freeze(self, evidence):
+        """代理门禁冻结当前评测证据集合 (Freeze Evaluation Evidence)。
+
+        Args:
+            evidence: 待冻结的观测证据元数据。
+
+        Returns:
+            Any: 冻结后的快照状态。
+        """
         return self._bounded_gate().freeze(evidence)
 
     def saturated(self, old, window):
+        """代理判断当前评测窗口是否已达到饱和状态 (Check Evaluation Saturation)。
+
+        Args:
+            old: 基线技能版本。
+            window: 评测统计窗口大小。
+
+        Returns:
+            bool: 是否达到饱和门限。
+        """
         return self._bounded_gate().saturated(old, window)
 
     async def evaluate(self, old, candidate, window, context=None):
+        """代理执行基线与候选技能在有界测试用例上的对抗评估 (Delegate Bounded Evaluation)。
+
+        Args:
+            old: 基线技能快照。
+            candidate: 候选技能快照。
+            window: 评测统计窗口。
+            context: 可选的执行上下文。
+
+        Returns:
+            dict: 包含用例对比指标与裁决结论的评测报告。
+        """
         report = await self._bounded_gate().evaluate(old, candidate, window, context)
-        # Online adapters contribute frozen host fixtures only. Arbitrary legacy
-        # callbacks have no shared-budget contract and remain an offline API.
+        # 线上适配器仅提供冻结的宿主用例；任意遗留回调无共享预算保证，维持离线 API 定位
         report["callback_mode"] = "bounded_validation_cases"
         return report
 
@@ -629,7 +724,26 @@ class ReviewedCallbackGate:
 
 
 def _capture_outputs(root, paths, final):
-    """Retain complete text under fixed byte bounds, or reject the outcome."""
+    """在固定字节预算下安全捕获工作区输出产物文本 (Capture Bounded Output Artifacts)。
+
+    【架构定位】
+    从沙箱工作区抽取待评估的产物文件文本与最终助手文本，作为双盲裁判与硬检查的输入载荷。
+
+    【核心不变性与安全约束】
+    1. 严格防止 DoS 与上下文溢出：单文件大小不得超过 64KiB，全产物文本累计不得超过 128KiB；
+    2. 二进制污染防范：严禁包含空字符 `b"\x00"`，必须为合法的 UTF-8 纯文本；
+    3. 软链接防御：目标文件严禁为符号链接；
+    4. 任何一项超出阈值或校验失败，立即标记 observable=False 并拒绝采纳。
+
+    Args:
+        root: 沙箱根目录路径。
+        paths: 待捕获的相对产物路径集合。
+        final: 助手最终返回的文本回复。
+
+    Returns:
+        tuple[dict[str, str | None], str, bool]:
+            (映射 relative_path 至文本内容的产物字典, 最终回复文本, 是否成功且未超限的可观测布尔标记)。
+    """
     if not isinstance(final, str):
         return {}, "", False
     total = len(final.encode("utf-8"))
@@ -984,7 +1098,24 @@ def _writing_checks_match(root, checks, files):
 
 
 def _json_subset(actual, expected):
-    """Match declared JSON facts while allowing prose-only output fields."""
+    """递归核验实际 JSON 结构是否完整包含声明的预期键值子集 (Recursive JSON Subset Matcher)。
+
+    【架构定位】
+    语义产物（semantic artifacts）硬检查核心算法，验证大模型输出的结构化数据是否包含必需事实，
+    同时宽容允许模型输出未声明的解释性文本或扩展字段。
+
+    【核心不变性与安全约束】
+    1. 字典匹配：expected 中的所有键必须存在于 actual 中，且对应值递归满足 `_json_subset`；
+    2. 列表匹配：长度必须严格相等，且对应位置元素逐一递归满足 `_json_subset`；
+    3. 标量匹配：类型与值必须完全相同（`type(actual) is type(expected) and actual == expected`）。
+
+    Args:
+        actual: 实际生成的反序列化 JSON 数据。
+        expected: 声明要求的预期 JSON 数据契约。
+
+    Returns:
+        bool: 若 actual 完整涵盖 expected 约束则返回 True，否则返回 False。
+    """
     if isinstance(expected, dict):
         return isinstance(actual, dict) and all(
             key in actual and _json_subset(actual[key], value) for key, value in expected.items()

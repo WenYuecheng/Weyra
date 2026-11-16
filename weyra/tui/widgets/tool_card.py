@@ -1,4 +1,19 @@
-"""Collapsible Tool Card with BearCode dispatch badges, diff syntax highlighting, and output truncation."""
+"""可折叠工具调用卡片、Unified Diff 语法高亮与超长输出截断组件 (Collapsible Tool Card)。
+
+【架构定位】
+负责工具调用的状态生命周期呈现（执行中、成功、失败、拒绝等）、入参格式化展示、
+文件修改的统一直方差异高亮 (Unified Diff) 以及超大输出结果的安全截断。
+
+【开源设计思想与架构血统】
+1. 借鉴 BearCode 的终端直观交互：
+   - 工具调用采用专属 Emoji/字符图标与颜色徽章标注状态。
+   - 若工具涉及文件修改（如 `patch` 或 `write_file`），自动在卡片内展开带有 `+` 绿和 `-` 红
+     高亮配色的差异对比，并附带 `+N lines · -M lines` 变更统计摘要。
+2. 借鉴 DeepSeek-Harness 的产物截断与溢出保护机制 (Presenter Output Spilling & Truncation)：
+   - 当工具输出超过 200 行或 20,000 字符时，终端卡片自动截断并展示提示；
+   - 提供“查看完整输出 →”按钮，引导用户通过模态视窗或落地持久化产物文件查看全量细节，
+     避免万行日志把终端界面撑爆。
+"""
 
 from __future__ import annotations
 
@@ -14,7 +29,11 @@ from weyra.presentation import get_tool_icon, get_tool_summary, truncate_preview
 
 
 class ToolCardWidget(Collapsible):
-    """Collapsible tool invocation card matching BearCode UI aesthetic."""
+    """工具调用与结果呈现折叠卡片组件 (Tool Execution & Diff Display Card)。
+
+    【架构定位】
+    封装工具执行生命周期卡片，支持实时状态更新、Diff 着色渲染与超长结果截断。
+    """
 
     def __init__(
         self,
@@ -62,7 +81,7 @@ class ToolCardWidget(Collapsible):
             dur_str = f" {self.duration:.2f}s" if self.duration is not None else ""
             return f"{icon} {self.tool_name}{summary_str} · {badge}{dur_str}"
 
-        # Tokyo Night / BearCode badge styling
+        # 赛博朋克 / BearCode 胶囊徽章样式渲染
         if self.status == "running":
             markup = (
                 f"[bold black on #fbbf24] ⚡ TOOL DISPATCH [/] "
@@ -96,7 +115,22 @@ class ToolCardWidget(Collapsible):
         preview: dict[str, Any] | None = None,
         artifact_path: str | None = None,
     ) -> None:
-        """Update tool card with result, unified diff, and duration."""
+        """更新工具卡片执行结果、耗时、Unified Diff 与截断预览 (Complete Tool Execution & Render Diff)。
+
+        【开源设计思想与架构血统】
+        遵循 DeepSeek-Harness 的卡片展现规范：
+        1. 状态由 running 转移至 success / failed / denied，并更新耗时标签；
+        2. 格式化参数 JSON；
+        3. 解析 Unified Diff 语法行并高亮着色；
+        4. 检查超长输出截断，并在必要时显示独立产物查看按钮。
+
+        Args:
+            status: 工具执行状态码（'success', 'failed', 'denied' 等）。
+            result: 工具执行原始返回结果。
+            duration: 工具执行耗时秒数。
+            preview: 结构化预览字典（可能包含 diff、stats 等元数据）。
+            artifact_path: 大输出持久化产物落盘路径。
+        """
         self.status = status
         self.duration = duration
         self.artifact_path = artifact_path
@@ -112,13 +146,13 @@ class ToolCardWidget(Collapsible):
 
         body_text = Text()
 
-        # 1. Parameters section
+        # 1. 调用入参段 (Parameters & Arguments)
         if self.arguments:
             body_text.append("▶ Parameters (Arguments):\n", style="bold #38bdf8" if not self.no_color else "bold")
             arg_str = json.dumps(self.arguments, ensure_ascii=False, indent=2)
             body_text.append(f"{arg_str}\n\n", style="dim #64748b" if not self.no_color else "dim")
 
-        # 2. Diff section if present
+        # 2. 代码变更直方差异段 (Unified Diff Section)
         diff = preview.get("diff") if isinstance(preview, dict) else None
         if diff:
             diff_lines = diff.splitlines()
@@ -141,7 +175,7 @@ class ToolCardWidget(Collapsible):
                 style="bold #34d399" if not self.no_color else "bold",
             )
 
-        # 3. Output section with truncation
+        # 3. 运行执行输出与超长截断段 (Execution Output & Truncation)
         if result:
             body_text.append("▶ Execution Output:\n", style="bold #00f2fe" if not self.no_color else "bold")
             preview_text, was_truncated, total_l, total_c = truncate_preview(

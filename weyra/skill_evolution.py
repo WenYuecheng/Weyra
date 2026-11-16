@@ -223,7 +223,27 @@ class EvolutionStore:
         return records
 
     def recover(self):
-        """Finalize an already published prepared edit; never publish during recovery."""
+        """从持久化审计轨迹中恢复并核验中断的技能演化准备状态 (Crash Recovery for Prepared Skill Evolutions)。
+
+        【架构定位】
+        负责在系统启动或服务初始化时，扫描所有历史与当前演化根目录，回放未决的演化事件，
+        并针对异常终止残留的 `prepared` 状态提议进行确定性幂等恢复。
+
+        【开源设计思想与架构血统】
+        深度对标受控演化故障恢复规范：
+        1. 恢复期间绝不发布新代码 (Never Publish During Recovery)：
+           若进程中断前新版本未实际落盘，绝不猜测意图隐式覆盖发布，而是将状态标记为 `interrupted` 保护原始现场；
+        2. 会话事件镜像回流：将恢复扫描出的所有历史审计事件同步镜像至底层会话存储（`_mirror_event`）；
+        3. 冲突与篡改防御：核验磁盘文件哈希与审计指纹，若发生非预期外部篡改则置为 `conflict`。
+
+        【核心不变性与安全约束】
+        1. 必须在 `_lock` 线程锁保护下执行；
+        2. 扫描 `legacy_roots` 与当前 `root` 下所有 `provenance.jsonl`；
+        3. 纯自愈操作，遇到单点 I/O 或格式异常记录于 `auxiliary_errors` 而不中断全局恢复。
+
+        Returns:
+            list[dict]: 包含所有已完成恢复处置的终态事件字典列表。
+        """
         with self._lock:
             for root in [*self.legacy_roots, self.root]:
                 if not root.exists():
@@ -929,8 +949,7 @@ class EvolutionStore:
                 "failure_kind": "failure_to_apply",
                 "task_quality": None,
             }
-        # Capture all available bases before awaiting the model. A proposal may select a
-        # catalog entry, but cannot supply the comparison hash used for publication.
+        # 在等待模型返回前捕获所有可用基线快照。提案可指定目录条目，但不得自行伪造用于发布的对比哈希
         catalog = self.skills.capture_catalog() if target_snapshot is None else None
         frozen_window = json.loads(json.dumps(window, ensure_ascii=False))
         frozen_evidence = json.loads(

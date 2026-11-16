@@ -288,13 +288,13 @@ class WeyraAppService:
         self.runtime = None
         self.agent = None
 
-        # Approval coordination
+        # 人工审批异步协调状态字典
         self._pending_approvals: dict[str, dict[str, Any]] = {}
-        # Client idempotency cache for current service lifecycle
+        # 当前服务生命周期内的客户端幂等性缓存 (Client Idempotency Cache)
         self._processed_submissions: dict[str, SubmissionReceipt] = {}
         self._submission_modes: dict[str, str] = {}
         self._submission_texts: dict[str, str] = {}
-        # Active turn execution task
+        # 当前活跃的执行轮次异步任务
         self._active_task: asyncio.Task | None = None
         self._last_outcome: str | None = None
         self._active_tools: dict[str, dict[str, Any]] = {}
@@ -414,7 +414,37 @@ class WeyraAppService:
         return "idle"
 
     def _read_session(self, session_id, *, include_records=True):
-        """Read durable facts without a writer lease, recovery, or agent startup."""
+        """以无写入租约的轻量只读模式提取会话持久化事实 (Read Durable Session Facts Without Writer Lease)。
+
+        【架构定位】
+        负责在不启动智能体内核、不申请独占写入锁、不触发崩溃恢复的前提下，
+        安全提取指定会话的历史记录、最新叶节点指针与水线序号，用于快照生成与历史渲染。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/host/`, `packages/session-query/`) 的无副作用只读查询规范：
+        1. 零锁竞争：通过 SQLite URI `?mode=ro` 建立瞬态只读连接，完全不与正在执行推理的写入进程冲突；
+        2. 严格工程边界沙箱：核验数据库文件与项目路径的从属关系，阻断符号链接逃逸；
+        3. 事件向前兼容校验：读取 `event_metadata` 表中的版本与 `ignorable` 标记，
+           使用 `validate_event` 过滤或标记不可投影的高版本事件，保障弱版本客户端安全解析。
+
+        【核心不变性与安全约束】
+        1. 绝不尝试修改数据库任何字段；
+        2. 校验 `PRAGMA user_version <= SCHEMA_VERSION`，拒绝解析未来的不兼容数据库；
+        3. 若会话不属于当前项目根路径，拒绝访问并抛出 `PermissionError`。
+
+        Args:
+            session_id: 目标会话全局唯一标识符。
+            include_records: 是否装载全量事件记录（若为 False 则仅计算事件序号水线，极大节约 I/O）。
+
+        Returns:
+            tuple[list[dict], str | None, int]:
+                (事件记录字典列表, 当前活跃叶节点 ID, 数据库中已提交的最高序号 seq 水线)。
+
+        Raises:
+            PermissionError: 当会话数据库逃逸项目目录或会话归属于其他项目时抛出。
+            SessionError: 当数据库架构版本不兼容或事件声明非法时抛出。
+            ValueError: 当指定的 session_id 在数据库中不存在时抛出。
+        """
         state_dir = self.project_path / ".weyra"
         path = state_dir / "state.db"
         if not state_dir.resolve().is_relative_to(self.project_path) or path.is_symlink():
@@ -457,6 +487,30 @@ class WeyraAppService:
 
     @staticmethod
     def _session_chain(records, leaf):
+        """沿 DAG 父指针将扁平事件记录线性化重构为因果有序链路 (Linearize DAG Ancestry Path)。
+
+        【架构定位】
+        从全量事件集合中，提取从指定叶节点至根节点的单一因果链条，消除多分支分叉带来的干扰。
+
+        【开源设计思想与架构血统】
+        严格遵循 Pi Agent (`packages/coding-agent`) 树形日志拓扑回溯算法：
+        1. 基于字典快速索引 `by_id`；
+        2. 从 `leaf` 起始依次寻访 `parent` 指针，实时检测未知节点与环路，防御损坏历史破坏重构；
+        3. 最终逆序排列输出按时间与因果升序排列的干净链条。
+
+        【核心不变性与安全约束】
+        纯函数计算，保证无副作用；若父节点缺失或链路成环，抛出 `ValueError`。
+
+        Args:
+            records: 扁平的事件记录列表。
+            leaf: 溯源起点的叶子节点事件 ID。
+
+        Returns:
+            list[dict]: 按因果发生先后升序排列的单链事件记录列表。
+
+        Raises:
+            ValueError: 当链路中断、父节点缺失或出现环路拓扑损坏时抛出。
+        """
         by_id = {item["id"]: item for item in records}
         chain, seen = [], set()
         while leaf is not None:
@@ -637,8 +691,7 @@ class WeyraAppService:
         elif kind == "tool_completed":
             call_id = data.get("call_id") if isinstance(data, dict) else None
             payload = dict(data) if isinstance(data, dict) else {}
-            # Completion notifications are intentionally small in the kernel;
-            # hydrate the display from the already committed authoritative result.
+            # 内核完成通知仅包含最小元数据；从已提交的权威记录中水合完整结果并展示
             if self.agent:
                 record = next((r["data"] for r in reversed(self.agent.session.records)
                                if r["kind"] == "tool_result" and r["data"].get("call_id") == call_id), None)
@@ -662,11 +715,11 @@ class WeyraAppService:
             self._is_compacting = False
             self._emit_event("compaction_end", data if isinstance(data, dict) else {})
         else:
-            # Generic passthrough for custom events
+            # 自定义事件通用直通转发
             payload = data if isinstance(data, dict) else {"value": data}
             self._emit_event(kind, payload)
 
-        # Notify state changed
+        # 广播状态变更通知
         snapshot = await self.get_snapshot()
         self._emit_event("state_changed", snapshot.to_dict())
 
@@ -791,7 +844,7 @@ class WeyraAppService:
         if self._is_compacting and not (self._active_task and not self._active_task.done()):
             raise RuntimeError("busy: wait for manual compaction")
 
-        # 1. Idempotency check
+        # 1. 客户端提交请求幂等性检查 (Idempotency Check)
         if client_request_id in self._processed_submissions:
             if self._submission_texts.get(client_request_id) != text:
                 raise ValueError("request_conflict: same request_id with differing text")
@@ -887,7 +940,7 @@ class WeyraAppService:
             return CommandResult(ok=False, code="not_running", message="No active turn to cancel")
 
         self._is_cancelling = True
-        # Reject pending approvals
+        # 拒绝所有挂起中的未决审批
         for req_id, item in list(self._pending_approvals.items()):
             fut = item["future"]
             if not fut.done():
@@ -1052,7 +1105,33 @@ class WeyraAppService:
         return snapshot
 
     async def mutate_goal(self, operation, *, goal_id, revision, **values):
-        """Apply a host-requested goal mutation with optimistic concurrency."""
+        """应用宿主或 UI 触发的乐观并发目标状态转移操作 (Apply Optimistic Goal Mutation)。
+
+        【架构定位】
+        连接应用服务层与 GoalService 领域目标状态机的事务性操作中枢。
+
+        【开源设计思想与架构血统】
+        借鉴 DeepSeek-Harness (`packages/goal/`) 的乐观并发控制 (OCC / CAS)：
+        1. 基于 `GoalRef(goal_id, revision)` 校验版本基准，杜绝并发修改造成的更新丢失；
+        2. 驱动底层目标状态机执行变迁（如 pause, resume, restart, complete, revise）；
+        3. 变迁成功后派发 `goal_changed` 应用级事件通知所有客户端与 UI 实时刷新。
+
+        【核心不变性与安全约束】
+        1. 必须在 Agent 宿主已初始化时调用；
+        2. 乐观并发版本冲突时由底层 GoalService 抛出 GoalError。
+
+        Args:
+            operation: 目标状态机操作名（如 'pause', 'resume', 'restart', 'complete', 'revise' 等）。
+            goal_id: 目标唯一标识符。
+            revision: 预期基于的目标修订版本号。
+            **values: 传递给操作的附加参数（如修订后的 objective 或 todos 清单）。
+
+        Returns:
+            dict: 包含最新 goal 属性与 armed 状态的字典。
+
+        Raises:
+            GoalError: 当智能体尚未就绪或目标版本冲突时抛出。
+        """
         from .goals import GoalRef, GoalError
         if self.agent is None:
             raise GoalError('goal_not_found')
@@ -1119,7 +1198,7 @@ class WeyraAppService:
             FileNotFoundError: 工件文件不存在或超出合法工作区边界。
         """
         artifacts_dir = self.project_path / ".weyra" / "artifacts"
-        # Sanitize output_id against path traversal
+        # 严格清洗 output_id 防范路径穿越攻击
         clean_name = Path(output_id).name
         target_file = (artifacts_dir / clean_name).resolve()
 
@@ -1156,7 +1235,7 @@ class WeyraAppService:
         Returns:
             tuple: 包含 snapshot, history, subscription 与 live_deltas 的四元组。
         """
-        # These snapshot/history readers contain no suspension: one event-loop boundary.
+        # 历史快照读取无异步挂起点：单次事件循环边界即可完成投影
         snapshot, sub = await self.subscribe(subscriber_id)
         history = await self.get_history(limit=0)
         live = []
@@ -1192,7 +1271,7 @@ class WeyraAppService:
             CommandResult: 关闭操作执行结果信封。
         """
         self.lifecycle = "closing"
-        # Reject pending approvals
+        # 释放前驳回所有挂起中的待决审批
         for req_id, item in list(self._pending_approvals.items()):
             fut = item["future"]
             if not fut.done():

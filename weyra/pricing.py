@@ -221,9 +221,9 @@ class Price:
             and self.cache_write_billing != "included"
         ):
             return None
-        # Reported categories can use their individual ceiling rates. This does
-        # not turn ceiling tariffs into verified invoice prices: actual() on the
-        # original Price still returns None and settlement remains cost_unknown.
+        # 遵循 DSH 真实核销准则 (Fail-Closed Actual Pricing)：
+        # 已上报的各细分项可使用各自独立的上限费率计算。但这并不等于将上限费率自动转为已核实的最终发票价；
+        # 原始 Price 对象的 actual() 仍返回 None，结算状态维持 cost_unknown 直至权威上报。
         categorized = replace(self, cost_basis="exact").actual(usage)
         if categorized is not None:
             return categorized

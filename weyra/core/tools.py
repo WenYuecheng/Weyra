@@ -30,10 +30,26 @@ from weyra.output import preview_output
 from .tool_admission import (ToolSnapshot, ToolRegistration, ResolvedToolSet, freeze)
 
 class ToolBatchExecutionError(RuntimeError):
-    """A failed batch with retained execution outcomes; never implies rollback."""
-    def __init__(self, cause, results):
+    """批量工具执行失败但保留已产生副作用的异常实体 (Retained Tool Batch Execution Error)。
+
+    【架构定位】
+    当批次工具中存在执行失败时抛出，保留失败原因与所有已完成或未决步骤的结果元组。
+    明确声明工具失败不自动意味着磁盘状态已回滚，上层需依据 effect 判定真实状态。
+
+    Attributes:
+        cause: 底层原始异常原因。
+        results: 已执行产生的 ToolResult 元组。
+    """
+
+    def __init__(self, cause: Exception, results: list):
+        """初始化工具结算失败异常。
+
+        Args:
+            cause: 触发结算失败的底层原始异常。
+            results: 已执行并产生的 ToolResult 对象列表。
+        """
         self.cause, self.results = cause, tuple(results)
-        super().__init__('Tool result settlement failed; execution effects may already exist')
+        super().__init__("Tool result settlement failed; execution effects may already exist")
 
 
 class ToolRuntime:
@@ -138,8 +154,21 @@ class ToolRuntime:
             if not name.startswith("mcp__") and (name not in self._registrations or self._registrations[name].when is None)
         )
 
-    async def resolve_tools(self, context):
-        """Resolve all conditions atomically for one captured model and scope."""
+    async def resolve_tools(self, context) -> ResolvedToolSet:
+        """根据当前绑定的模型规格与运行上下文，原子评估所有工具的准入条件。
+
+        【架构定位】
+        单步执行前工具动态准入判定核心入口，支持根据模型能力或作用域进行条件过滤。
+
+        Args:
+            context: 包含模型、上下文与作用域的 ToolActivationContext 实例。
+
+        Returns:
+            ResolvedToolSet: 已完成当前步准入校验的工具集合快照。
+
+        Raises:
+            TypeError: 当工具条件断言未返回布尔值时抛出。
+        """
         admitted = {}
         initial = dict(self._registrations)
         for name in sorted(initial):
@@ -326,11 +355,23 @@ class ToolRuntime:
                 return decision
             answer = self.confirm(spec, args, context)
             approved = bool(await answer if inspect.isawaitable(answer) else answer)
-            # Policy can be revoked while a human approval is pending.
+            # 在等待人工审批过程中权限策略可能被撤销，完成审批后必须二次校验策略有效性
             decision = self._policy(spec, args, context)
             return approved and decision is not False
 
     async def _run(self, call, context, previous=None, prepared=None, tool_set=None):
+        """底层代理调用执行管道运行工具 (Execute Tool via ToolPipeline)。
+
+        Args:
+            call: 工具调用规范实体。
+            context: 执行上下文。
+            previous: 前置已执行结果。
+            prepared: 预校验准备状态。
+            tool_set: 生效的可用工具集字典。
+
+        Returns:
+            ToolResult: 工具执行产物结果对象。
+        """
         return await self.pipeline.run(call, context, previous, prepared, tool_set)
 
     async def _finalize(self, result, context, persist=True):

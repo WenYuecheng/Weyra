@@ -113,9 +113,23 @@ def _offline_runtime(scenario):
 
 
 class _DemoJudge(ScriptedProvider):
-    """Scripted batch judgments over observed demo outputs; no quality claim."""
+    """用于离线演示场景确定性成对判分的脚本化仲裁器 (Scripted Demo Judge)。
+
+    【架构定位】
+    在无需消耗 API Token 的离线 Demo 中，提供符合 SkillJudge 契约的确定性双盲成对评判结果，
+    仅用于功能闭环演示，不作模型能力质量背书。
+    """
 
     async def stream(self, request, context):
+        """流式解析评测请求并返回确定性成对判分结果 (Stream Scripted Judgments)。
+
+        Args:
+            request: 模型请求信封。
+            context: 运行上下文。
+
+        Yields:
+            StreamEvent: 预设的流式裁判事件。
+        """
         cases = json.loads(request.messages[0].content)
         judgments = {}
         for case_id, case in cases.items():
@@ -144,10 +158,33 @@ async def run_demo(
     budget=None,
     owns_runtime=True,
 ):
-    """Return an inspectable report; live execution requires a caller-built runtime.
+    """运行生产级高保真演示场景并输出可核查的分析报告 (Run Reproducible Demo Scenario)。
 
-    ``provider`` is a display label only. Credential loading belongs to the CLI.
-    A supplied project is used as a parent for a fresh isolated fixture folder.
+    【架构定位】
+    提供完全自包含、亚秒级全链路覆盖的离线/在线演示闭环（analysis 分析场景与 writing 写作演化场景）。
+
+    【开源设计思想与架构血统】
+    借鉴 DeepSeek-Harness (`packages/test-support`) 的高保真可复现基准：
+    1. 真实引擎驱动：执行代码 100% 走生产级 Agent 核心主循环、上下文管理器、SQLite 会话存储与权限拦截；
+    2. 场景覆盖：
+       - analysis 场景：覆盖主 Agent 读取文件、fork 派生子智能体、子智能体执行并回流成果的全链路；
+       - writing 场景：覆盖初始规则写入、用户提出例外纠错、SkillOpt 补丁生成与 ConfiguredSkillGate 沙箱门禁裁决；
+    3. 隔离沙箱：在项目 `.weyra/demos/` 目录下生成独立临时工程，执行完毕后输出 `demo-report.json`。
+
+    Args:
+        scenario: 演示场景选择，"analysis" 或 "writing"。
+        provider: 展示标签（仅用于报告展示）。
+        offline: 是否使用离线脚本化运行时（默认为 True，0 成本可复现）。
+        project: 可选的父工作区路径，默认为当前工作目录。
+        runtime: 在线执行时传入的预先构建的 ModelRuntime。
+        budget: 在线执行时传入的共享根预算账本。
+        owns_runtime: 是否在演示结束时关闭传入的 runtime。
+
+    Returns:
+        dict: 包含场景执行统计、模型消耗、工具调用结果与报告路径的详细字典。
+
+    Raises:
+        ValueError: 当参数不匹配或未配置在线运行时/预算时抛出。
     """
     if scenario not in {"analysis", "writing"}:
         raise ValueError("Unknown scenario; choose analysis or writing")
@@ -171,15 +208,14 @@ async def run_demo(
     runtime = _offline_runtime(scenario) if offline else runtime
     demo_gate = None
     if scenario == "writing" and offline:
-        # The fixture is a pre-existing skill. Gated cold-start creation is unsupported.
+        # 测试夹具使用预先存在的技能，门禁模式不支持冷启动无中生有创建技能
         from .skills import SkillStore
         from .skill_evolution import EvolutionStore
         seed = EvolutionStore(SkillStore(fixture))
         seed_proposal = json.loads(runtime.registry.get("maintenance").responses[0].content)
         seed.create(seed_proposal["name"], seed_proposal["body"], description=seed_proposal["description"],
                     permission_mode="acceptEdits")
-        # Replay both the captured user correction and an independent host task.
-        # Each arm loads the real installed skill through the production tool.
+        # 同时重放捕获的用户修正反馈与独立的宿主测试任务；各个分支均通过生产工具加载已安装技能
         for _case in range(2):
             for answer in ("结论：这是一段故事。", "小舟推开门，故事从冲突展开。"):
                 runtime.registry.get("offline").responses.extend([
@@ -230,8 +266,7 @@ async def run_demo(
             await agent.run_once("以后所有写作继续遵守结论先行的长期要求。")
             if agent._background:
                 await asyncio.gather(*list(agent._background))
-            # A maintenance model chooses the skill identity; the demo follows
-            # that published identity rather than assuming its fixture name.
+            # 维护模型自主决定技能唯一标识；演化演示遵循已发布的真实标识而非死板预设夹具名称
             created = [
                 agent.skills.load(name)
                 for name in agent.skills.capture_catalog()

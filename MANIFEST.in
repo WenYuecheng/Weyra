@@ -1,12 +1,15 @@
-include weyra.example.toml .env.example requirements.txt CONTRIBUTING.md
-recursive-include docs *.md *.json
-recursive-include wiki *.md *.json
+include README.md LICENSE THIRD_PARTY_NOTICES.md
+include weyra.example.toml .env.example requirements.txt
+recursive-include weyra *.py *.tcss
 recursive-include examples *.py
-recursive-include data *.json
-recursive-include paper *.md
-
-recursive-include benchmarks *.py *.json *.md
-recursive-include scripts *.py
-include THIRD_PARTY_NOTICES.md
-
-recursive-include tests *.py
+include scripts/verify_source.py scripts/capture_readme.py
+recursive-include docs/screenshots *.png
+prune benchmarks
+prune data
+prune tests
+prune paper
+prune wiki
+prune resume
+prune .benchmarks
+prune .weyra
+global-exclude __pycache__ *.py[cod] *.db *.sqlite *.sqlite3 .DS_Store
