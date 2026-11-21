@@ -65,6 +65,13 @@ def verify(task, image, files, folder, expected_cases=None):
         result = box.execute(list(task.command), timeout=120)
         (folder / "stdout.txt").write_text(result["stdout"])
         (folder / "stderr.txt").write_text(result["stderr"])
+        if result["returncode"] == 124:
+            stats = {"timed_out": True, "failure_stage": "execution"}
+            verdict = "fail" if expected_cases is not None else "environment_error"
+            atomic(folder / "verification.json", {
+                "returncode": 124, "stats": stats, "verdict": verdict,
+            })
+            return verdict, stats
         stats = {}
         if task.language == "javascript":
             r = box.execute(["cat", "/tmp/jest-result.json"])

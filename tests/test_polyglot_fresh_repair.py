@@ -101,3 +101,48 @@ def test_repair_context_and_artifact(tmp_path, monkeypatch, arm):
         assert "stale first turn commentary" not in repair_text
     else:
         assert "stale first turn commentary" in repair_text
+
+
+@pytest.mark.parametrize("stop_reason", ["length", "max_tokens"])
+def test_baseline_executes_complete_tool_calls_at_output_limit(tmp_path, stop_reason):
+    from weyra.coding.agent import CodingAgent
+    from weyra.llm.providers import _validate_pairs
+
+    saved = {}
+
+    class Workspace:
+        def worker(self, operation, args):
+            assert operation == "write_file"
+            saved[args["path"]] = args["content"]
+            return {"content": "File saved"}
+
+    provider = ScriptedProvider([
+        ModelResponse(
+            tool_calls=(ToolCall("save", "write_file", {
+                "path": "answer.py", "content": "answer = 42",
+            }),),
+            stop_reason=stop_reason,
+        ),
+        ModelResponse("Saved."),
+    ])
+    registry = ProviderRegistry()
+    registry.register("offline", provider)
+    runtime = ModelRuntime(registry, {"main": ModelInfo("offline", "fake", 32768, 4096)})
+
+    async def run():
+        agent = CodingAgent(tmp_path, runtime, permission_mode="acceptEdits",
+                            context_policy={"headroom_tokens": 4096, "summary_max_tokens": 2048},
+                            enable_memory=False, enable_evolution=False)
+        try:
+            task = SimpleNamespace(files={"answer.py": "answer = 0"}, editable=("answer.py",))
+            campaign.register_tools(agent, Workspace(), task)
+            await campaign.minimal_turn(agent, runtime, "Save answer = 42.", [], steps=2)
+        finally:
+            await agent.close()
+
+    asyncio.run(run())
+
+    assert saved == {"answer.py": "answer = 42"}
+    assert len(provider.requests) == 2
+    assert provider.requests[1].messages[-1].role == "tool"
+    _validate_pairs(provider.requests[1])

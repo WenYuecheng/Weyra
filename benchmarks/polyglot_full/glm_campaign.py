@@ -355,7 +355,7 @@ async def minimal_turn(agent, runtime, text, history, steps=STEPS_PER_ROUND):
                     provider_data=response.provider_data,
                 )
             )
-            if not response.tool_calls or response.stop_reason in {"length", "max_tokens"}:
+            if not response.tool_calls:
                 return
             results = await agent.tools.execute_batch(response.tool_calls, context)
             history.extend(

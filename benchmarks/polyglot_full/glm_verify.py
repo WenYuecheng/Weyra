@@ -229,6 +229,13 @@ def verify_task(task, image, files, folder, expected=None):
         result = box.execute(["python", "/work/_weyra_verify.py", mode], timeout=120)
         (folder / "stdout.txt").write_text(result["stdout"])
         (folder / "stderr.txt").write_text(result["stderr"])
+        if result["returncode"] == 124:
+            stats = {"timed_out": True, "failure_stage": "execution"}
+            verdict = "fail" if expected is not None else "environment_error"
+            atomic(folder / "verification.json", {
+                "returncode": 124, "stats": stats, "verdict": verdict,
+            })
+            return verdict, stats
         lines = [
             line for line in result["stdout"].splitlines() if line.startswith("WEYRA_VERDICT ")
         ]

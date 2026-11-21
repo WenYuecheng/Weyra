@@ -182,3 +182,40 @@ def test_prepare_cli_freezes_source_and_runs_preflight(tmp_path, monkeypatch):
     assert frozen["images"] == images
     checks = json.loads((tmp_path / "output/full-preflight.json").read_text())
     assert checks["python/example"]["result"]["cases"] == ["case"]
+
+
+@pytest.mark.parametrize("language", ["python", "javascript", "go", "rust", "cpp", "java"])
+@pytest.mark.parametrize("expected, verdict", [(["case"], "fail"), (None, "environment_error")])
+def test_verifier_timeout_is_submission_failure_only_after_preflight(
+    tmp_path, monkeypatch, language, expected, verdict
+):
+    from benchmarks.polyglot_full import glm_verify, runner
+
+    class TimedOutSandbox:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def create(self, files):
+            pass
+
+        def inspect(self):
+            return {}
+
+        def execute(self, argv, timeout=60):
+            return {"returncode": 124, "stdout": "", "stderr": ""}
+
+        def export(self, paths):
+            raise RuntimeError("Container stopped after verifier timeout")
+
+        def close(self):
+            pass
+
+    task = SimpleNamespace(language=language, id=language + "/example", editable=("solution",),
+                           verifier_files={"tests": "immutable"}, command=("test",))
+    for module in (runner, glm_verify):
+        monkeypatch.setattr(module, "Sandbox", TimedOutSandbox)
+        monkeypatch.setattr(module, "isolation", lambda _: {})
+    observed, stats = glm_verify.verify_task(task, "image", {"solution": "loop"},
+                                            tmp_path, expected)
+    assert observed == verdict
+    assert stats["timed_out"] is True
