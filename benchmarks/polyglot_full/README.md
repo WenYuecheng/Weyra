@@ -75,6 +75,30 @@ reference. This repository's report documents the Weyra protocol.
 The source release includes offline test coverage and can inventory all 225
 tasks. A live campaign with this protocol is still pending.
 
+## Bounded whole-file profile
+
+For a smaller campaign budget, `glm_whole` uses the same 225 tasks and graders,
+with one file-writing response per submission and at most two submissions.
+Both arms receive only `write_file`, use `high` reasoning, an 8,192-token output
+limit, at most two physical requests and 65,536 accounted tokens per task-arm.
+All editable file contents are included in the prompt. Weyra retains the review
+instruction and repair-context reset. The single-step Weyra loop reaches its
+step limit after saving; the independent verifier grades the saved artifact.
+
+Use a separate output directory so outcomes from different profiles stay separate:
+
+```sh
+python -m benchmarks.polyglot_full.glm_whole prepare --upstream .benchmarks/polyglot-upstream \
+  --output .benchmarks/results/whole-glm
+python -m benchmarks.polyglot_full.glm_whole run --upstream .benchmarks/polyglot-upstream \
+  --output .benchmarks/results/whole-glm --token-cap "$POLYGLOT_TOKEN_CAP"
+python -m benchmarks.polyglot_full.glm_whole report --upstream .benchmarks/polyglot-upstream \
+  --output .benchmarks/results/whole-glm
+```
+
+The whole-file and multi-tool profiles must be reported independently. Neither
+is the external Aider protocol, which uses different editing and feedback.
+
 - [Aider Polyglot dataset](https://github.com/Aider-AI/polyglot-benchmark/tree/7e0611e77b54e2dea774cdc0aa00cf9f7ed6144f)
 - [GLM-5.3-Flash configuration](https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash)
 - [Published GLM-5.3-Flash reference results](https://github.com/local-inference-lab/rtx6kpro/blob/master/models/glm-5.3-flash/aider-polyglot-release-10152026.md)

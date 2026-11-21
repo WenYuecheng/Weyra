@@ -146,3 +146,60 @@ def test_baseline_executes_complete_tool_calls_at_output_limit(tmp_path, stop_re
     assert len(provider.requests) == 2
     assert provider.requests[1].messages[-1].role == "tool"
     _validate_pairs(provider.requests[1])
+
+
+@pytest.mark.parametrize("arm", ["A", "R"])
+def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatch, arm):
+    from benchmarks.polyglot_full import glm_full, glm_whole
+
+    with monkeypatch.context() as patch:
+        for target, names in ((glm_full, ("PROFILE", "TASK_TOKENS", "TASK_CALLS", "WEYRA_SKILL")),
+                              (campaign, ("SYSTEM", "TOOL_NAMES"))):
+            for name in names:
+                patch.setattr(target, name, getattr(target, name))
+        glm_whole.configure()
+        responses = [
+            ModelResponse(tool_calls=(ToolCall(str(i), "write_file", {
+                "path": "answer.py", "content": f"answer = {i}",
+            }),)) for i in (1, 2)
+        ]
+        provider = ScriptedProvider(responses)
+        provider.budget_denial = None
+        registry = ProviderRegistry()
+        registry.register("offline", provider)
+        runtime = ModelRuntime(registry, {"main": ModelInfo("offline", "fake", 32768, 8192)})
+        saved = {"answer.py": b"answer = 0"}
+
+        class Workspace:
+            def create(self, files):
+                pass
+            def inspect(self):
+                return {}
+            def worker(self, operation, args):
+                if operation == "write_file":
+                    saved[args["path"]] = args["content"].encode()
+                return {"content": "saved"}
+            def export(self, paths):
+                return dict(saved)
+            def close(self):
+                pass
+
+        def verify(task, image, files, folder, expected):
+            return ("pass" if files["answer.py"] == b"answer = 2" else "fail"), {"case_ids": expected}
+
+        patch.setattr(campaign, "Sandbox", lambda _: Workspace())
+        patch.setattr(campaign, "isolation", lambda _: {})
+        patch.setattr(campaign, "runtime_for", lambda *args: (runtime, provider))
+        patch.setattr(campaign, "verify_task", verify)
+        patch.setattr(campaign, "feedback", lambda *args: "Tests failed.")
+        task = SimpleNamespace(instruction="Set answer to 2.", editable=("answer.py",),
+                               files={"answer.py": "answer = 0"})
+        with campaign.Ledger(tmp_path / "usage.db", 65536) as ledger:
+            result = asyncio.run(campaign.solve(task, arm, campaign.BASE_SKILL, ["case"],
+                                "image", tmp_path / "attempt", ledger, None, arm,
+                                settings=glm_full.PROFILE))
+        assert result["status"] == "pass"
+        assert [r["verdict"] for r in result["rounds"]] == ["fail", "pass"]
+        assert len(provider.requests) == 2
+        assert all(len(r.tools) == 1 and r.tools[0]["name"] == "write_file"
+                   for r in provider.requests)
