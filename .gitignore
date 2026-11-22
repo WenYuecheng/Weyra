@@ -32,6 +32,7 @@
 !/benchmarks/polyglot_full/glm_review.py
 !/benchmarks/polyglot_full/baseline_reuse.py
 !/benchmarks/polyglot_full/glm_verify.py
+!/benchmarks/polyglot_full/rust_contracts.py
 !/benchmarks/polyglot_full/runner.py
 !/benchmarks/polyglot_full/sandbox.py
 !/benchmarks/polyglot_full/worker.py
@@ -40,6 +41,7 @@
 !/benchmarks/polyglot_full/README.md
 /tests/*
 !/tests/test_polyglot_full.py
+!/tests/test_polyglot_rust_contracts.py
 !/tests/test_polyglot_fresh_repair.py
 !/tests/test_polyglot_baseline_reuse.py
 

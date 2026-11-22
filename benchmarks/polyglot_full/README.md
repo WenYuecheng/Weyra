@@ -60,6 +60,17 @@ before the first paid request. If a grader fails preflight, the command reports
 the affected task IDs in `full-preflight-blocked.json`. After resolving the
 error, rerun `prepare` with the same source and images to retry those tasks.
 
+For `rust/react` and `rust/doubly-linked-list`, private grader fixtures preserve
+the original source doctests. The verifier runs the functional tests, checks
+that a positive control compiles against the submission library, then runs
+the original examples against that same library. Doctest IDs use the original
+file path and fence order. Verification requires every protected case to run.
+Rust grading selects all official Cargo integration targets. In the pinned
+corpus these contain all original functional tests. This selection excludes
+library unit tests added by solutions, including the reference self-tests in
+`rust/decimal` and `rust/fizzy`. Rust grader policy and doctest fixtures are
+hashed with the task, so Rust tasks require fresh preflight results.
+
 ## Read the report
 
 The full denominator is 225, including missing pairs. Both arms receive a

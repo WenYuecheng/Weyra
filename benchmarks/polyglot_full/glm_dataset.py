@@ -7,6 +7,7 @@ import re
 import tomllib
 
 from .dataset import Task, discover
+from .rust_contracts import TEST_TARGETS, protected_fixtures
 from .sandbox import safe_path
 
 LANGUAGES = ("python", "javascript", "go", "rust", "cpp", "java")
@@ -156,4 +157,9 @@ def discover_all(root, *, full_coverage=False):
                     .replace("thread_rng().choose(NUMBERS)", "NUMBERS.choose(&mut thread_rng())")
                     for path, text in solutions.items()
                 }
+            if language == "rust":
+                fixtures.update(protected_fixtures(task_id, fixtures))
+                # The pinned Rust exercises provide official functional tests as
+                # integration targets. Library unit tests may belong to submissions.
+                fixtures[TEST_TARGETS] = json.dumps(["--test", "*"]) + "\n"
             yield Task(task_id, language, files, fixtures, solutions, editable, (), instruction)

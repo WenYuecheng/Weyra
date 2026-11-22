@@ -6,6 +6,8 @@ import re
 import xml.etree.ElementTree as ET
 
 from .runner import atomic, isolation, verify
+from .rust_contracts import MANIFEST as RUST_CONTRACT_MANIFEST
+from .rust_contracts import TEST_TARGETS as RUST_TEST_TARGETS
 from .sandbox import Sandbox
 
 VERIFIER_VERSION = 4
@@ -32,9 +34,22 @@ import subprocess
 import sys
 import xml.etree.ElementTree as ET
 
-def run(*argv):
+def run(*argv, cargo_artifacts=None):
     result = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    print(result.stdout, end="")
+    if cargo_artifacts is None:
+        print(result.stdout, end="")
+    else:
+        for line in result.stdout.splitlines():
+            try:
+                event = json.loads(line) if line.startswith("{") else {}
+            except json.JSONDecodeError:
+                event = {}
+            if event.get("reason") == "compiler-artifact":
+                cargo_artifacts.append(event)
+            elif event.get("reason") == "compiler-message":
+                print(event["message"].get("rendered") or event["message"]["message"])
+            elif not event.get("reason"):
+                print(line)
     return result.returncode, result.stdout
 
 def xml_cases(paths):
@@ -46,6 +61,57 @@ def xml_cases(paths):
             if any(test.find(tag) is not None for tag in ("failure", "error", "skipped")):
                 failures.append(name)
     return tests, failures
+
+
+def rust_contract_checks(bundle, artifacts):
+    manifest = json.loads((bundle / "manifest.json").read_text())
+    crate = manifest["crate"]
+    case_map = manifest["cases"]
+    manifest_path = str(Path("Cargo.toml").resolve())
+    rlibs = {
+        filename
+        for event in artifacts
+        if event["manifest_path"] == manifest_path
+        and event["target"]["name"] == crate
+        and "lib" in event["target"]["kind"]
+        and not event["profile"]["test"]
+        for filename in event["filenames"]
+        if filename.endswith(".rlib") and Path(filename).is_file()
+    }
+    if len(rlibs) != 1:
+        print(f"Expected one Cargo library artifact for {crate}, found {len(rlibs)}")
+        return 1, [], [], "execution"
+    extern_args = (
+        f"--edition={manifest['edition']}",
+        "--extern", f"{crate}={next(iter(rlibs))}",
+        "-L", "dependency=target/debug/deps",
+    )
+    control, _ = run(
+        "rustc", str(bundle / "positive.rs"), *extern_args, "--emit=metadata",
+        "-o", "/tmp/weyra-rust-positive.rmeta",
+    )
+    if control:
+        return control, [], [], "compilation"
+
+    harness = str(bundle / "harness.rs")
+    code, output = run("rustdoc", "--test", harness, *extern_args, "--test-args=--test-threads=1")
+    rows = re.findall(
+        rf"(?m)^test {re.escape(harness)} - (\w+) \(line \d+\)"
+        r"(?: - [^\n]+?)? \.\.\. (ok|FAILED|ignored)(?:, [^\n]+)?$", output,
+    )
+    seen = [name for name, _ in rows]
+    tests = [case_map[name] for name in seen if name in case_map]
+    failures = [case_map[name] for name, status in rows if name in case_map and status != "ok"]
+    summaries = re.findall(
+        r"(?m)^test result: (?:ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored; "
+        r"0 measured; 0 filtered out;", output,
+    )
+    counts = tuple(str(sum(actual == status for _, actual in rows))
+                   for status in ("ok", "FAILED", "ignored"))
+    if sorted(seen) != sorted(case_map) or summaries != [counts] or counts[2] != "0":
+        print("Protected doctest execution did not match the manifest and unfiltered result summary.")
+        return code or 1, tests, failures, "execution"
+    return code, tests, failures, "tests"
 
 language = sys.argv[1]
 tests, failures, stage = [], [], "tests"
@@ -91,12 +157,30 @@ elif language == "rust":
     seed = Path("/opt/rust/dependencies.lock")
     if seed.exists() and not Path("Cargo.lock").exists():
         shutil.copyfile(seed, "Cargo.lock")
-    code, output = run("cargo", "test", "--offline", "--all-features", "--", "--test-threads=1")
+    bundle = Path("_weyra_rust_contracts")
+    has_contracts = (bundle / "manifest.json").is_file()
+    artifacts = []
+    targets_file = Path("_weyra_rust_test_targets.json")
+    targets = json.loads(targets_file.read_text()) if targets_file.is_file() else []
+    cargo_args = ("cargo", "test", "--offline", "--all-features", *targets)
+    if has_contracts:
+        code, output = run(*cargo_args, "--message-format=json", "--",
+                           "--test-threads=1", cargo_artifacts=artifacts)
+    else:
+        code, output = run(*cargo_args, "--", "--test-threads=1")
     tests = re.findall(r"(?m)^test (.+?) \.\.\. (?:ok|FAILED|ignored)", output)
     failures = re.findall(r"(?m)^test (.+?) \.\.\. (?:FAILED|ignored)", output)
     failed = bool(failures)
     if re.search(r"(?m)^error(?:\[E\d{4}\]:|: could not compile)", output):
         stage = "compilation"
+    if has_contracts and stage != "compilation":
+        doc_code, doc_tests, doc_failures, doc_stage = rust_contract_checks(bundle, artifacts)
+        tests.extend(doc_tests)
+        failures.extend(doc_failures)
+        failed = bool(failures)
+        code = code or doc_code
+        if doc_code or doc_failures:
+            stage = doc_stage
 elif language == "cpp":
     source = sorted(str(p) for p in Path(".").glob("*.cpp"))
     source.extend(str(p) for p in Path("test").glob("*.cpp"))
@@ -231,6 +315,11 @@ def verify_task(task, image, files, folder, expected=None):
                 atomic(record, stored)
         return outcome, stats
 
+    has_private_rust_fixtures = (
+        {RUST_CONTRACT_MANIFEST, RUST_TEST_TARGETS} & task.verifier_files.keys()
+    )
+    if has_private_rust_fixtures and not files.keys() <= set(task.editable):
+        raise ValueError("Rust submissions may only replace designated implementation files")
     folder = Path(folder)
     box = Sandbox(image, compile_tests=task.language in {"cpp", "go", "rust"})
     protected = dict(task.verifier_files)
