@@ -124,6 +124,29 @@ request remains metered, and active pairs retain conservative budget headroom.
 
 - [Aider test feedback implementation](https://github.com/Aider-AI/aider/blob/main/benchmark/benchmark.py#L820-L844)
 
+## Contract-review candidate
+
+`glm_review` uses the public-feedback profile's model settings and limits. The
+first request uses the shared base skill. Weyra's repair request retains the
+original editable starter alongside the saved implementation and diagnostics,
+then audits every reported failure and affected invariant before writing the
+complete fix. The original starter provides interfaces; reference solutions
+and test source remain outside the agent workspace.
+
+Use a new output directory and run `prepare`, `run`, and `report` with
+`benchmarks.polyglot_full.glm_review`. An optional `run --reuse-baseline PATH`
+reuses all 225 A outcomes from a completed comparison with identical baseline
+conditions. It checks the dataset, image/case IDs, model settings, system/skill,
+and per-task limits, then freezes hashes of the source protocol, report and all
+A evidence. Changed or incomplete evidence is rejected. Candidate R outcomes
+always start fresh on all 225 tasks. The new ledger charges new requests only;
+the protocol separately records the reused A token volume.
+
+Shared-baseline candidate comparisons must be labelled as such. Developing the
+candidate after reading earlier failures is exploratory optimization on the
+same benchmark, rather than an independent held-out evaluation. Compare whole
+candidate profiles and retain their results separately.
+
 - [Aider Polyglot dataset](https://github.com/Aider-AI/polyglot-benchmark/tree/7e0611e77b54e2dea774cdc0aa00cf9f7ed6144f)
 - [GLM-5.3-Flash configuration](https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash)
 - [Published GLM-5.3-Flash reference results](https://github.com/local-inference-lab/rtx6kpro/blob/master/models/glm-5.3-flash/aider-polyglot-release-10152026.md)

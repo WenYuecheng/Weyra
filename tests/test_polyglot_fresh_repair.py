@@ -16,6 +16,25 @@ from weyra.core.model_runtime import ModelRuntime
 from weyra.llm.providers import ProviderRegistry, ScriptedProvider
 
 
+def test_contract_repair_keeps_original_interface_and_all_failure_review():
+    task = SimpleNamespace(
+        instruction="Implement the public interface.", editable=("answer.py",),
+        files={"answer.py": "def required_interface(value):\n    pass\n"},
+        solutions={"answer.py": "PRIVATE_REFERENCE"},
+        verifier_files={"secret_test.py": "PRIVATE_TEST"},
+    )
+    prompt = campaign.fresh_repair_prompt(
+        task, {"answer.py": b"def renamed(value): return 1"}, "Expected: 2, received: 1",
+        include_contract=True, review="Audit all reported failures and affected invariants.",
+    )
+    assert "required_interface" in prompt
+    assert "def renamed" in prompt
+    assert "Expected: 2, received: 1" in prompt
+    assert "Audit all reported failures" in prompt
+    assert "PRIVATE_REFERENCE" not in prompt
+    assert "PRIVATE_TEST" not in prompt
+
+
 @pytest.mark.parametrize("arm", ["B", "R"])
 def test_repair_context_and_artifact(tmp_path, monkeypatch, arm):
     class Workspace:
@@ -150,7 +169,8 @@ def test_baseline_executes_complete_tool_calls_at_output_limit(tmp_path, stop_re
 
 @pytest.mark.parametrize("arm", ["A", "R"])
 @pytest.mark.parametrize("feedback_mode", ["labels", "test_output"])
-def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatch, arm, feedback_mode):
+@pytest.mark.parametrize("repair_context", ["fresh", "contract", "history"])
+def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatch, arm, feedback_mode, repair_context):
     from dataclasses import replace
     from benchmarks.polyglot_full import glm_full, glm_whole
 
@@ -160,7 +180,8 @@ def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatc
             for name in names:
                 patch.setattr(target, name, getattr(target, name))
         glm_whole.configure()
-        glm_full.PROFILE = replace(glm_full.PROFILE, feedback_mode=feedback_mode)
+        glm_full.PROFILE = replace(glm_full.PROFILE, feedback_mode=feedback_mode,
+                                  repair_context=repair_context, repair_review="Audit every failure.")
         responses = [
             ModelResponse(tool_calls=(ToolCall(str(i), "write_file", {
                 "path": "answer.py", "content": f"answer = {i}",
@@ -209,3 +230,8 @@ def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatc
                    for r in provider.requests)
         expected_feedback = "Expected: 2, received: 1" if feedback_mode == "test_output" else "Tests failed."
         assert expected_feedback in " ".join(m.content for m in provider.requests[1].messages)
+        repair_text = " ".join(m.content for m in provider.requests[1].messages)
+        assert ("Audit every failure." in repair_text) is (arm == "R")
+        if arm == "R" and repair_context == "contract":
+            assert "Original editable starter" in repair_text
+            assert "answer = 0" in repair_text

@@ -29,6 +29,8 @@
 !/benchmarks/polyglot_full/glm_full.py
 !/benchmarks/polyglot_full/glm_whole.py
 !/benchmarks/polyglot_full/glm_public.py
+!/benchmarks/polyglot_full/glm_review.py
+!/benchmarks/polyglot_full/baseline_reuse.py
 !/benchmarks/polyglot_full/glm_verify.py
 !/benchmarks/polyglot_full/runner.py
 !/benchmarks/polyglot_full/sandbox.py
@@ -39,6 +41,7 @@
 /tests/*
 !/tests/test_polyglot_full.py
 !/tests/test_polyglot_fresh_repair.py
+!/tests/test_polyglot_baseline_reuse.py
 
 /.github/*
 !/.github/workflows/

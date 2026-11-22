@@ -14,6 +14,7 @@ import random
 from openai import AsyncOpenAI
 
 from . import glm_campaign as campaign
+from . import baseline_reuse
 from .glm_dataset import LANGUAGES, UPSTREAM, discover_all
 from .sandbox import command
 
@@ -296,6 +297,7 @@ def main():
     parser.add_argument("--output", type=Path)
     parser.add_argument("--token-cap", type=int)
     parser.add_argument("--parallel", type=int, choices=range(1, 5), default=2)
+    parser.add_argument("--reuse-baseline", type=Path)
     args = parser.parse_args()
     tasks = dataset_at(args.upstream)
     if args.action == "inventory":
@@ -340,24 +342,28 @@ def main():
             if args.token_cap is None or args.token_cap < TASK_TOKENS * len(ARMS):
                 parser.error("--token-cap must cover at least one complete pair")
             order = schedule(tasks)
-            campaign.freeze(
-                run_path,
-                {
-                    **source,
-                    "model": campaign.MODEL,
-                    "endpoint": campaign.ENDPOINT,
-                    "profile": asdict(PROFILE),
-                    "checks": checks,
-                    "order": order,
-                    "task_tokens": TASK_TOKENS,
-                    "task_calls": TASK_CALLS,
-                    "rounds": ROUNDS,
-                    "token_cap": args.token_cap,
-                    "baseline_skill": campaign.BASE_SKILL,
-                    "weyra_skill": WEYRA_SKILL,
-                    "system": campaign.SYSTEM,
-                },
-            )
+            protocol = {
+                **source,
+                "model": campaign.MODEL,
+                "endpoint": campaign.ENDPOINT,
+                "profile": asdict(PROFILE),
+                "checks": checks,
+                "order": order,
+                "task_tokens": TASK_TOKENS,
+                "task_calls": TASK_CALLS,
+                "rounds": ROUNDS,
+                "token_cap": args.token_cap,
+                "baseline_skill": campaign.BASE_SKILL,
+                "weyra_skill": WEYRA_SKILL,
+                "system": campaign.SYSTEM,
+            }
+            if args.reuse_baseline is not None:
+                protocol["baseline_reuse"] = baseline_reuse.snapshot(
+                    args.reuse_baseline, protocol, tasks,
+                )
+            campaign.freeze(run_path, protocol)
+            if args.reuse_baseline is not None:
+                baseline_reuse.restore(args.reuse_baseline, args.output, protocol["baseline_reuse"])
             asyncio.run(run(args.output, tasks, checks, order, args.token_cap, args.parallel))
 
 
