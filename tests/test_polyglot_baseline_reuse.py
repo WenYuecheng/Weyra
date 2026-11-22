@@ -17,6 +17,9 @@ def baseline(tmp_path):
     expected = {
         "dataset": "dataset", "model": "model", "endpoint": "https://model.example/",
         "images": {"python": "image"},
+        "source": "source-digest",
+        "tool_names": ["read_file", "write_file"],
+        "tasks": {key: {"id": key, "verifier_sha256": {"test.py": "fixture-digest"}} for key in tasks},
         "checks": {key: {"image": "image", "cases": ["test"]} for key in tasks},
         "task_tokens": 65536, "task_calls": 2, "rounds": 2,
         "baseline_skill": "base", "system": "system",
@@ -63,12 +66,18 @@ def test_reuse_is_explicit_and_keeps_original_outcomes(baseline, tmp_path):
     assert not (output / "formal" / tasks[0] / "R").exists()
 
 
-@pytest.mark.parametrize("field", ["profile", "checks", "system", "task_calls"])
+@pytest.mark.parametrize(
+    "field", ["profile", "checks", "system", "task_calls", "source", "tool_names", "tasks"]
+)
 def test_reuse_rejects_changed_baseline_conditions(baseline, field):
     source, expected, tasks = baseline
     wrong = copy.deepcopy(expected)
     if field == "profile":
         wrong[field]["output_tokens"] = 16384
+    elif field == "tool_names":
+        wrong[field].reverse()
+    elif field == "tasks":
+        wrong[field][tasks[0]]["verifier_sha256"]["test.py"] = "changed-digest"
     else:
         wrong[field] = "different"
     with pytest.raises(ValueError, match="Baseline conditions"):
@@ -118,4 +127,19 @@ def test_reuse_rejects_linked_protocol_and_missing_implementation(baseline, tmp_
     implementation = source / "formal" / tasks[0] / "A/attempt-1/1/implementation/answer.py"
     implementation.unlink()
     with pytest.raises(ValueError, match="implementation"):
+        baseline_reuse.snapshot(source, expected, tasks)
+
+
+@pytest.mark.parametrize("field", ["source", "tool_names", "tasks"])
+@pytest.mark.parametrize("missing", ["previous", "expected", "both"])
+def test_reuse_requires_fingerprint_keys(baseline, field, missing):
+    source, expected, tasks = baseline
+    protocol = source / "full-protocol.json"
+    if missing in {"previous", "both"}:
+        previous = json.loads(protocol.read_text())
+        del previous[field]
+        protocol.write_text(json.dumps(previous))
+    if missing in {"expected", "both"}:
+        del expected[field]
+    with pytest.raises(ValueError, match="Baseline conditions"):
         baseline_reuse.snapshot(source, expected, tasks)

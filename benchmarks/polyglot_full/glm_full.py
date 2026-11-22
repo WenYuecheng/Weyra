@@ -356,6 +356,8 @@ def main():
                 "baseline_skill": campaign.BASE_SKILL,
                 "weyra_skill": WEYRA_SKILL,
                 "system": campaign.SYSTEM,
+                "tool_names": list(campaign.TOOL_NAMES),
+                "tasks": {task_id: task.metadata() for task_id, task in tasks.items()},
             }
             if args.reuse_baseline is not None:
                 protocol["baseline_reuse"] = baseline_reuse.snapshot(

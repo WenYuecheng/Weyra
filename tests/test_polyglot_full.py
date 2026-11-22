@@ -305,3 +305,37 @@ def test_pool_never_starts_a_pair_without_its_budget():
         [("task", ["A", "R"])], group, ledger, 1, 4, asyncio.Event(), lambda: None
     ))
     assert result == "campaign_budget"
+
+
+def test_run_cli_freezes_source_tools_and_full_task_metadata(tmp_path, monkeypatch):
+    from benchmarks.polyglot_full.dataset import Task
+
+    task = Task(
+        "python/example", "python", {"answer.py": "starter"}, {"tests.py": "test"},
+        {"answer.py": "reference"}, ("answer.py",), ("pytest",), "Implement the answer.",
+    )
+    tasks = {task.id: task}
+    images = dict.fromkeys(glm_full.LANGUAGES, "image")
+    output = tmp_path / "output"
+    argv = ["glm_full", "prepare", "--upstream", str(tmp_path), "--output", str(output)]
+    monkeypatch.setattr(sys, "argv", argv)
+    monkeypatch.setattr(glm_full, "dataset_at", lambda _: tasks)
+    monkeypatch.setattr(glm_full.campaign, "image_ids", lambda _: images)
+    monkeypatch.setattr(glm_full.campaign, "preflight_one",
+                        lambda *args: {"status": "eligible", "cases": ["case"]})
+
+    async def no_model_run(*args):
+        pass
+
+    monkeypatch.setattr(glm_full, "run", no_model_run)
+    glm_full.main()
+
+    argv[1] = "run"
+    argv.extend(["--token-cap", str(glm_full.TASK_TOKENS * len(glm_full.ARMS))])
+    glm_full.main()
+    glm_full.main()
+
+    frozen = json.loads((output / "full-protocol.json").read_text())
+    assert frozen["source"] == glm_full.campaign.source_hash()
+    assert frozen["tool_names"] == list(glm_full.campaign.TOOL_NAMES)
+    assert frozen["tasks"] == {task.id: task.metadata()}

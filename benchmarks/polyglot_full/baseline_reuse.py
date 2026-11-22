@@ -7,7 +7,7 @@ import shutil
 
 CONDITIONS = (
     "dataset", "model", "endpoint", "images", "checks", "task_tokens", "task_calls",
-    "rounds", "baseline_skill", "system",
+    "rounds", "baseline_skill", "system", "source", "tool_names", "tasks",
 )
 TREATMENT_ONLY = {"repair_context", "repair_review"}
 
@@ -84,8 +84,9 @@ def snapshot(source, expected, tasks):
     report = json.loads(report_path.read_text())
     if len(tasks) != 225 or report.get("campaign_status") != "completed" or not report.get("coverage_complete"):
         raise ValueError("Baseline reuse requires a completed 225-task campaign")
-    if any(previous.get(key) != expected.get(key) for key in CONDITIONS):
-        raise ValueError("Baseline conditions differ")
+    for key in CONDITIONS:
+        if key not in previous or key not in expected or previous[key] != expected[key]:
+            raise ValueError(f"Baseline conditions differ for {key}")
     profiles = [
         {key: value for key, value in item["profile"].items() if key not in TREATMENT_ONLY}
         for item in (previous, expected)
