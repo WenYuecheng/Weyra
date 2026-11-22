@@ -54,8 +54,9 @@ def _validate_artifacts(folder, result_path, result, cases):
     if not all((attempt / name).is_file() for name in ("history.json", "trajectory.jsonl")):
         raise ValueError("Baseline trajectory evidence is missing")
     rounds = result.get("rounds", [])
-    if result["status"] == "pass" and (not rounds or rounds[-1]["verdict"] != "pass"):
-        raise ValueError("Baseline passing result lacks verification")
+    status = result["status"]
+    if status in {"pass", "fail"} and (not rounds or rounds[-1].get("verdict") != status):
+        raise ValueError(f"Baseline {status} result lacks matching final verification")
     for row in rounds:
         if type(row.get("round")) is not int or row["round"] < 1:
             raise ValueError("Baseline verification round is invalid")
@@ -80,8 +81,10 @@ def snapshot(source, expected, tasks):
     """Validate complete shared A conditions and hash all original A evidence."""
     source = Path(source).resolve()
     protocol_path, report_path = _documents(source)
-    previous = json.loads(protocol_path.read_text())
-    report = json.loads(report_path.read_text())
+    protocol_bytes = protocol_path.read_bytes()
+    report_bytes = report_path.read_bytes()
+    previous = json.loads(protocol_bytes)
+    report = json.loads(report_bytes)
     if len(tasks) != 225 or report.get("campaign_status") != "completed" or not report.get("coverage_complete"):
         raise ValueError("Baseline reuse requires a completed 225-task campaign")
     for key in CONDITIONS:
@@ -115,8 +118,10 @@ def snapshot(source, expected, tasks):
         outcomes[task_id] = {"files": files}
         tokens += result.get("accounted_tokens", 0)
     return {
-        "source": str(source), "protocol_sha256": _hash(protocol_path),
-        "report_sha256": _hash(report_path), "reused_arms": ["A"],
+        "source": str(source),
+        "protocol_sha256": hashlib.sha256(protocol_bytes).hexdigest(),
+        "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+        "reused_arms": ["A"],
         "accounted_tokens_from_original_campaign": tokens, "outcomes": outcomes,
     }
 

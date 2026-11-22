@@ -339,3 +339,38 @@ def test_run_cli_freezes_source_tools_and_full_task_metadata(tmp_path, monkeypat
     assert frozen["source"] == glm_full.campaign.source_hash()
     assert frozen["tool_names"] == list(glm_full.campaign.TOOL_NAMES)
     assert frozen["tasks"] == {task.id: task.metadata()}
+
+
+@pytest.mark.parametrize("reuse_enabled", [True, False])
+def test_report_cli_identifies_frozen_baseline_reuse(tmp_path, monkeypatch, capsys, reuse_enabled):
+    tasks = {"python/example": SimpleNamespace(language="python")}
+    compact = {
+        "source": str(tmp_path / "older-baseline"),
+        "protocol_sha256": "protocol-digest",
+        "report_sha256": "report-digest",
+        "accounted_tokens_from_original_campaign": 1234,
+        "reused_arms": ["A"],
+        "reused_task_count": 1,
+    }
+    protocol = {}
+    if reuse_enabled:
+        protocol["baseline_reuse"] = {
+            **{key: value for key, value in compact.items() if key != "reused_task_count"},
+            "outcomes": {"python/example": {"files": {"attempt-1/result.json": "digest"}}},
+        }
+    (tmp_path / "full-protocol.json").write_text(json.dumps(protocol))
+    monkeypatch.setattr(sys, "argv", ["glm_full", "report", "--upstream", str(tmp_path),
+                                     "--output", str(tmp_path)])
+    monkeypatch.setattr(glm_full, "dataset_at", lambda _: tasks)
+
+    glm_full.main()
+
+    report = json.loads((tmp_path / "full-report.json").read_text())
+    printed = json.loads(capsys.readouterr().out)
+    if reuse_enabled:
+        assert report["baseline_reuse"] == compact
+        assert printed["baseline_reuse"] == compact
+    else:
+        assert not report.get("baseline_reuse")
+        assert not printed.get("baseline_reuse")
+    assert printed["planned"] == report["all"]["planned"]

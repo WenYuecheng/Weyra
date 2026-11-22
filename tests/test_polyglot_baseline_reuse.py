@@ -143,3 +143,60 @@ def test_reuse_requires_fingerprint_keys(baseline, field, missing):
         del expected[field]
     with pytest.raises(ValueError, match="Baseline conditions"):
         baseline_reuse.snapshot(source, expected, tasks)
+
+
+@pytest.mark.parametrize(
+    "status, final_verdict, valid",
+    [
+        ("fail", None, False),
+        ("fail", "pass", False),
+        ("fail", "environment_error", False),
+        ("fail", "fail", True),
+        ("resource_exhausted", None, True),
+    ],
+)
+def test_reuse_checks_terminal_fail_verification(baseline, status, final_verdict, valid):
+    source, expected, tasks = baseline
+    attempt = source / "formal" / tasks[0] / "A/attempt-1"
+    result_path = attempt / "result.json"
+    outcome = json.loads(result_path.read_text())
+    outcome["status"] = status
+    if final_verdict is None:
+        outcome["rounds"] = []
+    else:
+        outcome["rounds"][-1]["verdict"] = final_verdict
+        (attempt / "1/verification.json").write_text(json.dumps({
+            "verdict": final_verdict, "stats": {"case_ids": ["test"]},
+        }))
+    result_path.write_text(json.dumps(outcome))
+    report_path = source / "full-report.json"
+    report = json.loads(report_path.read_text())
+    report["rows"][0]["A"] = outcome
+    report_path.write_text(json.dumps(report))
+
+    if valid:
+        assert baseline_reuse.snapshot(source, expected, tasks)["reused_arms"] == ["A"]
+    else:
+        with pytest.raises(ValueError, match="Baseline .*verification"):
+            baseline_reuse.snapshot(source, expected, tasks)
+
+
+def test_reuse_hashes_the_documents_it_validated(baseline, monkeypatch, tmp_path):
+    source, expected, tasks = baseline
+    protocol, report = (source / name for name in ("full-protocol.json", "full-report.json"))
+    protocol_digest, report_digest = (
+        hashlib.sha256(path.read_bytes()).hexdigest() for path in (protocol, report)
+    )
+    validate = baseline_reuse._validate_artifacts
+
+    def change_documents_during_validation(*args):
+        protocol.write_text("{}")
+        report.write_text("{}")
+        validate(*args)
+
+    monkeypatch.setattr(baseline_reuse, "_validate_artifacts", change_documents_during_validation)
+    frozen = baseline_reuse.snapshot(source, expected, tasks)
+    assert frozen["protocol_sha256"] == protocol_digest
+    assert frozen["report_sha256"] == report_digest
+    with pytest.raises(ValueError, match="evidence changed"):
+        baseline_reuse.restore(source, tmp_path / "output", frozen)

@@ -138,6 +138,17 @@ def save_report(output, tasks, status):
         for task_id in tasks
     ]
     result = {"campaign_status": status, **report(rows)}
+    protocol = output / "full-protocol.json"
+    reuse = campaign.read(protocol).get("baseline_reuse") if protocol.is_file() else None
+    if reuse:
+        result["baseline_reuse"] = {
+            "source": reuse["source"],
+            "protocol_sha256": reuse["protocol_sha256"],
+            "report_sha256": reuse["report_sha256"],
+            "accounted_tokens_from_original_campaign": reuse["accounted_tokens_from_original_campaign"],
+            "reused_arms": reuse["reused_arms"],
+            "reused_task_count": len(reuse["outcomes"]),
+        }
     campaign.atomic(output / "full-report.json", result)
     return result
 
@@ -288,6 +299,8 @@ async def run(output, tasks, checks, order, cap, parallel):
     if status == "completed" and not result["coverage_complete"]:
         result = save_report(output, tasks, "incomplete_pairs")
     print(result["campaign_status"], result["all"]["paired"], "/", sum(COUNTS.values()))
+    if reuse := result.get("baseline_reuse"):
+        print(f"Baseline reused for {reuse['reused_task_count']} tasks from {reuse['source']}")
 
 
 def main():
@@ -317,7 +330,11 @@ def main():
         if args.action == "report":
             path = args.output / "full-report.json"
             existing = campaign.read(path)["campaign_status"] if path.is_file() else "unscored"
-            print(json.dumps(save_report(args.output, tasks, existing)["all"], indent=2))
+            result = save_report(args.output, tasks, existing)
+            summary = dict(result["all"])
+            if reuse := result.get("baseline_reuse"):
+                summary["baseline_reuse"] = reuse
+            print(json.dumps(summary, indent=2))
             return
         images = campaign.image_ids(LANGUAGES)
         if set(images) != set(LANGUAGES):
