@@ -99,6 +99,31 @@ python -m benchmarks.polyglot_full.glm_whole report --upstream .benchmarks/polyg
 The whole-file and multi-tool profiles must be reported independently. Neither
 is the external Aider protocol, which uses different editing and feedback.
 
+## Public test-feedback profile
+
+`glm_public` keeps the whole-file settings above and gives both arms the actual
+test-runner failure output before their second submission, including compiler
+diagnostics and assertion expected/actual values. The output is ANSI-stripped
+and bounded to 12,000 characters, retaining its beginning and end when truncated.
+This follows Aider's use of failing test output for repair; it does not provide
+the reference implementation or allow editing test files. The older profiles
+retain their test-name-only feedback. The selected mode is frozen in `profile`.
+
+```sh
+python -m benchmarks.polyglot_full.glm_public prepare --upstream .benchmarks/polyglot-upstream \
+  --output .benchmarks/results/public-feedback-glm
+python -m benchmarks.polyglot_full.glm_public run --upstream .benchmarks/polyglot-upstream \
+  --output .benchmarks/results/public-feedback-glm --token-cap "$POLYGLOT_TOKEN_CAP" --parallel 4
+python -m benchmarks.polyglot_full.glm_public report --upstream .benchmarks/polyglot-upstream \
+  --output .benchmarks/results/public-feedback-glm
+```
+
+The worker pool refills a slot when a pair finishes, keeping the selected
+concurrency limit without waiting for unrelated slower pairs. Every physical
+request remains metered, and active pairs retain conservative budget headroom.
+
+- [Aider test feedback implementation](https://github.com/Aider-AI/aider/blob/main/benchmark/benchmark.py#L820-L844)
+
 - [Aider Polyglot dataset](https://github.com/Aider-AI/polyglot-benchmark/tree/7e0611e77b54e2dea774cdc0aa00cf9f7ed6144f)
 - [GLM-5.3-Flash configuration](https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash)
 - [Published GLM-5.3-Flash reference results](https://github.com/local-inference-lab/rtx6kpro/blob/master/models/glm-5.3-flash/aider-polyglot-release-10152026.md)

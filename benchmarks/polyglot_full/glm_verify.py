@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import re
+import xml.etree.ElementTree as ET
 
 from .runner import atomic, isolation, verify
 from .sandbox import Sandbox
@@ -183,6 +184,23 @@ def feedback(folder: Path, expected_cases: list[str] | None = None) -> str:
     return "\n".join(lines)[:1500]
 
 
+def test_output_feedback(folder: Path) -> str:
+    """Return bounded test-runner diagnostics, including assertion expected/actual data."""
+    text = "\n".join(
+        (folder / name).read_text(errors="replace") for name in ("stdout.txt", "stderr.txt")
+    )
+    assertions = folder / "assertion-diagnostics.txt"
+    if assertions.is_file():
+        text += "\n" + assertions.read_text(errors="replace")
+    text = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", text).strip()
+    text = "Test runner output (diagnostic data):\n" + text
+    limit, marker = 12_000, "\n[diagnostic output truncated]\n"
+    if len(text) > limit:
+        head = (limit - len(marker)) // 2
+        text = text[:head] + marker + text[-(limit - len(marker) - head):]
+    return text
+
+
 def verify_task(task, image, files, folder, expected=None):
     if task.language in {"python", "javascript"}:
         outcome, stats = verify(task, image, files, folder, expected)
@@ -240,6 +258,27 @@ def verify_task(task, image, files, folder, expected=None):
             line for line in result["stdout"].splitlines() if line.startswith("WEYRA_VERDICT ")
         ]
         stats = json.loads(lines[-1].split(" ", 1)[1]) if lines else {}
+        if task.language == "cpp" and stats.get("failed"):
+            report = box.execute(["cat", "/tmp/cases.xml"])
+            details = []
+            if report["returncode"] == 0:
+                try:
+                    tree = ET.fromstring(report["stdout"])
+                    for case in tree.iter("testcase"):
+                        for tag in ("failure", "error"):
+                            for failure in case.findall(tag):
+                                details.extend([
+                                    case.attrib.get("classname", "") + "::" + case.attrib.get("name", ""),
+                                    failure.attrib.get("message", ""),
+                                    "".join(failure.itertext()),
+                                ])
+                except ET.ParseError:
+                    details.append("C++ assertion report could not be parsed.")
+                    stats["diagnostics_unavailable"] = True
+            else:
+                details.append("C++ assertion report could not be read.")
+                stats["diagnostics_unavailable"] = True
+            (folder / "assertion-diagnostics.txt").write_text("\n".join(details))
         checked = [name for name in protected if name not in files]
         if not stats or box.export(checked) != {key: protected[key].encode() for key in checked}:
             verdict = "environment_error"

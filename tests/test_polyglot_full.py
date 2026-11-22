@@ -219,3 +219,89 @@ def test_verifier_timeout_is_submission_failure_only_after_preflight(
                                             tmp_path, expected)
     assert observed == verdict
     assert stats["timed_out"] is True
+
+
+def test_public_feedback_preserves_assertion_diagnostics_and_bounds_output(tmp_path):
+    from benchmarks.polyglot_full.glm_verify import test_output_feedback
+
+    (tmp_path / "stdout.txt").write_text("Compiler diagnostic\n" + "x" * 20000)
+    (tmp_path / "stderr.txt").write_text(
+        'Expected substring: "Queen must be placed on the board"\nReceived: "invalid"'
+    )
+    result = test_output_feedback(tmp_path)
+    assert "Compiler diagnostic" in result
+    assert 'Expected substring: "Queen must be placed on the board"' in result
+    assert len(result) <= 12000
+    assert "truncated" in result
+
+
+def test_cpp_assertion_xml_reaches_public_feedback(tmp_path, monkeypatch):
+    from benchmarks.polyglot_full import glm_verify
+
+    class Workspace:
+        def __init__(self, *args, **kwargs):
+            pass
+        def create(self, files):
+            self.files = files
+        def inspect(self):
+            return {}
+        def execute(self, argv, timeout=60):
+            if argv[0] == "cat":
+                output = '<testsuite><testcase classname="Case" name="answer"><failure message="Expected 42, actual 7">answer() == 42</failure></testcase></testsuite>'
+            else:
+                output = 'WEYRA_VERDICT ' + json.dumps({"code": 1, "failed": True,
+                    "case_ids": ["Case::answer"], "failed_case_ids": ["Case::answer"]})
+            return {"returncode": 0, "stdout": output, "stderr": ""}
+        def export(self, paths):
+            return {name: self.files[name].encode() for name in paths}
+        def close(self):
+            pass
+
+    monkeypatch.setattr(glm_verify, "Sandbox", Workspace)
+    monkeypatch.setattr(glm_verify, "isolation", lambda _: {})
+    task = SimpleNamespace(language="cpp", id="cpp/example", editable=("answer.cpp",),
+                           verifier_files={"answer_test.cpp": "immutable"})
+    outcome, _ = glm_verify.verify_task(task, "image", {"answer.cpp": "wrong"}, tmp_path,
+                                      ["Case::answer"])
+    assert outcome == "fail"
+    diagnostic = glm_verify.test_output_feedback(tmp_path)
+    assert "Expected 42, actual 7" in diagnostic
+    assert "answer() == 42" in diagnostic
+
+
+def test_pool_refills_while_an_earlier_pair_is_still_running():
+    import asyncio
+
+    async def example():
+        release = asyncio.Event()
+        started = []
+
+        async def group(task_id, arms):
+            started.append(task_id)
+            if task_id == "0":
+                await release.wait()
+            if task_id == "4":
+                release.set()
+
+        ledger = SimpleNamespace(totals=lambda: (0, 0, 0))
+        jobs = [(str(i), ["A", "R"]) for i in range(5)]
+        result = await asyncio.wait_for(glm_full.dispatch(
+            jobs, group, ledger, 10_000_000, 4, asyncio.Event(), lambda: None
+        ), timeout=2)
+        assert result == "completed"
+        assert len(started) == 5
+
+    asyncio.run(example())
+
+
+def test_pool_never_starts_a_pair_without_its_budget():
+    import asyncio
+
+    async def group(*args):
+        pytest.fail("No model work should be started")
+
+    ledger = SimpleNamespace(totals=lambda: (0, 0, 0))
+    result = asyncio.run(glm_full.dispatch(
+        [("task", ["A", "R"])], group, ledger, 1, 4, asyncio.Event(), lambda: None
+    ))
+    assert result == "campaign_budget"
