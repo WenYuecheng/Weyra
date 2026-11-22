@@ -149,7 +149,9 @@ def test_baseline_executes_complete_tool_calls_at_output_limit(tmp_path, stop_re
 
 
 @pytest.mark.parametrize("arm", ["A", "R"])
-def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatch, arm):
+@pytest.mark.parametrize("feedback_mode", ["labels", "test_output"])
+def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatch, arm, feedback_mode):
+    from dataclasses import replace
     from benchmarks.polyglot_full import glm_full, glm_whole
 
     with monkeypatch.context() as patch:
@@ -158,6 +160,7 @@ def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatc
             for name in names:
                 patch.setattr(target, name, getattr(target, name))
         glm_whole.configure()
+        glm_full.PROFILE = replace(glm_full.PROFILE, feedback_mode=feedback_mode)
         responses = [
             ModelResponse(tool_calls=(ToolCall(str(i), "write_file", {
                 "path": "answer.py", "content": f"answer = {i}",
@@ -192,6 +195,7 @@ def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatc
         patch.setattr(campaign, "runtime_for", lambda *args: (runtime, provider))
         patch.setattr(campaign, "verify_task", verify)
         patch.setattr(campaign, "feedback", lambda *args: "Tests failed.")
+        patch.setattr(campaign, "test_output_feedback", lambda *args: "Expected: 2, received: 1")
         task = SimpleNamespace(instruction="Set answer to 2.", editable=("answer.py",),
                                files={"answer.py": "answer = 0"})
         with campaign.Ledger(tmp_path / "usage.db", 65536) as ledger:
@@ -203,3 +207,5 @@ def test_whole_submission_saves_and_repairs_in_two_requests(tmp_path, monkeypatc
         assert len(provider.requests) == 2
         assert all(len(r.tools) == 1 and r.tools[0]["name"] == "write_file"
                    for r in provider.requests)
+        expected_feedback = "Expected: 2, received: 1" if feedback_mode == "test_output" else "Tests failed."
+        assert expected_feedback in " ".join(m.content for m in provider.requests[1].messages)

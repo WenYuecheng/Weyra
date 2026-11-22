@@ -33,7 +33,7 @@ from weyra.core.state import Budget, BudgetExceeded, RunContext
 from weyra.llm.providers import ModelError, OpenAIProvider, ProviderRegistry
 
 
-from .glm_verify import VERIFIER_VERSION, feedback, verify_task
+from .glm_verify import VERIFIER_VERSION, feedback, test_output_feedback, verify_task
 
 from .runner import BASE, atomic, isolation, source_hash as source_hash
 
@@ -80,6 +80,7 @@ class InferenceSettings:
     top_p: float | None = None
     steps: int = STEPS_PER_ROUND
     seconds: int = TASK_SECONDS
+    feedback_mode: str = "labels"
 
 
 DEFAULT_SETTINGS = InferenceSettings()
@@ -472,7 +473,11 @@ async def solve(
                     break
                 verdict = "fail"
                 if attempt < round_limit:
-                    diagnostic = feedback(location, expected)
+                    diagnostic = (
+                        test_output_feedback(location)
+                        if settings.feedback_mode == "test_output"
+                        else feedback(location, expected)
+                    )
                     if arm == "R":
                         agent.clear_session()
                         text = fresh_repair_prompt(task, files, diagnostic)

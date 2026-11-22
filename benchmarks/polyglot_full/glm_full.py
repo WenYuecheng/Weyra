@@ -203,6 +203,33 @@ def runnable_checks(preflight, tasks, images):
     return checks, blocked
 
 
+async def dispatch(pending, group, ledger, cap, parallel, stop, checkpoint):
+    """Refill free worker slots while retaining a conservative budget for active pairs."""
+    cursor, status = 0, "completed"
+    active = {}
+    async with asyncio.TaskGroup() as workers:
+        while cursor < len(pending) or active:
+            while cursor < len(pending) and len(active) < parallel and not stop.is_set():
+                task_id, arms = pending[cursor]
+                amount = len(arms) * TASK_TOKENS
+                if ledger.totals()[0] + sum(active.values()) + amount > cap:
+                    break
+                active[workers.create_task(group(task_id, arms))] = amount
+                cursor += 1
+            if not active:
+                if cursor < len(pending) and not stop.is_set():
+                    status = "campaign_budget"
+                break
+            done, _ = await asyncio.wait(active, return_when=asyncio.FIRST_COMPLETED)
+            for job in done:
+                del active[job]
+                if reason := job.result():
+                    status = reason
+                    stop.set()
+            checkpoint()
+    return status
+
+
 async def run(output, tasks, checks, order, cap, parallel):
     """Use a metered client only after the full task inventory passed preflight."""
     key = os.environ.get("ZAI_API_KEY") or (
@@ -252,26 +279,10 @@ async def run(output, tasks, checks, order, cap, parallel):
                         remaining.append(arm)
                 if remaining:
                     pending.append((task_id, remaining))
-            cursor, status = 0, "completed"
-            while cursor < len(pending):
-                reserved = 0
-                batch = []
-                for task_id, arms in pending[cursor : cursor + parallel]:
-                    amount = len(arms) * TASK_TOKENS
-                    if ledger.totals()[0] + reserved + amount > cap:
-                        break
-                    reserved += amount
-                    batch.append((task_id, arms))
-                if not batch:
-                    status = "campaign_budget"
-                    break
-                async with asyncio.TaskGroup() as workers:
-                    active = [workers.create_task(group(*item)) for item in batch]
-                cursor += len(batch)
-                if reasons := [job.result() for job in active if job.result()]:
-                    status = reasons[0]
-                    break
-                save_report(output, tasks, "running")
+            status = await dispatch(
+                pending, group, ledger, cap, parallel, stop,
+                lambda: save_report(output, tasks, "running"),
+            )
     result = save_report(output, tasks, status)
     if status == "completed" and not result["coverage_complete"]:
         result = save_report(output, tasks, "incomplete_pairs")
