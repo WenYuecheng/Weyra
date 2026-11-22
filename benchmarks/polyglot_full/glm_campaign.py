@@ -81,6 +81,8 @@ class InferenceSettings:
     steps: int = STEPS_PER_ROUND
     seconds: int = TASK_SECONDS
     feedback_mode: str = "labels"
+    repair_context: str = "fresh"
+    repair_review: str = ""
 
 
 DEFAULT_SETTINGS = InferenceSettings()
@@ -367,16 +369,26 @@ async def minimal_turn(agent, runtime, text, history, steps=STEPS_PER_ROUND):
         await context.close()
 
 
-def fresh_repair_prompt(task, files: dict[str, bytes], diagnostic: str) -> str:
+def fresh_repair_prompt(
+    task, files: dict[str, bytes], diagnostic: str, *, include_contract=False, review=""
+) -> str:
     """Rebuild the repair context from the task contract and the verified artifact."""
     implementation = {name: raw.decode("utf-8", errors="replace") for name, raw in files.items()}
+    contract = (
+        "Original editable starter (authoritative interfaces, not a solution):\n"
+        + json.dumps({name: task.files[name] for name in task.editable}, ensure_ascii=False)
+        + "\n\n"
+        if include_contract else ""
+    )
     return (
         f"{task.instruction}\n\n"
+        f"{contract}"
         f"Current saved implementation (JSON by path):\n"
         f"{json.dumps(implementation, ensure_ascii=False)}\n\n"
         f"Verifier diagnostic:\n{diagnostic}\n\n"
         "Review the contract and implementation together. Fix the general cause while "
         f"preserving the public interface. Save work only in: {', '.join(task.editable)}."
+        + ("\n\n" + review if review else "")
     )
 
 
@@ -478,15 +490,21 @@ async def solve(
                         if settings.feedback_mode == "test_output"
                         else feedback(location, expected)
                     )
-                    if arm == "R":
+                    if arm == "R" and settings.repair_context != "history":
                         agent.clear_session()
-                        text = fresh_repair_prompt(task, files, diagnostic)
+                        text = fresh_repair_prompt(
+                            task, files, diagnostic,
+                            include_contract=settings.repair_context == "contract",
+                            review=settings.repair_review,
+                        )
                     else:
                         text = (
                             "The verifier found failures. Repair the existing implementation and save files. "
                             "Preserve the public interface and handle the general case.\n"
                             + diagnostic
                         )
+                        if arm == "R" and settings.repair_review:
+                            text += "\n\n" + settings.repair_review
     except TimeoutError:
         verdict = "resource_exhausted" if ledger.totals(unit)[1] else "infrastructure_error"
     except (ValueError, *INFRA_ERRORS) as exc:

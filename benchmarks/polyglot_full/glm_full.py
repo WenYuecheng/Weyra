@@ -14,6 +14,7 @@ import random
 from openai import AsyncOpenAI
 
 from . import glm_campaign as campaign
+from . import baseline_reuse
 from .glm_dataset import LANGUAGES, UPSTREAM, discover_all
 from .sandbox import command
 
@@ -137,6 +138,17 @@ def save_report(output, tasks, status):
         for task_id in tasks
     ]
     result = {"campaign_status": status, **report(rows)}
+    protocol = output / "full-protocol.json"
+    reuse = campaign.read(protocol).get("baseline_reuse") if protocol.is_file() else None
+    if reuse:
+        result["baseline_reuse"] = {
+            "source": reuse["source"],
+            "protocol_sha256": reuse["protocol_sha256"],
+            "report_sha256": reuse["report_sha256"],
+            "accounted_tokens_from_original_campaign": reuse["accounted_tokens_from_original_campaign"],
+            "reused_arms": reuse["reused_arms"],
+            "reused_task_count": len(reuse["outcomes"]),
+        }
     campaign.atomic(output / "full-report.json", result)
     return result
 
@@ -287,6 +299,8 @@ async def run(output, tasks, checks, order, cap, parallel):
     if status == "completed" and not result["coverage_complete"]:
         result = save_report(output, tasks, "incomplete_pairs")
     print(result["campaign_status"], result["all"]["paired"], "/", sum(COUNTS.values()))
+    if reuse := result.get("baseline_reuse"):
+        print(f"Baseline reused for {reuse['reused_task_count']} tasks from {reuse['source']}")
 
 
 def main():
@@ -296,6 +310,7 @@ def main():
     parser.add_argument("--output", type=Path)
     parser.add_argument("--token-cap", type=int)
     parser.add_argument("--parallel", type=int, choices=range(1, 5), default=2)
+    parser.add_argument("--reuse-baseline", type=Path)
     args = parser.parse_args()
     tasks = dataset_at(args.upstream)
     if args.action == "inventory":
@@ -315,7 +330,11 @@ def main():
         if args.action == "report":
             path = args.output / "full-report.json"
             existing = campaign.read(path)["campaign_status"] if path.is_file() else "unscored"
-            print(json.dumps(save_report(args.output, tasks, existing)["all"], indent=2))
+            result = save_report(args.output, tasks, existing)
+            summary = dict(result["all"])
+            if reuse := result.get("baseline_reuse"):
+                summary["baseline_reuse"] = reuse
+            print(json.dumps(summary, indent=2))
             return
         images = campaign.image_ids(LANGUAGES)
         if set(images) != set(LANGUAGES):
@@ -340,24 +359,30 @@ def main():
             if args.token_cap is None or args.token_cap < TASK_TOKENS * len(ARMS):
                 parser.error("--token-cap must cover at least one complete pair")
             order = schedule(tasks)
-            campaign.freeze(
-                run_path,
-                {
-                    **source,
-                    "model": campaign.MODEL,
-                    "endpoint": campaign.ENDPOINT,
-                    "profile": asdict(PROFILE),
-                    "checks": checks,
-                    "order": order,
-                    "task_tokens": TASK_TOKENS,
-                    "task_calls": TASK_CALLS,
-                    "rounds": ROUNDS,
-                    "token_cap": args.token_cap,
-                    "baseline_skill": campaign.BASE_SKILL,
-                    "weyra_skill": WEYRA_SKILL,
-                    "system": campaign.SYSTEM,
-                },
-            )
+            protocol = {
+                **source,
+                "model": campaign.MODEL,
+                "endpoint": campaign.ENDPOINT,
+                "profile": asdict(PROFILE),
+                "checks": checks,
+                "order": order,
+                "task_tokens": TASK_TOKENS,
+                "task_calls": TASK_CALLS,
+                "rounds": ROUNDS,
+                "token_cap": args.token_cap,
+                "baseline_skill": campaign.BASE_SKILL,
+                "weyra_skill": WEYRA_SKILL,
+                "system": campaign.SYSTEM,
+                "tool_names": list(campaign.TOOL_NAMES),
+                "tasks": {task_id: task.metadata() for task_id, task in tasks.items()},
+            }
+            if args.reuse_baseline is not None:
+                protocol["baseline_reuse"] = baseline_reuse.snapshot(
+                    args.reuse_baseline, protocol, tasks,
+                )
+            campaign.freeze(run_path, protocol)
+            if args.reuse_baseline is not None:
+                baseline_reuse.restore(args.reuse_baseline, args.output, protocol["baseline_reuse"])
             asyncio.run(run(args.output, tasks, checks, order, args.token_cap, args.parallel))
 
 
