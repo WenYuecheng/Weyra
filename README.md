@@ -167,10 +167,6 @@ CI 检查源码、CLI、离线演示、TUI 与应用服务，并构建和安装�
 
 ## 发布内容与许可
 
-当前发布目录包含完整应用界面、后端运行时、安装配置、使用示例及 README 截图。发布目录也包含下文链接的 Polyglot 评测源码和运行说明。评测数据与原始结果、个人材料、本地数据库、会话记录、私有配置和密钥保留在本地；`.gitignore` 以目录白名单控制后续提交。
+当前发布目录包含完整应用界面、后端运行时、安装配置、使用示例及 README 截图。评测套件、评测数据与结果、个人材料、本地数据库、会话记录、私有配置和密钥均不纳入当前版本的发布文件；`.gitignore` 以目录白名单控制后续提交。
 
 Weyra 参考 Pi、DeepSeek Harness、Hermes 的运行时设计，并结合技能知识组织与验证驱动更新机制。适配接口和保留的 DeepSeek Harness 检查点提示词，其版权与许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。项目采用 [MIT License](LICENSE)。
-
-## Coding benchmark
-
-[Reproduce the six-language Aider Polyglot comparison](benchmarks/polyglot_full/README.md).
