@@ -15,6 +15,16 @@
 !/docs/
 !/examples/
 !/scripts/
+!/benchmarks/
+
+/benchmarks/*
+!/benchmarks/polyglot/
+/benchmarks/polyglot/*
+!/benchmarks/polyglot/README.md
+!/benchmarks/polyglot/policy.py
+!/benchmarks/polyglot/protocol.json
+!/benchmarks/polyglot/report.py
+!/benchmarks/polyglot/results.csv
 
 /.github/*
 !/.github/workflows/

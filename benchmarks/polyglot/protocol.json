@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-24",
+  "dataset_commit": "7e0611e77b54e2dea774cdc0aa00cf9f7ed6144f",
+  "runtime_commit": "309acfb3f2ac895e3c0fc8e373c587c17708867d",
+  "runtime_source_sha256": "95d32a34f929c80027984ba11374cf34016851a5f4c269eb024a720abc9e9945",
+  "frozen_protocol_sha256": "80a7a7fb367908a0ad3b930fa7540d0b1437534733434ff54835d5e5c487a6aa",
+  "merged_report_sha256": "a92fb6f1807f161a7f334ba34ed611bb7d33092dfb6c0a092d5d9c166513973d",
+  "policy_sha256": "3907e82be8f2694fe52d39f24ad25a103f5a8b85ffb4ae75db76e33e80d98d6d",
+  "parallel_pairs_by_phase": {
+    "original": 4,
+    "first_continuation": 6,
+    "continuation": 3
+  },
+  "model": "glm-5.3-flash",
+  "profile": {
+    "context_window": 1000000,
+    "output_tokens": 8192,
+    "reasoning_effort": "high",
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "steps": 1,
+    "seconds": 600,
+    "feedback_mode": "test_output"
+  },
+  "images": {
+    "python": "sha256:4fc581ca008aec068219d75ac6060645ab28b04ff04a3cf6885f6f43f51b9c95",
+    "go": "sha256:68db68348a61387fa65c224dd020c6ebcd6fea052aafa7da089f85b6e1175226",
+    "rust": "sha256:b9acfbeac7fc357564627c3c8d8a7f95899cee86ff8ea14e369a0279d127eedc",
+    "cpp": "sha256:b118ed2bba5b03b5352cdd1f586a7f5f98bffdaac6f4e6810a00904160178780",
+    "java": "sha256:c75927e12edcd1334ac66092f53406f3e87b0f7727a7a9aad5df57655d699fba"
+  },
+  "unit_tokens": 98304,
+  "rounds": 2,
+  "physical_requests_per_unit": 2,
+  "runtime_attempts_per_submission": 1,
+  "sdk_retries": 0,
+  "overflow_retries": 0,
+  "auto_compaction": false,
+  "tool_names": [
+    "write_file"
+  ],
+  "baseline_skill": "Read the requirements and starter interfaces, preserve the public API, and implement the simplest correct algorithm. When a verifier reports a failure, identify the underlying issue, fix it generally, and save the corrected files.",
+  "system": "Implement the exercise and save the complete implementation with write_file. The entire original contents of every editable file are supplied. You have exactly one model response per submission: in this response call write_file for every file that must change. Batch all required writes in this one response. Only files explicitly designated editable may be written. Preserve the supplied public interface and implement all required behavior. Use concise reasoning so the complete code fits the output budget. Independent tests run immediately after your tool calls; no acknowledgement is needed."
+}
