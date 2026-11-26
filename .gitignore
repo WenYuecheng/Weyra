@@ -15,25 +15,35 @@
 !/docs/
 !/examples/
 !/scripts/
+!/tests/
 !/benchmarks/
 
 /benchmarks/*
+!/benchmarks/README.md
 !/benchmarks/polyglot/
 /benchmarks/polyglot/*
-!/benchmarks/polyglot/README.md
 !/benchmarks/polyglot/policy.py
 !/benchmarks/polyglot/protocol.json
 !/benchmarks/polyglot/report.py
 !/benchmarks/polyglot/results.csv
+!/benchmarks/reliability/
+/benchmarks/reliability/*
+!/benchmarks/reliability/run_suite.py
+!/benchmarks/skills_eval/
+/benchmarks/skills_eval/*
+!/benchmarks/skills_eval/run_benchmark.py
 
 /.github/*
 !/.github/workflows/
 /.github/workflows/*
 !/.github/workflows/ci.yml
 /docs/*
+!/docs/skill-evolution.md
 !/docs/screenshots/
 /docs/screenshots/*
 !/docs/screenshots/*.png
+/tests/*
+!/tests/test_*.py
 /examples/*
 !/examples/sdk_service.py
 !/examples/demo_tui.py

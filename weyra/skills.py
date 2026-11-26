@@ -9,24 +9,63 @@
 1. 借鉴 Hermes Agent (`skills/`) 的分层技能目录发现架构：
    - 项目专属技能目录（`.weyra/skills/`）优先于用户全局目录（`~/.weyra/skills/`）及历史路径；
    - 目录内包含标准 `SKILL.md`（YAML frontmatter 元数据 + 可执行 Markdown 正文）与关联静态资源；
-2. 四级目标决议与歧义安全弃权机制 (4-Tier Resolution & Safe Abstention)：
+2. 借鉴 Skill-Pro (ICML 2026, PMLR v306 / `mi26d`, Skill=(C, \pi, T)) 的激活条件优先检索：
+   - 先基于激活条件 C（`name`、`aliases`、`description`、`when_to_use`）执行 BM25 检索，不足时再回退至正文 \pi；
+3. 四级目标决议与歧义安全弃权机制 (4-Tier Resolution & Safe Abstention)：
    - Level 1: 显式 ID 准确定位 (`explicit_id`)；
    - Level 2: 轮次成功使用记录定位 (`used_ids`)；
    - Level 3: 精确全称或中英文别名匹配 (`exact_alias`, 支持中文字符正则分词)；
    - Level 4: 语义/词法相关度排序检索 (`lexical`)；
    - 歧义熔断守则：当匹配到的候选目标多于 1 个时，系统主动返回 `reason='ambiguous', target=None` 弃权执行，
      防止将针对特定技能的改进补丁错误应用到无关技能上；
-3. 静态资源加密哈希锁定 (Cryptographic Resource Binding)：
+4. 借鉴 SkillDiff (arXiv:2611.25534, *How Feedback-Free Self-Evolution Reshapes Agent Skills: A Systematic Study*, Nov 2026)：
+   - 解析并锁定受保护专家知识锚点 (`anchors` / `[ANCHOR]`)，防止多轮演化向模型先验坍缩；
+5. 静态资源加密哈希锁定 (Cryptographic Resource Binding)：
    - 技能依赖的外部辅助脚本或配置文件通过 SHA-256 强哈希固化在快照中，运行时若检测到磁盘文件篡改（Resource Drift）立即拦截。
 """
 
 import hashlib
+import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import MappingProxyType
 from typing import Mapping
 from .frontmatter import parse_markdown, rank, reject_symlinks, sha
+
+
+def _parse_list_field(value) -> tuple[str, ...]:
+    """Parse a frontmatter list field encoded as sequence, JSON array, or comma-separated text."""
+    if isinstance(value, str):
+        stripped = value.strip()
+        if not stripped:
+            return ()
+        try:
+            parsed = json.loads(stripped)
+            value = parsed if isinstance(parsed, (list, tuple)) else re.split(r"[,|，]", stripped)
+        except (ValueError, TypeError):
+            value = re.split(r"[,|，]", stripped)
+    if not isinstance(value, (list, tuple)):
+        return ()
+    return tuple(item.strip() for item in value if isinstance(item, str) and item.strip())
+
+
+def _parse_anchors(metadata: Mapping[str, str], body: str) -> tuple[str, ...]:
+    """提取受保护专家知识锚点 (借鉴 SkillDiff, arXiv:2611.25534, Nov 2026)。
+
+    从 frontmatter (`anchors` / `protected_anchors`) 及正文 `[ANCHOR]` / `<!-- anchor -->`
+    标记行提取非先验专家条款，在多轮技能改写期间防止关键规则被模型先验覆盖删除。
+    """
+    items = list(
+        _parse_list_field(metadata.get("anchors", metadata.get("protected_anchors", ())))
+    )
+    for line in body.splitlines():
+        if "[ANCHOR]" in line or "<!-- anchor -->" in line:
+            cleaned = line.replace("[ANCHOR]", "").replace("<!-- anchor -->", "").strip()
+            cleaned = re.sub(r"^[-*+]\s+", "", cleaned).strip()
+            if cleaned:
+                items.append(cleaned)
+    return tuple(dict.fromkeys(items))
 
 
 @dataclass(frozen=True)
@@ -42,6 +81,7 @@ class SkillSnapshot:
     resources: Mapping[str, str]
     context: str = ""
     metadata: Mapping[str, str] = field(default_factory=lambda: MappingProxyType({}))
+    anchors: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -98,6 +138,7 @@ class SkillStore:
             MappingProxyType(resources),
             m.get("context", ""),
             MappingProxyType(m),
+            _parse_anchors(m, body),
         )
 
     def capture_catalog(self):
@@ -145,7 +186,10 @@ class SkillStore:
         return (catalog if catalog is not None else self.capture_catalog())[name]
 
     def search(self, query, limit=5, catalog=None):
-        """基于词法相关度从技能目录中搜索候选技能。
+        """基于 Skill-Pro (ICML 2026, PMLR v306) (C, π, T) 激活条件优先的 BM25 技能检索。
+
+        先基于激活条件 C（name, aliases, description, when_to_use）排序检索；
+        仅当 C 阶段命中不足 `limit` 时，再对剩余技能正文 π 执行补充召回，避免长正文干扰触发条件匹配。
 
         Args:
             query: 查询字符串。
@@ -156,17 +200,33 @@ class SkillStore:
             list[SkillSnapshot]: 匹配的技能快照列表。
         """
         catalog = catalog if catalog is not None else self.capture_catalog()
-        return [
-            catalog[k]
-            for k in rank(
+        if limit <= 0 or not catalog:
+            return []
+
+        def _activation_text(skill: SkillSnapshot) -> str:
+            aliases = " ".join(_parse_list_field(skill.metadata.get("aliases", ())))
+            return " ".join(
+                part for part in (skill.name, aliases, skill.when_to_use, skill.description) if part
+            )
+
+        selected = rank(
+            query,
+            [(k, _activation_text(s)) for k, s in catalog.items()],
+            limit,
+        )
+        if len(selected) < limit:
+            seen = set(selected)
+            fallback = rank(
                 query,
                 [
-                    (k, s.name + " " + s.description + " " + s.when_to_use + " " + s.body)
+                    (k, _activation_text(s) + " " + s.body)
                     for k, s in catalog.items()
+                    if k not in seen
                 ],
-                limit,
+                limit - len(selected),
             )
-        ]
+            selected.extend(fallback)
+        return [catalog[k] for k in selected]
 
     def resolve_target(self, query: str, explicit_id=None, used_ids=(), catalog=None) -> SkillResolution:
         """执行四级级联技能目标决议，多候选歧义时主动安全弃权 (Cascaded Target Resolution)。

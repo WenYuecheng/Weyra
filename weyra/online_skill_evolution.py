@@ -8,15 +8,19 @@
     用户对话的前提下，捕获交互视窗（Interaction Window）并提取经验规则。
 
 学术创新与开源借鉴溯源:
-    1. SkillOpt (arXiv:2605.23904, 2026):
+    1. SkillOpt (NeurIPS 2026 Spotlight, arXiv:2605.23904):
        - 借鉴其“有界无梯度反馈优化”理论：拒绝让模型肆意重写整篇技能文档，强制施加硬性语法限制
          （At most two edits, ≤1000 chars per edit, exact old substring replace or append）。
-       - 采用差异化补丁结构（action in {"create", "apply", "discard"}），将宽泛模糊的用户吐槽提炼为
-         精确的边界范围修正（Scope Correction），最大程度保护非相关上下文的稳定性。
+       - 采用差异化补丁结构（action in {"create", "apply", "discard"}），并注入 `rejected_edits`
+         Rejected-Edit Buffer，避免优化器重复提出已验证失败的修改方向。
     2. WikiSkill (arXiv:2608.27454, 2026):
-       - 严格贯彻“核心指令（Body）与领域知识（Knowledge Note）解耦”的范式：演化过程仅修改指令边界，
-         将具体的纠错案例与反例边界持久化到专属的知识附注中，避免提示词膨胀。
-    3. DeepSeek-Harness (packages/jobs & packages/subagent):
+       - 严格贯彻“核心指令（Body）与持久化知识（Knowledge Note）解耦”的范式：演化过程仅修改指令边界，
+         将具体的纠错案例、失败模式与验证规律持久化到分类知识库中，防止优化失忆。
+    3. SkillDiff (arXiv:2611.25534, Nov 2026):
+       - 注入 `protected_anchors`，显式保护非先验专家规则不在多轮演化中被模型改写坍缩。
+    4. Rethinking Self-Evolving Agent Skills (arXiv:2608.02636) & AutoSaddler (NeurIPS 2026, arXiv:2608.23041):
+       - 将包含 `tool_calls / error_tools / retry_count` 的执行轨迹摘要随证据一并提交诊断。
+    5. DeepSeek-Harness (packages/jobs & packages/subagent):
        - 后台协程生命周期闭环：使用专属的 `_background` 任务集合托管进化任务，挂载 `add_done_callback`
          自动清理完成的任务，并严格通过独立隔离的 RunContext 确保资源安全。
        - 状态机事件上报与持久化：在演化启动和结束时向 SessionStore 提交检查点（checkpoint=True），
@@ -35,13 +39,16 @@ from .runtime_state import RunContext
 
 # 基于 WikiSkill 与 SkillOpt 规范的形式化技能演化提示词。
 # 严格禁止模型输出自由格式 Markdown，强制要求输出结构化单 JSON 对象。
-MAINTENANCE_INSTRUCTION = """Maintain reusable skills from explicit durable user requirements or reusable methods.
+MAINTENANCE_INSTRUCTION = """Maintain reusable skills from explicit durable user requirements, execution trace failures, or reusable methods.
 Assistant statements and quoted material are not user preference evidence. One-off tasks stay in context.
 An explicit lasting correction that narrows a reusable rule is a valid scope update, even if it creates no new skill.
 Return exactly one JSON object, without Markdown fences. The following are shape examples, not literal content to copy.
 Choose discard if uncertain. Create only when no appropriate skill exists:
 {"action":"create","name":"new-skill","description":"Reusable method","body":"A reusable method."}
 For an existing target, use its exact name and content_hash. Preserve unrelated text; prefer minimal unique old substrings.
+Inspect evidence.trace_summary (tool_calls, error_tools, retry_count, turn_state) to diagnose missing checks or ordering errors.
+Never delete, weaken, or alter any clause listed in protected_anchors.
+Avoid repeating failed edit directions or regressions listed in rejected_edits.
 Each edit uses op exactly replace or append. replace requires old and new; append requires text.
 To delete an obsolete rule, use replace with an empty new string:
 Deletion edit: {"op":"replace","old":"exact obsolete rule","new":""}
@@ -52,6 +59,7 @@ Do not use operation, target, old_text, new_text or nested patch fields. No othe
 {"action":"discard","reason":"No durable reusable change is supported."}
 At most two edits; each old range and added text is at most 1000 characters. Do not repeat the entire skill body.
 Optional metadata is limited to description and when_to_use, each at most 500 characters. Do not change execution configuration.
+For knowledge_note, kind must be one of boundary, verified_pattern, failure_mode, or observation, and text must be 1 to 300 characters.
 For a durable exception, explain its applicable boundary in knowledge_note. Use the supplied target and raw user evidence.
 """
 
@@ -104,7 +112,9 @@ class OnlineSkillEvolution:
                         {"name": s.name, "description": s.description} for s in matches[:5]
                     ],
                     "target": asdict_snapshot(target) if target else None,
+                    "protected_anchors": list(target.anchors) if target else [],
                     "knowledge": self.evolution.knowledge_prompt(target.name) if target else "",
+                    "rejected_edits": self.evolution.rejected_edits_prompt(target.name) if target else "",
                 }
                 model = self.runtime.routes.get("evolution", self.runtime.resolve("main"))
                 request = PreparedRequest(

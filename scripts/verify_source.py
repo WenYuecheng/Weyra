@@ -75,6 +75,16 @@ def main() -> None:
         project = root / "tui"
         project.mkdir()
         asyncio.run(verify_tui(project))
+        rel_script = Path(__file__).resolve().parents[1] / "benchmarks" / "reliability" / "run_suite.py"
+        if rel_script.is_file():
+            rel_out = root / "reliability.json"
+            rel_run = subprocess.run(
+                [sys.executable, str(rel_script), "--out", str(rel_out)],
+                capture_output=True, text=True, timeout=60,
+            )
+            if rel_run.returncode:
+                raise RuntimeError(rel_run.stdout + rel_run.stderr)
+            print("PASS: benchmarks/reliability/run_suite.py (zero-API)")
 
 
 if __name__ == "__main__":

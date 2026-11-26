@@ -34,6 +34,48 @@ MAX_CACHE_ENTRIES = 64
 MAX_CACHE_BYTES = 2_000_000
 
 
+def _is_deterministic_case(case: dict) -> bool:
+    """判定用例是否具备可执行确定性断言 (对标 SkillsBench arXiv:2602.12670 & SOPBench EMNLP 2026 Main)。"""
+    if case.get("deterministic_only") is True:
+        return True
+    constraints = case.get("hard_constraints", {})
+    has_deterministic_oracle = bool(
+        case.get("expected_artifacts")
+        or constraints.get("expected_semantic_artifacts")
+        or constraints.get("writing_checks")
+    )
+    return has_deterministic_oracle and not str(case.get("rubric", "")).strip()
+
+
+def _can_short_circuit_judge(cases: list[dict]) -> bool:
+    """仅当全部 validation 用例均为确定性断言时跳过 LLM Judge（对齐 SkillsBench / SOPBench 规则）。"""
+    validation_cases = [c for c in cases if c.get("split", "validation") == "validation"]
+    return bool(validation_cases) and all(_is_deterministic_case(c) for c in validation_cases)
+
+
+def _deterministic_judgment(old_result: dict, cand_result: dict) -> dict:
+    """依据 SkillsBench / SOPBench 确定性代码检查结果合成 SkillJudge 兼容的成对裁决。"""
+    old_ok = bool(old_result.get("passed")) and old_result.get("hard_failures", 0) == 0
+    cand_ok = bool(cand_result.get("passed")) and cand_result.get("hard_failures", 0) == 0
+    old_score = 4 if old_ok else 0
+    cand_score = 4 if cand_ok else 0
+    if cand_score > old_score:
+        preferred = "candidate"
+    elif cand_score < old_score:
+        preferred = "old"
+    else:
+        preferred = "tie"
+    return {
+        "scores": {"old": old_score, "candidate": cand_score},
+        "preferred": preferred,
+        "evidence": [
+            {"arm": "old", "text": f"deterministic passed={old_ok}, hard_failures={old_result.get('hard_failures', 0)}"},
+            {"arm": "candidate", "text": f"deterministic passed={cand_ok}, hard_failures={cand_result.get('hard_failures', 0)}"},
+        ],
+        "model_approved": preferred == "candidate",
+    }
+
+
 def _digest(value) -> str:
     """计算任意对象的标准化 JSON SHA-256 摘要哈希。
 
@@ -100,6 +142,7 @@ def _key(gate, snapshot, case: dict) -> str:
     return _digest({
         "executor": EXECUTOR_VERSION,
         "skill": snapshot.content_hash,
+        "null_baseline": bool(getattr(snapshot, "metadata", {}).get("__null_baseline__")),
         "context": getattr(snapshot, "context", ""),
         "name": snapshot.name,
         "path": str(getattr(snapshot, "path", "")),
@@ -322,15 +365,29 @@ async def evaluate(gate, old, candidate, window, context=None) -> dict:
                 })
                 _save(path, entries)
                 return report
-    # 发生硬执行失败后绝不消耗大模型裁判调用配额
+    # 发生硬执行失败后绝不消耗大模型裁判调用配额；纯确定性用例遵循 SkillsBench/SOPBench 规则直接短路，跳过 LLM Judge
     hard_failed = any(row["hard_failures"] for arm in outputs.values() for row in arm.values())
-    judgments = (
-        {}
+    deterministic_gate = _can_short_circuit_judge(cases)
+    report["judge_mode"] = (
+        "short_circuit_hard_failure"
         if hard_failed
-        else await gate.judge.compare_many(
+        else "deterministic_short_circuit"
+        if deterministic_gate
+        else "double_blind_llm"
+    )
+    if hard_failed:
+        judgments = {}
+    elif deterministic_gate:
+        judgments = {
+            case["id"]: _deterministic_judgment(
+                outputs["old"][case["id"]], outputs["candidate"][case["id"]]
+            )
+            for case in cases
+        }
+    else:
+        judgments = await gate.judge.compare_many(
             cases, outputs["old"], outputs["candidate"], context=context
         )
-    )
     regression = hard_failed
     consistent = not hard_failed
     for case in cases:

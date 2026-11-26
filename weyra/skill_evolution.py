@@ -6,20 +6,21 @@
 终身持续学习（Lifelong Continual Learning）。
 
 【开源与学术论文借鉴体系】
-1. 借鉴 WikiSkill (arXiv:2608.27454, 2026) 的指令与知识分层解耦机制 (Explicit Instruction vs Knowledge Separation)：
+1. 借鉴 WikiSkill (arXiv:2608.27454, 2026) 的指令与持久化知识分层解耦机制 (Explicit Instruction vs Persistent Wiki Layer):
    - 严禁将任务偶发观测或长篇报错日志直接污染至核心可执行提示词正文中；
-   - 将环境经验与特定边界提炼为轻量结构化知识条目（`knowledge_note`, 限制在 300 字符内，最多保留 10 条），
-     通过 `knowledge.json` 独立存储并在检索时按需拼接；
-2. 借鉴 SkillOpt (arXiv:2605.23904, 2026) 的有界补丁与闭环沙箱验证范式 (Bounded Patching & Closed-Loop Validation)：
+   - 将环境经验与特定边界提炼为轻量结构化知识条目（`knowledge_note`, 限制在 300 字符内，按类别配额持久保留），
+     通过 `knowledge.json` 独立存储并按优先级拼接，防止多轮演进中的“优化失忆症”（Optimization Amnesia）；
+2. 借鉴 SkillOpt (NeurIPS 2026 Spotlight, arXiv:2605.23904, 2026) 的有界补丁、闭环验证与被拒编辑缓冲 (Bounded Patching, Validation Gate & Rejected-Edit Buffer):
    - 严格限定单次演化补丁规模：最多 1~2 处编辑，单次替换或追加长度硬性受限于 1,000 字符内，杜绝模型幻觉全量覆写；
+   - 维护 `rejected_edits.jsonl` 被拒编辑缓冲并回流给优化器，避免重复提出已验证失败或退化的补丁；
    - 强制沙箱隔离验证门禁 (`validation_gate`)：候选补丁发布前必须在隔离环境中重放基线用例；
    - 零退化门禁指标：候选技能必须取得严格大于旧版本的成功数 (`candidate.successes > old.successes`)
      且不增加任何硬失败 (`candidate.hard_failures <= old.hard_failures`)，否则绝对拒绝合入；
-3. 单调语义化版本升级与可回滚历史快照 (Monotonic SemVer & Atomic Rollback)：
-   - 每次成功演化单调自增修订版本号（如 1.0.0 -> 1.0.1）；
-   - 写入前保存 `<version>.md` 快照与 `provenance.jsonl` 审计追溯链条，支持版本回滚；
-4. 崩溃恢复自治状态机 (`recover`)：
-   - 若系统在 `prepared` 阶段突发中断，恢复流程严格保持幂等，仅对已落盘完成的技能生成镜像，杜绝意外发布未受控的中间代码。
+3. 借鉴 SkillDiff (arXiv:2611.25534, Nov 2026) 的反先验专家知识锚点保护 (In-Place Expert Knowledge Anchoring):
+   - 对标记为 `anchors` / `[ANCHOR]` 的专家条款施加写保护，阻止无外部证据支撑的多轮改写将其删除并向模型先验坍缩；
+4. 借鉴 SkillGen (NeurIPS 2026, arXiv:2605.10999) & SkillsBench (NeurIPS 2026, arXiv:2602.12670) 的干预对比验证：
+   - 门禁模式下新建技能以 `__null_baseline__`（无技能基线）作为 `old` 对照组，验证严格净收益后方允许发布；
+5. 单调语义化版本升级与可回滚历史快照 (Monotonic SemVer & Atomic Rollback) 与崩溃恢复状态机 (`recover`)。
 """
 
 from __future__ import annotations
@@ -34,6 +35,11 @@ import uuid
 from pathlib import Path
 from .knowledge import atomic, sha, reject_symlinks
 from .runtime_state import BudgetExceeded
+
+KNOWLEDGE_KINDS = ("boundary", "verified_pattern", "failure_mode", "observation", "rejected_update")
+MAX_NOTES_PER_KIND = 10
+KNOWLEDGE_QUOTAS = {kind: MAX_NOTES_PER_KIND for kind in KNOWLEDGE_KINDS}
+MAX_REJECTED_EDITS = 20
 
 
 class EvolutionStore:
@@ -433,7 +439,7 @@ class EvolutionStore:
         """规整化并严格校验单条经验知识条目（遵循 WikiSkill 解耦机制）。
 
         【核心不变性与安全约束】
-        1. 类别白名单：kind 必须为 `observation`、`boundary` 或 `rejected_update` 之一；
+        1. 类别白名单：kind 必须为 `KNOWLEDGE_KINDS` 之一；
         2. 字符长度硬约束：文本有效内容必须非空且严格不超过 300 字符，杜绝无限制日志膨胀。
 
         Args:
@@ -449,11 +455,7 @@ class EvolutionStore:
         """
         if isinstance(note, str):
             note = {"kind": "observation", "text": note}
-        if not isinstance(note, dict) or note.get("kind") not in {
-            "observation",
-            "boundary",
-            "rejected_update",
-        }:
+        if not isinstance(note, dict) or note.get("kind") not in KNOWLEDGE_KINDS:
             raise ValueError("Invalid knowledge kind")
         text = note.get("text")
         if not isinstance(text, str) or not text.strip() or len(text) > 300:
@@ -466,8 +468,22 @@ class EvolutionStore:
             "skill_version": version,
         }
 
+    @staticmethod
+    def _trim_knowledge(records):
+        """按 WikiSkill (arXiv:2608.27454, 2026) 持久化知识层按类别配额裁剪，防止瞬态记录挤掉边界经验。"""
+        remaining = dict(KNOWLEDGE_QUOTAS)
+        kept = []
+        for item in reversed(records):
+            kind = item.get("kind")
+            quota = remaining.get(kind, 0)
+            if quota > 0:
+                kept.append(item)
+                remaining[kind] = quota - 1
+        kept.reverse()
+        return kept
+
     def knowledge(self, name):
-        """查询指定技能关联的最新解耦知识经验列表（最多 10 条）。
+        """查询指定技能关联的分类解耦知识经验列表（按类别配额保留）。
 
         Args:
             name: 技能唯一名称。
@@ -478,16 +494,13 @@ class EvolutionStore:
         return self._knowledge_at(self._dir(name))
 
     def _knowledge_at(self, folder):
-        """从指定目录下的 `knowledge.json` 安全反序列化读取并去重知识列表。
-
-        【容量约束】
-        严格保留最近 10 条有效知识条目，遵循滑窗淘汰机制。
+        """从指定目录下的 `knowledge.json` 安全反序列化读取并按类别配额去重知识列表。
 
         Args:
             folder: 目标技能演化目录。
 
         Returns:
-            list[dict]: 归一化的最新知识列表（上限 10 条）。
+            list[dict]: 归一化并按类别配额保留的知识列表。
         """
         path = folder / "knowledge.json"
         try:
@@ -514,7 +527,7 @@ class EvolutionStore:
                     seen.add(key)
             except (ValueError, AttributeError, TypeError):
                 continue
-        return records[-10:]
+        return self._trim_knowledge(records)
 
     def _save_note(self, name, note, event_id, version):
         """向指定名称技能的知识库安全持久化单条新知识经验。
@@ -528,10 +541,10 @@ class EvolutionStore:
         return self._save_note_at(self._dir(name), note, event_id, version)
 
     def _save_note_at(self, folder, note, event_id, version):
-        """向目标目录的 `knowledge.json` 原子合并并持久化最新知识记录。
+        """向目标目录的 `knowledge.json` 原子合并并持久化最新分类知识记录。
 
         【核心不变性与安全约束】
-        以 (event_id, kind, text) 为唯一键去重，保留最新 10 条并经由 `atomic()` 原子落盘。
+        以 (event_id, kind, text) 为唯一键去重，按类别配额保留后经由 `atomic()` 原子落盘。
 
         Args:
             folder: 目标技能演化目录。
@@ -546,10 +559,10 @@ class EvolutionStore:
             item for item in records if (item["event_id"], item["kind"], item["text"]) != key
         ]
         records.append(record)
-        atomic(folder / "knowledge.json", json.dumps(records[-10:], ensure_ascii=False))
+        atomic(folder / "knowledge.json", json.dumps(self._trim_knowledge(records), ensure_ascii=False))
 
     def knowledge_prompt(self, name):
-        """将指定技能的外部解耦知识格式化为注入模型的提示词切片。
+        """将指定技能的外部解耦知识按高优先级类别排序格式化为提示词切片。
 
         【字符预算】
         格式化后的知识提示词片段严格硬性截断于 2,000 字符以内，防止上下文膨胀。
@@ -560,10 +573,69 @@ class EvolutionStore:
         Returns:
             str: 格式化后的知识经验提示词文本（<= 2,000 字符）。
         """
+        priority = {kind: idx for idx, kind in enumerate(KNOWLEDGE_KINDS)}
+        items = sorted(
+            self.knowledge(name),
+            key=lambda item: priority.get(item.get("kind"), len(KNOWLEDGE_KINDS)),
+        )
         return "\n".join(
             f"[{item['kind']}; version {item['skill_version']}] {item['text']}"
-            for item in self.knowledge(name)
+            for item in items
         )[:2000]
+
+    def rejected_edits(self, name, limit=5):
+        """读取 SkillOpt (NeurIPS 2026 Spotlight, arXiv:2605.23904) Rejected-Edit Buffer 中的近期被拒编辑。"""
+        folder = self._dir(name)
+        path = folder / "rejected_edits.jsonl"
+        if not path.exists():
+            return []
+        reject_symlinks(path)
+        records = []
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+                if isinstance(item, dict):
+                    records.append(item)
+            except ValueError:
+                self.auxiliary_errors.append("Incomplete rejected edit record: " + str(path))
+        return records[-limit:] if limit > 0 else []
+
+    def _save_rejected_edit(self, name, entry):
+        """将验证失败或被拒绝的候选编辑写入 SkillOpt (arXiv:2605.23904) 被拒编辑缓冲 (`rejected_edits.jsonl`)。"""
+        folder = self._dir(name)
+        path = folder / "rejected_edits.jsonl"
+        reject_symlinks(path)
+        existing = self.rejected_edits(name, limit=MAX_REJECTED_EDITS)
+        sanitized = {
+            "event_id": str(entry.get("event_id", ""))[:64],
+            "reason": str(entry.get("reason", ""))[:240],
+            "edits_summary": str(entry.get("edits_summary", ""))[:600],
+            "failed_cases": list(entry.get("failed_cases", ()))[:8],
+            "evidence": str(entry.get("evidence", ""))[:500],
+            "skill_version": str(entry.get("skill_version", "unknown"))[:32],
+            "time": datetime.now(timezone.utc).isoformat(),
+        }
+        existing.append(sanitized)
+        trimmed = existing[-MAX_REJECTED_EDITS:]
+        payload = "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in trimmed)
+        atomic(path, payload)
+
+    def rejected_edits_prompt(self, name, limit=5):
+        """格式化 SkillOpt (arXiv:2605.23904) Rejected-Edit Buffer 提示切片 (<= 1,500 字符) 供优化器避坑。"""
+        items = self.rejected_edits(name, limit=limit)
+        if not items:
+            return ""
+        lines = []
+        for item in items:
+            cases = ",".join(str(c) for c in item.get("failed_cases", ())) or "n/a"
+            lines.append(
+                f"[rejected v{item.get('skill_version', '?')}; reason={item.get('reason', '')}; "
+                f"cases={cases}] edits={item.get('edits_summary', '')}"
+                + (f" | evidence={item['evidence']}" if item.get("evidence") else "")
+            )
+        return "\n".join(lines)[:1500]
 
     def apply(
         self,
@@ -577,6 +649,7 @@ class EvolutionStore:
         permission_mode="default",
         authorized=False,
         knowledge_note=None,
+        allow_anchor_override=False,
         _prepare_only=False,
         _validation="unvalidated",
         _expected_resources=None,
@@ -587,8 +660,9 @@ class EvolutionStore:
         1. 权限闸门：仅允许在 acceptEdits 或 bypassPermissions 权限模式下生效，或持有显式授权；
         2. 补丁规模限制：强制 1 到 2 处编辑，单次 replace/append 不得超出 1,000 字符；
         3. 唯一锚点匹配：replace 操作匹配的旧文本片段在原技能正文中必须严格唯一出现一次；
-        4. 语义版本自增：成功应用后语义版本末尾 patch 位自增 1，原文件备份为 `<version>.md`；
-        5. 知识解耦落盘：若附带 knowledge_note，将其解耦写入 `knowledge.json` 而非主提示词正文。
+        4. SkillDiff 专家锚点保护：未显式授权覆写时，禁止删除或破坏 `snap.anchors` 受保护条款；
+        5. 语义版本自增：成功应用后语义版本末尾 patch 位自增 1，原文件备份为 `<version>.md`；
+        6. 知识解耦落盘：若附带 knowledge_note，将其解耦写入 `knowledge.json` 而非主提示词正文。
         """
         event_id = event_id or uuid.uuid4().hex
         with self._lock:
@@ -636,6 +710,29 @@ class EvolutionStore:
                     body = body[:start] + new + body[end:]
                 if appends:
                     body += "\n" + "\n".join(appends)
+                if not allow_anchor_override and snap.anchors:
+                    violated = [
+                        anchor
+                        for anchor in snap.anchors
+                        if anchor in snap.body and anchor not in body
+                    ]
+                    if violated:
+                        reason_msg = f"Protected anchor removed or altered: {violated[0][:80]}"
+                        rejection = self._reject(name, event_id, reason_msg, knowledge=True)
+                        rejection["failure_kind"] = "anchor_violation"
+                        rejection["violated_anchors"] = violated
+                        self._save_rejected_edit(
+                            name,
+                            {
+                                "event_id": event_id,
+                                "reason": "anchor_violation",
+                                "edits_summary": json.dumps(edits, ensure_ascii=False)[:600],
+                                "failed_cases": [],
+                                "evidence": reason_msg,
+                                "skill_version": snap.version,
+                            },
+                        )
+                        return rejection
                 return self._publish(
                     snap, body, event_id, description, when_to_use, reason, knowledge_note,
                     _prepare_only, _validation
@@ -830,6 +927,7 @@ class EvolutionStore:
         permission_mode="default",
         authorized=False,
         event_id=None,
+        _validation="unvalidated",
     ):
         r"""全新自研技能的安全受控创建与初始版本 (1.0.0) 审计落盘。
 
@@ -892,7 +990,7 @@ class EvolutionStore:
             )
             event = {
                 "status": "prepared",
-                "validation": "unvalidated",
+                "validation": _validation,
                 "event_id": event_id,
                 "name": name,
                 "version": "1.0.0",
@@ -1061,7 +1159,118 @@ class EvolutionStore:
             try:
                 if action == "create":
                     if validation_gate is not None:
-                        return self._reject(name, event_id, "Gated creation requires a comparison baseline; unsupported")
+                        if not getattr(validation_gate, "supports_null_baseline", False):
+                            return self._reject(
+                                name, event_id, "Creation requires a baseline-capable validation gate"
+                            )
+                        description_val = proposal.get("description", "")
+                        when_val = proposal.get("when_to_use", "")
+                        body_val = proposal.get("body", "")
+                        if (
+                            not name
+                            or name in (".", "..")
+                            or "/" in name
+                            or "\\" in name
+                            or not isinstance(body_val, str)
+                            or not body_val.strip()
+                            or any(x.strip() == "---" for x in body_val.splitlines())
+                            or not isinstance(description_val, str)
+                            or len(description_val) > 500
+                            or not isinstance(when_val, str)
+                            or len(when_val) > 500
+                        ):
+                            return self._reject(name, event_id, "Invalid new skill")
+                        if validation_context is not None and validation_context.reason:
+                            result = {
+                                "status": "incubating",
+                                "event_id": event_id,
+                                "reason": validation_context.reason,
+                                "proposal_ref": str(proposal_path),
+                                "window_version": validation_context.version,
+                                "validation": "unvalidated",
+                                "task_quality": None,
+                            }
+                            self._record(name, result)
+                            return result
+                        from .skills import SkillSnapshot, _parse_anchors
+
+                        skill_path = (self.skills.root / ".weyra" / "skills" / name / "SKILL.md").resolve()
+                        raw_new = (
+                            "---\n"
+                            + "\n".join(
+                                k + ": " + json.dumps(v, ensure_ascii=False)
+                                for k, v in dict(
+                                    name=name,
+                                    version="1.0.0",
+                                    description=description_val,
+                                    when_to_use=when_val,
+                                ).items()
+                            )
+                            + "\n---\n"
+                            + body_val
+                        )
+                        null_baseline = SkillSnapshot(
+                            name=name,
+                            path=skill_path,
+                            version="0.0.0",
+                            description="",
+                            when_to_use="",
+                            body="",
+                            content_hash=sha(""),
+                            resources=MappingProxyType({}),
+                            metadata=MappingProxyType({"__null_baseline__": True}),
+                        )
+                        candidate = SkillSnapshot(
+                            name=name,
+                            path=skill_path,
+                            version="1.0.0",
+                            description=description_val,
+                            when_to_use=when_val,
+                            body=body_val,
+                            content_hash=sha(raw_new),
+                            resources=MappingProxyType({}),
+                            anchors=_parse_anchors({}, body_val),
+                        )
+                        try:
+                            if validation_context is not None:
+                                scores = await validation_gate.evaluate(
+                                    null_baseline, candidate, validation_context, context=run_context
+                                )
+                            else:
+                                scores = await validation_gate(null_baseline, candidate)
+                            report_path = self.root / "validation" / (sha(str(event_id)) + ".json")
+                            atomic(report_path, json.dumps(scores, ensure_ascii=False))
+                            if self.session is not None:
+                                self.session.append(
+                                    "skill_validation",
+                                    {"event_id": event_id, "report_ref": str(report_path)},
+                                    checkpoint=True,
+                                )
+                            old_score, new_score = scores["old"], scores["candidate"]
+                            if getattr(validation_gate, "requires_model_review", False) and scores.get("model_approved") is not True:
+                                reason = scores.get("reason", "Independent model review did not approve candidate")
+                                result = self._reject(name, event_id, reason)
+                                result.update(validation_report=scores, validation_report_ref=str(report_path))
+                                return result
+                            for score in (old_score, new_score):
+                                if any(type(score[k]) is not int or score[k] < 0 for k in ("successes", "hard_failures")):
+                                    raise ValueError("Invalid validation metrics")
+                            if not (
+                                new_score["successes"] > old_score["successes"]
+                                and new_score["hard_failures"] <= old_score["hard_failures"]
+                            ):
+                                return self._reject(
+                                    name,
+                                    event_id,
+                                    "Validation requires strict improvement without additional hard failures",
+                                )
+                        except BudgetExceeded:
+                            raise
+                        except Exception as error:
+                            return self._reject(name, event_id, "Validation failed: " + type(error).__name__)
+                        result = self.create(**proposal, _validation="validated")
+                        result.update(validation_report=scores, validation_report_ref=str(report_path))
+                        return result
                     return self.create(**proposal)
                 if validation_gate is not None:
                     candidate = self.apply(**proposal, _prepare_only=True, _expected_resources=target.resources)
@@ -1093,6 +1302,26 @@ class EvolutionStore:
                             reason = (scores.get("reason", "Independent model review did not approve candidate")
                                       if validation_context is not None else
                                       'Independent model review did not approve candidate')
+                            failed_cases = [
+                                row.get("id")
+                                for row in scores.get("per_case", ())
+                                if isinstance(row, dict)
+                                and (
+                                    not row.get("candidate", {}).get("passed", True)
+                                    or row.get("judge", {}).get("preferred") in {"old", "inconsistent"}
+                                )
+                            ]
+                            self._save_rejected_edit(
+                                name,
+                                {
+                                    "event_id": event_id,
+                                    "reason": reason,
+                                    "edits_summary": json.dumps(proposal.get("edits", []), ensure_ascii=False)[:600],
+                                    "failed_cases": failed_cases,
+                                    "evidence": scores.get("reason", ""),
+                                    "skill_version": target.version,
+                                },
+                            )
                             result = self._reject(name, event_id, reason)
                             result.update(validation_report=scores, validation_report_ref=str(report_path))
                             return result
@@ -1101,7 +1330,19 @@ class EvolutionStore:
                                 raise ValueError('Invalid validation metrics')
                         if not (new_score['successes'] > old_score['successes'] and
                                 new_score['hard_failures'] <= old_score['hard_failures']):
-                            return self._reject(name, event_id, 'Validation requires strict improvement without additional hard failures')
+                            reason = 'Validation requires strict improvement without additional hard failures'
+                            self._save_rejected_edit(
+                                name,
+                                {
+                                    "event_id": event_id,
+                                    "reason": reason,
+                                    "edits_summary": json.dumps(proposal.get("edits", []), ensure_ascii=False)[:600],
+                                    "failed_cases": [],
+                                    "evidence": json.dumps({"old": old_score, "candidate": new_score}, ensure_ascii=False),
+                                    "skill_version": target.version,
+                                },
+                            )
+                            return self._reject(name, event_id, reason)
                     except BudgetExceeded:
                         raise
                     except Exception as error:

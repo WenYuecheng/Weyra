@@ -125,9 +125,16 @@ class ResourceLoader:
             ),
             "memory": "Memory index snapshot:\n"
             + "\n".join(sorted(item["id"] for item in self.memory.list())),
+            # 对齐 Skill-Pro (ICML 2026, mi26d) 激活条件 C 与 SkillAlign (EMNLP 2026 Main, 2026.emnlp-main.2565) 接口显露规范
             "skills": "Skill catalog snapshot:\n"
             + "\n".join(
-                f"{skill.name}: {skill.description} [{skill.version}]"
+                f"{skill.name}: {skill.description}"
+                + (
+                    f" | when: {getattr(skill, 'when_to_use', '')}"
+                    if getattr(skill, "when_to_use", "")
+                    else ""
+                )
+                + f" [{skill.version}]"
                 for _, skill in sorted(catalog.items())
             ),
         }

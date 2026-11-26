@@ -139,8 +139,15 @@ class CodingLifecycle:
         ctx.services["skill_catalog"] = catalog
         candidates = self.skills.search(prompt, catalog=catalog)
         if candidates:
+            # 显露激活条件 when_to_use：对齐 Skill-Pro (ICML 2026, mi26d) & SkillAlign (EMNLP 2026 Main, 2026.emnlp-main.2565)
             note = "Relevant available skills:\n" + "\n".join(
-                f"{s.name} [{s.version}]: {s.description}" for s in candidates
+                f"{s.name} [{s.version}]: {s.description}"
+                + (
+                    f" (when: {getattr(s, 'when_to_use', '')})"
+                    if getattr(s, "when_to_use", "")
+                    else ""
+                )
+                for s in candidates
             )
             if not any(
                 message.source == "skill_catalog" and message.content == note
@@ -524,7 +531,11 @@ class CodingLifecycle:
                 )
 
             async def run_feedback_turn(text, queued):
-                """执行带有技能反馈归因的单一交互轮次 (Execute Turn with Skill Feedback Attribution)。
+                """执行带有技能反馈归因与轨迹摘要提取的单一交互轮次。
+
+                提取 tool_calls、error_tools、retry_count 与 turn_state 作为结构化演化证据，
+                参考 Rethinking Self-Evolving Agent Skills (arXiv:2608.02636)、
+                AutoSaddler (NeurIPS 2026, arXiv:2608.23041) 与 SkillsVote (EMNLP 2026 Main, 2026.emnlp-main.281)。
 
                 Args:
                     text: 输入指令。
@@ -537,16 +548,54 @@ class CodingLifecycle:
                 self._last_replay_snapshot = None
                 result = await self._run_turn(text, queued_input=queued)
                 used = []
+                tool_calls = []
+                error_tools = []
+                retry_count = 0
+                prev_failed_tool = None
+                turn_state = "completed"
                 for record in self.session.chain():
-                    if record["id"] in prior or record["kind"] != "tool_result":
+                    if record["id"] in prior:
                         continue
+                    kind = record["kind"]
                     data = record["data"]
+                    if kind == "turn_end" and isinstance(data.get("state"), str):
+                        turn_state = data["state"]
+                        continue
+                    if kind != "tool_result":
+                        continue
+                    name = data.get("name")
+                    status = data.get("status")
+                    if isinstance(name, str) and len(tool_calls) < 20:
+                        tool_calls.append(name)
+                    if status in {"error", "denied", "invalid", "cancelled"}:
+                        if len(error_tools) < 10:
+                            error_tools.append({"name": name, "status": status})
+                        if name and name == prev_failed_tool:
+                            retry_count += 1
+                        prev_failed_tool = name
+                    else:
+                        if name and name == prev_failed_tool:
+                            retry_count += 1
+                        prev_failed_tool = None
                     structured = data.get("structured")
-                    if (data.get("name") == "skill" and data.get("status") == "success"
+                    if (name == "skill" and status == "success"
                             and isinstance(structured, dict) and isinstance(structured.get("name"), str)):
                         if structured["name"] not in used:
                             used.append(structured["name"])
                 window = {"user": text, "assistant": result}
+                if (
+                    self.enable_evolution
+                    or tool_calls
+                    or error_tools
+                    or retry_count
+                    or turn_state != "completed"
+                ):
+                    window["trace_summary"] = {
+                        "tool_calls": tool_calls,
+                        "error_tools": error_tools,
+                        "retry_count": retry_count,
+                        "turn_state": turn_state,
+                    }
                 if self._last_replay_snapshot is not None:
                     window["replay"] = self._last_replay_snapshot
                 if used:
