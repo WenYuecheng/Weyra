@@ -495,7 +495,7 @@ class WeyraTUIApp(App[None]):
         响应 F3 / Ctrl+K 快捷键或 `/skills` 指令，展示内置技能与自演化技能目录，并支持版本回滚。
 
         【开源设计思想与架构血统】
-        对接自学习与在线演化技能体系（`SkillEvolution`），通过调用 `/skill-rollback <name> <ver>`
+        对接技能演化存储（`EvolutionStore`），通过调用 `/skill-rollback <name> <ver>`
         实现针对已演化技能安全无损的版本撤销与历史溯源。
 
         Args:

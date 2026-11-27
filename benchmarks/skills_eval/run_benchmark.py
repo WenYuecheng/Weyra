@@ -499,7 +499,7 @@ async def _run_arm(runtime, budget: Budget, arm_name: str, *, with_skills: bool,
                 try:
                     prompt = task["prompt"]
                     if with_skills:
-                        # 盲测 Skill-Pro C-first BM25 + SkillAlign when_to_use：Prompt 不透露任何具体技能名
+                        # 盲测 <available_skills> 摘要披露与渐进式加载：Prompt 不透露任何具体技能名
                         prompt += " Check available workspace skills via the `skill` tool if applicable and follow the matching SOP strictly."
                     await asyncio.wait_for(agent.run_once(prompt), timeout=150)
                     rounds_used = 1
@@ -585,7 +585,7 @@ async def _run_arm(runtime, budget: Budget, arm_name: str, *, with_skills: bool,
 
 
 async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
-    """运行 3 项真实 DeepSeek 有界演进与护栏校验 (SkillDiff / SkillOpt / SkillGen, 0 Judge calls)。"""
+    """运行 3 项真实 DeepSeek 有界演进与护栏校验 (SkillDiff / SkillOpt, 0 Judge calls)。"""
     tokens_before = budget.total_tokens
     calls_before = budget.calls
     cost_before = budget.total_cost_cny
@@ -831,7 +831,7 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
             "version_after": after_patch_snap.version,
             "focus_items_preserved": patch_focus_ok,
         },
-        "skillgen_create": {
+        "null_baseline_create": {
             "status": create_res.get("status"),
             "reason": create_res.get("reason"),
             "error": create_res.get("error"),
@@ -911,7 +911,7 @@ async def main_async() -> dict:
     (OUT_DIR / "results.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     pe = evo_suite["patch_evolution"]
-    ge = evo_suite["skillgen_create"]
+    ge = evo_suite["null_baseline_create"]
     md_lines = [
         f"# DeepSeek (`{model.model_id}`) 多域技能路由、TTS 对比与在线演进评测报告",
         "",

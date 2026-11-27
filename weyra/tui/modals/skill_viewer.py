@@ -1,7 +1,7 @@
 """已注册技能目录查看与版本回滚模态弹窗 (Skill Registry & Version Rollback Modal)。
 
 【架构定位】
-连接 SkillEvolution 演化存储，展示所有内置与演化生成的技能，支持审查与版本安全回滚。
+连接 EvolutionStore 演化存储，展示所有工作区与演化生成的技能，支持审查与版本安全回滚。
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ class SkillViewerModal(ModalScreen[tuple[str, str] | None]):
         绑定已注册技能元数据列表，初始化表格与详情面板，支持动态高亮与版本回滚操作。
 
         【开源设计思想与架构血统】
-        结合自演化技能生命周期（`SkillEvolution` / `OnlineSkillEvolution`）设计。
+        结合自演化技能生命周期（`EvolutionStore` / `OnlineSkillEvolution`）设计。
         提供直观的技能清单视图与版本切换支持，使开发者可在线查看各技能的 Prompt 描述、
         来源（内置或演化自学习）及版本演进路径。
 
