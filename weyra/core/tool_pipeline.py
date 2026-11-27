@@ -138,9 +138,6 @@ class ToolExecutionPipeline:
                     result.content = "Tool registration changed during authorization"
                     return result
                 context.services["tools"] = self
-                capture = context.services.get("replay_capture")
-                if capture is not None:
-                    capture.tool(call.name)
                 if registration is not None:
                     registration.tasks.add(asyncio.current_task())
                 self.session.append(

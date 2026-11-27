@@ -8,10 +8,9 @@
     提供了自包含、高可靠、零外部依赖的检索与存储底层支撑。
 
 开源框架借鉴与学术溯源:
-    1. WikiSkill (arXiv:2608.27454, 2026):
-       - 借鉴其统一 Frontmatter 规范（parse_markdown）：从 Markdown 首部提取 YAML/JSON 形式化元数据
-         （name, description, when_to_use 等）并与主体指令（Body）完全解耦，提供技能自省能力。
-       - 符号链接攻击免疫（reject_symlinks）：递归校验路径及其所有父目录，严格禁止软链接跨根逃逸。
+    1. Agent Skills Standard (`agentskills.io`) & DeepSeek Harness (`packages/skill/skill-filesystem`):
+       - 统一 Frontmatter 解析（`parse_markdown`）与符号链接安全校验（`reject_symlinks`），
+         实现单文件技能的自包含与防跨根逃逸。
     2. Hermes Agent (hermes_state.py & memory/):
        - POSIX 原子写屏障（atomic）：采用 `tempfile.mkstemp` 在同目录下创建临时文件，完成内容写入后
          强制执行 `os.fsync` 落盘，再利用操作系统内核的 `os.replace` 进行原子原子替换，彻底避免半写损坏。
@@ -125,7 +124,7 @@ def rank(query: str, items: list[tuple[Any, str]], limit: int) -> list[Any]:
 
 
 def parse_markdown(text: str) -> tuple[dict[str, Any], str]:
-    """解析附带 Frontmatter 头的 Markdown 文本（借鉴 WikiSkill 设计）。
+    """解析附带 YAML Frontmatter 头的 `SKILL.md` Markdown 文本（对齐 agentskills.io / Pi Agent）。
 
     提取开头的 `---` 元数据块，解析其中的键值对，并返回 (metadata_dict, markdown_body)。
     """

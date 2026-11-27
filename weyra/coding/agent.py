@@ -11,8 +11,8 @@ ModelRuntime 模型网关、MemoryStore 记忆管理、SkillStore 技能库、Jo
    - 统一协调会话管理 (SessionStore)、上下文窗口与压缩 (ContextManager)、工具安全调度 (ToolRuntime)、模型网关 (ModelRuntime)、长期记忆 (MemoryStore)、技能库 (SkillStore) 与后台作业 (Jobs)；
    - 暴露统一的单步运行 (`run_once`)、流式事件驱动 (`stream`)、双队列交互 (`steer` / `follow_up`) 以及断点唤醒恢复 (`resume_pending`)；
    - 结合 DeepSeek-Harness (`packages/core/`) 严密驱动生命周期与资源清理。
-2. 协同 WikiSkill 与 SkillOpt 的在线自主演化装配 (`OnlineSkillEvolution`):
-   - 在主循环轮次终结时自动提取交互视窗，若触发自愈反馈则自动化调度技能评审与更新。
+2. 协同 Microsoft SkillOpt 与 SkillDiff 的在线自主演化装配 (`OnlineSkillEvolution`):
+   - 在主循环轮次终结时自动提取交互视窗，若触发演进反馈则调用 SkillOpt 有界编辑与验证门禁完成技能评估与发布。
 """
 
 from __future__ import annotations
@@ -129,12 +129,8 @@ class CodingAgent(AgentLoop):
         evolution_config = getattr(runtime, "skill_evolution", {})
         if enable_evolution is None:
             enable_evolution = evolution_config.get("enabled", False)
-        if enable_evolution:
-            judge = runtime.routes.get("skill_judge")
-            if judge is None or "skill_judge" in getattr(runtime, "inherited_purposes", ()):
-                raise ValueError("Enabled evolution requires explicit skill_judge route")
-            if evolution_validation_gate is None and not evolution_config.get("validation_manifest"):
-                raise ValueError("Enabled evolution requires validation_manifest or an evidence-bearing validation callback")
+        if enable_evolution and evolution_validation_gate is None and not evolution_config.get("validation_manifest"):
+            raise ValueError("Enabled evolution requires validation_manifest or an evidence-bearing validation callback")
         from weyra.core.harness import AgentHarness
         self.harness = AgentHarness()
         self.hooks = self.harness.hooks
@@ -166,7 +162,14 @@ class CodingAgent(AgentLoop):
             self.budget.attach(self.session)
             self.memory = MemoryStore(self.project)
             self.skills = SkillStore(self.project)
-            self.evolution = EvolutionStore(self.skills, session=self.session)
+            self.evolution = EvolutionStore(
+                self.skills,
+                session=self.session,
+                lr_scheduler=evolution_config.get("lr_scheduler", "constant"),
+                max_lr=evolution_config.get("max_lr", 4),
+                min_lr=evolution_config.get("min_lr", 2),
+                gate_metric=evolution_config.get("gate_metric", "hard"),
+            )
             self.jobs = jobs or Jobs(self.project)
             self._owns_jobs = jobs is None
             self.tools = ToolRuntime(
@@ -220,14 +223,14 @@ class CodingAgent(AgentLoop):
 
             self.children = ChildManager(self)
             if self.enable_evolution:
-                from weyra.skill_judge import ConfiguredSkillGate, ReviewedCallbackGate
+                from weyra.skill_judge import SkillValidationGate
                 if self.evolution_validation_gate is None:
-                    self.evolution_validation_gate = ConfiguredSkillGate(
-                        self.runtime, self.budget, evolution_config["validation_manifest"], self.session
-                    )
-                elif not isinstance(self.evolution_validation_gate, ConfiguredSkillGate):
-                    self.evolution_validation_gate = ReviewedCallbackGate(
-                        self.runtime, self.budget, self.evolution_validation_gate, self.session
+                    self.evolution_validation_gate = SkillValidationGate(
+                        self.runtime,
+                        self.budget,
+                        evolution_config["validation_manifest"],
+                        self.session,
+                        gate_metric=evolution_config.get("gate_metric", "hard"),
                     )
             self._register_tools()
             self._refresh_project_rules()
@@ -474,25 +477,37 @@ class CodingAgent(AgentLoop):
             return {"deleted": args["name"]}
 
         async def skill(args, ctx):
-            """技能加载与执行工具处理闭包 (Handler for skill)。"""
+            """技能加载与渐进式资源读取工具（对齐 DeepSeek Harness `tool-skill` 与 Hermes `skill_view`）。"""
+            from weyra.skills import render_skill_content
+
             catalog = ctx.services.get("skill_catalog")
             if catalog is None:
                 catalog = self.skills.capture_catalog()
             snapshot = self.skills.load(args["name"], catalog)
+            if not getattr(snapshot, "model_invocable", True):
+                raise PermissionError(
+                    f"Skill '{snapshot.name}' has disable-model-invocation enabled"
+                )
             ctx.services.setdefault("loaded_skills", {})[snapshot.name] = snapshot
+            if args.get("file_path"):
+                return self.skills.read_resource(snapshot, args["file_path"])
             if snapshot.context == "fork":
                 return await self.children.spawn(
                     args.get("task", "Execute the skill."),
                     mode="spawn",
                     role="Skill instructions:\n" + snapshot.body,
                 )
-            return {
-                "name": snapshot.name,
-                "version": snapshot.version,
-                "instructions": snapshot.body,
-                "resources": list(snapshot.resources),
-                "content_hash": snapshot.content_hash,
-            }
+            return ToolResult(
+                "",
+                "skill",
+                render_skill_content(snapshot),
+                structured={
+                    "name": snapshot.name,
+                    "version": snapshot.version,
+                    "resources": list(snapshot.resources),
+                    "content_hash": snapshot.content_hash,
+                },
+            )
 
         def skill_resource(args, ctx):
             """技能内嵌资源文件读取工具处理闭包 (Handler for skill_resource)。"""
@@ -596,8 +611,8 @@ class CodingAgent(AgentLoop):
         )
         add(
             "skill",
-            "Load a pinned skill or execute its isolated workflow",
-            {"name": text, "task": text},
+            "Load a pinned skill, read one of its bundled resource files, or execute its isolated workflow",
+            {"name": text, "file_path": text, "task": text},
             ["name"],
             skill,
             mode="dispatch",

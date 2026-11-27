@@ -122,34 +122,54 @@ class CodingLifecycle:
         pending.clear()
 
     async def _knowledge(self, prompt, ctx):
-        """动态检索可用技能与长期记忆并注入会话上下文 (Dynamic Knowledge & Memory Injection)。
+        """动态检索可用技能、解析用户显式 `/<skill-name>` 调用与长期记忆注入。
 
-        【设计思想与开源血统】
-        1. 技能动态注入：根据当前用户 Prompt 语义检索匹配的技能目录（SkillStore），
-           将候选技能清单以 `skill_catalog` 消息形式无重叠追加至会话历史；
-        2. 记忆语义检索与预算安全注入：调用专属 memory 模型在最多 200 条记忆候选清单中
-           精准挑选最相关的 5 条条目（`select`），并严格受 60KiB 与当前上下文可用窗口限制；
-        3. 子代理交付物回流：自动调用 `_accept_child_results()` 消费已完结子任务结果。
-
-        Args:
-            prompt: 当前轮次的用户输入指令。
-            ctx: 当前轮次的运行上下文 RunContext。
+        【开源框架与学术论文溯源】
+        1. DeepSeek Harness (`packages/skill/tool-skill`):
+           - 识别直接用户输入中的 `/<skill-name>` 手势，对 `user_invocable=True` 技能确定性注入
+             `<skill_content>`（`source="skill_invocation"`），确保 `disable-model-invocation` 技能仅由用户显式触发；
+           - 向模型暴露标准 `<available_skills>` 摘要目录（`source="skill_catalog"`），去重避免重复追加。
+        2. Hermes Agent (`tools/skills_tool.py`) & Pi Agent (`agentskills.io`):
+           - 技能目录数量较大时先用 BM25 筛选相关候选，始终遵循摘要前置、按需 `skill` 工具加载的渐进式披露。
         """
+        from weyra.skills import extract_user_invoked_skills, format_available_skills, render_skill_content
+
         catalog = self.skills.capture_catalog()
         ctx.services["skill_catalog"] = catalog
-        candidates = self.skills.search(prompt, catalog=catalog)
-        if candidates:
-            # 显露激活条件 when_to_use：对齐 Skill-Pro (ICML 2026, mi26d) & SkillAlign (EMNLP 2026 Main, 2026.emnlp-main.2565)
-            note = "Relevant available skills:\n" + "\n".join(
-                f"{s.name} [{s.version}]: {s.description}"
-                + (
-                    f" (when: {getattr(s, 'when_to_use', '')})"
-                    if getattr(s, "when_to_use", "")
-                    else ""
-                )
-                for s in candidates
-            )
+        projected = self.session.project()
+
+        # 1. 用户显式 /<skill-name> 直调注入 (DeepSeek Harness `tool-skill` gesture pattern)
+        for invoked_name in extract_user_invoked_skills(prompt):
+            skill = catalog.get(invoked_name)
+            if skill is None or not getattr(skill, "user_invocable", True):
+                continue
+            rendered = render_skill_content(skill)
             if not any(
+                m.source == "skill_invocation"
+                and m.provider_data.get("skill_name") == skill.name
+                and m.content == rendered
+                for m in projected
+            ):
+                self.session.add_message(
+                    Message(
+                        "user",
+                        rendered,
+                        source="skill_invocation",
+                        provider_data={"skill_name": skill.name, "skill_version": skill.version},
+                    )
+                )
+            ctx.services.setdefault("loaded_skills", {})[skill.name] = skill
+
+        # 2. 模型可见技能目录披露 (<available_skills>, 过滤 disable-model-invocation)
+        model_skills = [s for _, s in sorted(catalog.items()) if getattr(s, "model_invocable", True)]
+        candidates = (
+            self.skills.search(prompt, limit=5, catalog=catalog)
+            if len(model_skills) > 8
+            else model_skills
+        )
+        if candidates:
+            note = format_available_skills(candidates)
+            if note and not any(
                 message.source == "skill_catalog" and message.content == note
                 for message in self.session.project()
             ):
@@ -403,11 +423,6 @@ class CodingLifecycle:
         )
         self.context.services["agent"] = self
         self.context.services["on_request_checkpoint"] = self._ack_inputs
-        if self.enable_evolution:
-            from weyra.skill_replay import ReplayCapture
-            self.context.services["replay_capture"] = ReplayCapture(
-                self.context.id, self.session.project(),
-                system_instructions=self.context_manager.system)
         self.context.budget_scope = getattr(self, "_delegation_task_id", None) or self.context.id
         if self.context.budget_scope not in self.budget._scopes:
             self.budget.set_scope_limit(self.context.budget_scope, self.task_token_limit)
@@ -429,34 +444,12 @@ class CodingLifecycle:
                 raise PermissionError(agent_start_hook.reason or "Agent start blocked")
             if agent_start_hook and agent_start_hook.updated_system_prompt is not None:
                 ctx.services["run_system"] = agent_start_hook.updated_system_prompt
-                if capture := ctx.services.get("replay_capture"):
-                    updated = agent_start_hook.updated_system_prompt
-                    if len(updated) <= 16000:
-                        capture.system_instructions = updated
-                    else:
-                        capture.reason = capture.reason or "instructions_exceed_replay_limit"
             if queued_input:
                 self._consume(queued_input["kind"])
             else:
                 self.session.add_message(Message("user", prompt))
             self.session.append("environment", self._environment_snapshot(), True)
             await self._knowledge(prompt, ctx)
-            if capture := ctx.services.get("replay_capture"):
-                # 本轮到达的记忆回显或子智能体产物，作为客观重放输入录入重放快照上下文
-                from weyra.llm.providers import rendered_message_content
-                extra = []
-                for message in self.session.project():
-                    if message.source not in {"memory", "child"} or message.role != "user":
-                        continue
-                    item = {"role": message.role, "source": message.source,
-                            "source_kind": message.source_kind,
-                            "content": rendered_message_content(message)}
-                    if item not in capture.context and item not in extra:
-                        extra.append(item)
-                if sum(len(m["content"]) for m in capture.context + extra) <= 8000 and len(capture.context + extra) <= 8:
-                    capture.context.extend(extra)
-                else:
-                    capture.reason = capture.reason or "context_exceeds_replay_limit"
             final_text = await run_agent_loop(self._loop_host(), ctx)
             state = getattr(ctx, "turn_state", "completed")
             return final_text
@@ -467,9 +460,6 @@ class CodingLifecycle:
             state = "failed"
             raise
         finally:
-            capture = ctx.services.get("replay_capture")
-            if capture is not None:
-                self._last_replay_snapshot = capture.snapshot()
             self.session.append("turn_end", {"turn_id": ctx.id, "state": state}, checkpoint=True)
             self._repair_tool_messages()
             await ctx.close()
@@ -534,8 +524,7 @@ class CodingLifecycle:
                 """执行带有技能反馈归因与轨迹摘要提取的单一交互轮次。
 
                 提取 tool_calls、error_tools、retry_count 与 turn_state 作为结构化演化证据，
-                参考 Rethinking Self-Evolving Agent Skills (arXiv:2608.02636)、
-                AutoSaddler (NeurIPS 2026, arXiv:2608.23041) 与 SkillsVote (EMNLP 2026 Main, 2026.emnlp-main.281)。
+                供 Microsoft SkillOpt (`arXiv:2605.23904`) 在线补丁生成器诊断失败环节。
 
                 Args:
                     text: 输入指令。
@@ -545,7 +534,6 @@ class CodingLifecycle:
                     tuple[str, dict]: 最终回答与捕获的交互视窗字典。
                 """
                 prior = {record["id"] for record in self.session.chain()}
-                self._last_replay_snapshot = None
                 result = await self._run_turn(text, queued_input=queued)
                 used = []
                 tool_calls = []
@@ -560,6 +548,11 @@ class CodingLifecycle:
                     data = record["data"]
                     if kind == "turn_end" and isinstance(data.get("state"), str):
                         turn_state = data["state"]
+                        continue
+                    if kind == "message" and data.get("source") == "skill_invocation":
+                        sname = (data.get("provider_data") or {}).get("skill_name")
+                        if isinstance(sname, str) and sname not in used:
+                            used.append(sname)
                         continue
                     if kind != "tool_result":
                         continue
@@ -596,8 +589,6 @@ class CodingLifecycle:
                         "retry_count": retry_count,
                         "turn_state": turn_state,
                     }
-                if self._last_replay_snapshot is not None:
-                    window["replay"] = self._last_replay_snapshot
                 if used:
                     window["used_skill_ids"] = used
                 return result, window

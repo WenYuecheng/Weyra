@@ -1,71 +1,126 @@
-"""有界审计、知识解耦与自主演化技能存储引擎 (Bounded Skill Evolution & Knowledge Store)。
+"""SkillOpt 有界技能演化存储与 SkillDiff 原位防坍缩引擎 (Bounded Skill Evolution Store).
 
 【架构定位】
-本模块负责 Weyra 智能体在长周期任务探索中的技能（Skill）自我迭代与自我修正。
-系统通过捕获执行反馈与失败用例，生成微调补丁并进行封闭沙箱评测，从而实现智能体技能库的
-终身持续学习（Lifelong Continual Learning）。
+本模块负责 Weyra 智能体技能（`SKILL.md`）的受控版本演化、并发冲突防护（OCC）、
+语义版本号递增、历史快照归档、崩溃恢复与原子回滚。
 
-【开源与学术论文借鉴体系】
-1. 借鉴 WikiSkill (arXiv:2608.27454, 2026) 的指令与持久化知识分层解耦机制 (Explicit Instruction vs Persistent Wiki Layer):
-   - 严禁将任务偶发观测或长篇报错日志直接污染至核心可执行提示词正文中；
-   - 将环境经验与特定边界提炼为轻量结构化知识条目（`knowledge_note`, 限制在 300 字符内，按类别配额持久保留），
-     通过 `knowledge.json` 独立存储并按优先级拼接，防止多轮演进中的“优化失忆症”（Optimization Amnesia）；
-2. 借鉴 SkillOpt (NeurIPS 2026 Spotlight, arXiv:2605.23904, 2026) 的有界补丁、闭环验证与被拒编辑缓冲 (Bounded Patching, Validation Gate & Rejected-Edit Buffer):
-   - 严格限定单次演化补丁规模：最多 1~2 处编辑，单次替换或追加长度硬性受限于 1,000 字符内，杜绝模型幻觉全量覆写；
-   - 维护 `rejected_edits.jsonl` 被拒编辑缓冲并回流给优化器，避免重复提出已验证失败或退化的补丁；
-   - 强制沙箱隔离验证门禁 (`validation_gate`)：候选补丁发布前必须在隔离环境中重放基线用例；
-   - 零退化门禁指标：候选技能必须取得严格大于旧版本的成功数 (`candidate.successes > old.successes`)
-     且不增加任何硬失败 (`candidate.hard_failures <= old.hard_failures`)，否则绝对拒绝合入；
-3. 借鉴 SkillDiff (arXiv:2611.25534, Nov 2026) 的反先验专家知识锚点保护 (In-Place Expert Knowledge Anchoring):
-   - 对标记为 `anchors` / `[ANCHOR]` 的专家条款施加写保护，阻止无外部证据支撑的多轮改写将其删除并向模型先验坍缩；
-4. 借鉴 SkillGen (NeurIPS 2026, arXiv:2605.10999) & SkillsBench (NeurIPS 2026, arXiv:2602.12670) 的干预对比验证：
-   - 门禁模式下新建技能以 `__null_baseline__`（无技能基线）作为 `old` 对照组，验证严格净收益后方允许发布；
-5. 单调语义化版本升级与可回滚历史快照 (Monotonic SemVer & Atomic Rollback) 与崩溃恢复状态机 (`recover`)。
+【开源框架与学术论文溯源】
+1. Microsoft SkillOpt (`microsoft/SkillOpt`, NeurIPS 2026 Spotlight, arXiv:2605.23904, MIT):
+   - 有界文本补丁原语（`append` / `insert_after` / `replace` / `delete`）与受保护块隔离：
+     直接调用 `weyra.skillopt_vendor.skill.apply_patch_with_report`；
+   - 文本学习率编辑预算调度（`constant` / `linear` / `cosine` / `autonomous`）：
+     直接调用 `weyra.skillopt_vendor.scheduler.build_scheduler`；
+   - 留出验证集严格提升门禁（`accept_new_best` / `accept` / `reject`）：
+     经 `SkillValidationGate` 计算得分并调用 `weyra.skillopt_vendor.gate.evaluate_gate`；
+   - 被拒编辑负反馈缓冲（`rejected_edits.jsonl`）：记录未通过门禁的补丁与分差，回流优化器避坑；
+   - SkillOpt-Sleep 受保护学习区（`apply_learned_edits`）：直接调用
+     `weyra.skillopt_vendor.memory.apply_edits_detailed`，仅维护 `LEARNED` 区块而不触碰手写正文。
+2. SkillDiff (`LitaoGuo/How-Self-Evolution-Reshapes-Skills`, arXiv:2611.25534, Nov 2026, MIT):
+   - 调用 `weyra.skilldiff_vendor.items.split_items` 与 `weyra.skilldiff_vendor.skilldiff.mark`
+     对模型先验未覆盖的专家知识就地标注 `**[FOCUS]**`（`annotate_skilldiff`）；
+   - 未经外部验证门禁通过的补丁禁止删除或破坏 `**[FOCUS]**` 专家条目，防止向模型先验坍缩。
+3. 工程可靠性（继承 Weyra 事务边界）:
+   - POSIX 原子写入（`atomic`）、符号链接防逃逸（`reject_symlinks`）、`base_hash` 乐观锁、
+     单调 SemVer 归档快照及 `recover()` 崩溃恢复状态机（恢复期间绝不隐式发布未落盘变更）。
 """
 
 from __future__ import annotations
+
 import asyncio
 from dataclasses import replace
-from types import MappingProxyType
+from datetime import datetime, timezone
 import json
 import os
-from datetime import datetime, timezone
-import threading
-import uuid
 from pathlib import Path
-from .knowledge import atomic, sha, reject_symlinks
-from .runtime_state import BudgetExceeded
+import re
+import threading
+from types import MappingProxyType
+from typing import Sequence
+import uuid
 
-KNOWLEDGE_KINDS = ("boundary", "verified_pattern", "failure_mode", "observation", "rejected_update")
-MAX_NOTES_PER_KIND = 10
-KNOWLEDGE_QUOTAS = {kind: MAX_NOTES_PER_KIND for kind in KNOWLEDGE_KINDS}
+from .frontmatter import atomic, parse_markdown, reject_symlinks, sha, tokens
+from .runtime_state import BudgetExceeded
+from .skilldiff_vendor.items import split_items
+from .skilldiff_vendor.skilldiff import BODY_TYPES, MARK, mark
+from .skillopt_vendor.memory import apply_edits_detailed
+from .skillopt_vendor.scheduler import build_scheduler
+from .skillopt_vendor.skill import apply_patch_with_report
+from .skillopt_vendor.types import Edit, EditRecord, Patch
+
 MAX_REJECTED_EDITS = 20
+_VALID_OPS = frozenset({"append", "insert_after", "replace", "delete"})
+
+
+def compute_lexical_prior_coverage(
+    raw_skill: str,
+    prior_texts: Sequence[str],
+    *,
+    threshold: float = 0.45,
+) -> dict[str, int]:
+    """基于词法覆盖率统计每个 SkillDiff 原子条目在模型先验样本中的命中次数（零 API 离线可用）。
+
+    对齐 `LitaoGuo/How-Self-Evolution-Reshapes-Skills` 的 `coverage[item_id]` 接口格式，
+    返回供 `skilldiff.mark(original, items, coverage)` 直接消费的 `{item_id: hit_count}` 字典。
+    """
+    items = split_items(raw_skill)
+    prior_token_sets = [set(tokens(text)) for text in prior_texts if isinstance(text, str) and text.strip()]
+    coverage: dict[str, int] = {}
+    for item in items:
+        if item["type"] not in BODY_TYPES:
+            continue
+        item_tokens = set(tokens(item["text"]))
+        if not item_tokens:
+            coverage[item["id"]] = 0
+            continue
+        hits = 0
+        for ptokens in prior_token_sets:
+            overlap = len(item_tokens & ptokens) / len(item_tokens)
+            if overlap >= threshold:
+                hits += 1
+        coverage[item["id"]] = hits
+    return coverage
+
+
+def _normalize_edit(edit: Edit | dict) -> Edit:
+    """将输入字典或 Edit 对象规整化为标准 `SkillOpt` `Edit`（`append`/`insert_after`/`replace`/`delete`）。"""
+    if isinstance(edit, Edit):
+        op = edit.op
+        target = edit.target
+        content = edit.content
+    elif isinstance(edit, dict):
+        op = edit.get("op", edit.get("type", ""))
+        target = edit.get("target", "")
+        content = edit.get("content", "")
+    else:
+        raise ValueError("Unsupported edit")
+    if op not in _VALID_OPS:
+        raise ValueError(f"Unsupported edit op: {op!r}")
+    if not isinstance(target, str) or not isinstance(content, str):
+        raise ValueError("Edit target and content must be strings")
+    if op in {"append", "insert_after"} and not content.strip():
+        raise ValueError("Append/insert_after edit requires non-empty content")
+    if op in {"replace", "delete"} and not target:
+        raise ValueError("Replace/delete edit requires target")
+    if op == "replace" and not content.strip():
+        raise ValueError("Replace edit requires content; use op='delete' to remove text")
+    return Edit(op=op, content=content, target=target)
 
 
 class EvolutionStore:
-    """技能演化存储与维护管理器 (Evolution Store)。
+    """SkillOpt + SkillDiff 驱动的技能演化存储与维护管理器 (Evolution Store)."""
 
-    管理项目技能的持久化审计目录、历史快照、外部知识库及受控补丁应用流程。
-    """
-
-    def __init__(self, skills, state_dir=None, session=None):
-        """初始化技能演化存储与审计管理器。
-
-        【架构定位】
-        负责绑定核心技能集合，确定演化快照与元数据持久化根路径，初始化审计并发控制
-        锁，并对系统异常崩溃留下的中间态执行幂等恢复。
-
-        【核心不变性与安全约束】
-        1. 路径穿越与符号链接防护：强制经由 `reject_symlinks` 校验目标目录真实性；
-        2. 并发隔离：线程级重入锁 `_lock` 保障文件与审计写入的强一致性，`_async_locks`
-           针对各个技能提供异步细粒度排他调度；
-        3. 启动即恢复：实例化时无条件触发 `self.recover()`，保证系统状态不残留悬空状态。
-
-        Args:
-            skills: SkillStore 技能库管理器实例。
-            state_dir: 可选的自定义状态持久化根目录；若为空则默认使用 `.weyra/skill-evolution`。
-            session: 可选的当前会话实例，用于审计事件的双写与镜像投递。
-        """
+    def __init__(
+        self,
+        skills,
+        state_dir=None,
+        session=None,
+        *,
+        lr_scheduler: str = "constant",
+        max_lr: int = 4,
+        min_lr: int = 2,
+        total_steps: int = 10,
+        gate_metric: str = "hard",
+    ):
         self.skills = skills
         self.root = Path(state_dir) if state_dir else skills.root / ".weyra" / "skill-evolution"
         reject_symlinks(self.root)
@@ -82,53 +137,28 @@ class EvolutionStore:
         self.legacy_roots = [] if state_dir else [skills.root / ".weyra" / "evolution"]
         self.recovery_results = []
         self.auxiliary_errors = []
+        self.scheduler = build_scheduler(
+            lr_scheduler, max_lr=max_lr, min_lr=min_lr, total_steps=total_steps
+        )
+        self.gate_metric = gate_metric
+        self._step_counts: dict[str, int] = {}
         self.recover()
 
-    def _key(self, name):
-        """计算技能唯一的内容寻址与目录隔离 SHA-256 哈希键。
-
-        【架构定位】
-        根据技能的绝对文件系统路径与技能名称计算哈希散列，作为演化数据落盘的子目录名称。
-
-        Args:
-            name: 技能唯一名称。
-
-        Returns:
-            str: 64 位十六进制 SHA-256 散列字符串。
-        """
+    def _key(self, name: str) -> str:
         try:
             path = self.skills.load(name).path
         except (KeyError, ValueError):
             path = self.skills.root / ".weyra" / "skills" / name / "SKILL.md"
         return sha(str(path.resolve()) + "\0" + name)
 
-    def _dir(self, name):
-        """解析并安全创建指定技能的演化快照与审计落盘目录。
-
-        【架构定位】
-        根据 `_key(name)` 定位子目录，校验符号链接合法性后自动补齐层级目录。
-
-        Args:
-            name: 技能唯一名称。
-
-        Returns:
-            Path: 指向该技能演化目录的已解析绝对路径。
-        """
+    def _dir(self, name: str) -> Path:
         p = self.root / self._key(name)
         reject_symlinks(p)
         p.mkdir(parents=True, exist_ok=True)
         return p
 
     @staticmethod
-    def _event_key(event):
-        """生成演化审计事件的不可变四元组指纹，用于会话日志去重。
-
-        Args:
-            event: 包含 event_id、status 等字段的事件字典。
-
-        Returns:
-            tuple: (event_id, status, skill_path, recovered) 四元组。
-        """
+    def _event_key(event: dict) -> tuple:
         return (
             event.get("event_id"),
             event.get("status"),
@@ -136,33 +166,13 @@ class EvolutionStore:
             event.get("recovered", False),
         )
 
-    def _mirror_event(self, event):
-        """将演化审计事件原子镜像投递至持久化会话日志中。
-
-        【架构定位】
-        打通技能演化引擎与 Weyra 会话树状态机。所有演化状态跃迁均通过 Checkpoint 记录
-        至会话事件流中，确保可观测性与持久化统一。
-
-        Args:
-            event: 结构化演化事件字典。
-        """
+    def _mirror_event(self, event: dict) -> None:
         key = self._event_key(event)
         if self.session is not None and key not in self._session_events:
             self.session.append("skill_evolution", dict(event), checkpoint=True)
             self._session_events.add(key)
 
-    def _record_in(self, folder, event):
-        """向目标目录下的 `provenance.jsonl` 原子追加写入单条结构化审计事件。
-
-        【核心不变性与安全约束】
-        1. 符号链接防卫：严禁向重定向软链接写入；
-        2. 掉电安全保障：写入后显式执行 `flush()` 与 `os.fsync()`，保证落盘绝对一致；
-        3. 会话联动：同步触发 `_mirror_event`。
-
-        Args:
-            folder: 目标技能的演化持久化目录路径。
-            event: 结构化审计事件字典。
-        """
+    def _record_in(self, folder: Path, event: dict) -> None:
         path = folder / "provenance.jsonl"
         reject_symlinks(path)
         separator = ""
@@ -177,27 +187,10 @@ class EvolutionStore:
             os.fsync(output.fileno())
         self._mirror_event(event)
 
-    def _record(self, name, event):
-        """向指定名称技能的演化目录记录单条结构化审计事件的便捷封装。
-
-        Args:
-            name: 技能唯一名称。
-            event: 结构化审计事件字典。
-        """
+    def _record(self, name: str, event: dict) -> None:
         self._record_in(self._dir(name), event)
 
-    def _read_records(self, path):
-        """从指定的 `provenance.jsonl` 文件中安全解析并反序列化所有审计事件。
-
-        【容错设计】
-        遇到截断或损坏的不完整 JSONL 行记录时不崩溃退出，记录辅助性警告信息并跳过。
-
-        Args:
-            path: 指向 `provenance.jsonl` 的文件系统路径。
-
-        Returns:
-            list[dict]: 成功反序列化的事件字典列表。
-        """
+    def _read_records(self, path: Path) -> list[dict]:
         if not path.exists():
             return []
         reject_symlinks(path)
@@ -213,43 +206,16 @@ class EvolutionStore:
                 )
         return records
 
-    def history(self, name):
-        """聚合查询指定技能在历史遗留与当前演化目录下的全量演化审计轨迹。
-
-        Args:
-            name: 技能唯一名称。
-
-        Returns:
-            list[dict]: 按时间先后顺序聚合的历史事件列表。
-        """
+    def history(self, name: str) -> list[dict]:
+        """聚合查询指定技能的演化审计历史轨迹。"""
         key = self._key(name)
         records = []
         for root in [*self.legacy_roots, self.root]:
             records.extend(self._read_records(root / key / "provenance.jsonl"))
         return records
 
-    def recover(self):
-        """从持久化审计轨迹中恢复并核验中断的技能演化准备状态 (Crash Recovery for Prepared Skill Evolutions)。
-
-        【架构定位】
-        负责在系统启动或服务初始化时，扫描所有历史与当前演化根目录，回放未决的演化事件，
-        并针对异常终止残留的 `prepared` 状态提议进行确定性幂等恢复。
-
-        【开源设计思想与架构血统】
-        深度对标受控演化故障恢复规范：
-        1. 恢复期间绝不发布新代码 (Never Publish During Recovery)：
-           若进程中断前新版本未实际落盘，绝不猜测意图隐式覆盖发布，而是将状态标记为 `interrupted` 保护原始现场；
-        2. 会话事件镜像回流：将恢复扫描出的所有历史审计事件同步镜像至底层会话存储（`_mirror_event`）；
-        3. 冲突与篡改防御：核验磁盘文件哈希与审计指纹，若发生非预期外部篡改则置为 `conflict`。
-
-        【核心不变性与安全约束】
-        1. 必须在 `_lock` 线程锁保护下执行；
-        2. 扫描 `legacy_roots` 与当前 `root` 下所有 `provenance.jsonl`；
-        3. 纯自愈操作，遇到单点 I/O 或格式异常记录于 `auxiliary_errors` 而不中断全局恢复。
-
-        Returns:
-            list[dict]: 包含所有已完成恢复处置的终态事件字典列表。
-        """
+    def recover(self) -> list[dict]:
+        """启动阶段确定性崩溃恢复：绝不隐式发布未确认落盘的 `prepared` 提议。"""
         with self._lock:
             for root in [*self.legacy_roots, self.root]:
                 if not root.exists():
@@ -287,28 +253,7 @@ class EvolutionStore:
                         self.auxiliary_errors.append(str(error))
         return list(self.recovery_results)
 
-    def _recover_prepared(self, folder, event):
-        """对突发中断遗留的处于 `prepared` 状态的演化提议执行确定性故障恢复。
-
-        【架构定位】
-        自治状态机核心恢复逻辑：系统崩溃或断电重启后，审计日志中可能存在已记录为 `prepared`
-        但尚未确认落盘的中间事件。本方法依据实际文件系统内容与哈希指纹严格核对，执行幂等恢复。
-
-        【核心不变性与安全约束】
-        1. 绝不隐式发布（Never Publish During Recovery）：若磁盘上的实际技能文件并未落盘为新版本，
-           绝不在恢复阶段执行覆盖发布，而是标记为 `interrupted` 保持现场；
-        2. 严格哈希校验：只有当当前磁盘文件哈希与 `content_hash` 严格一致时，才确认已落盘成功，
-           补全快照备份并将状态标记为 `updated`；
-        3. 冲突防御：若当前内容既非 `base_hash` 亦非 `content_hash`，则判定为外部并发修改冲突，
-           标记为 `conflict` 并保留现场。
-
-        Args:
-            folder: 目标技能的演化目录路径。
-            event: 待恢复的 `prepared` 审计事件字典。
-
-        Returns:
-            dict: 恢复终态事件记录字典（状态为 updated / interrupted / conflict 等）。
-        """
+    def _recover_prepared(self, folder: Path, event: dict) -> dict:
         result = {**event, "recovered": True, "auxiliary_errors": []}
         try:
             recorded_path = event.get("skill_path")
@@ -348,10 +293,6 @@ class EvolutionStore:
                     result["status"] = "updated"
                     try:
                         atomic(snapshot, current)
-                        if event.get("knowledge_note"):
-                            self._save_note_at(
-                                folder, event["knowledge_note"], event["event_id"], version
-                            )
                     except Exception as error:
                         result["status"] = "recovery_pending"
                         result["auxiliary_errors"].append(str(error))
@@ -374,16 +315,7 @@ class EvolutionStore:
             result["auxiliary_errors"].append(str(error))
         return result
 
-    def _completed(self, name, event_id):
-        """查询指定技能与 event_id 是否已成功完成更新（幂等防重放检查）。
-
-        Args:
-            name: 技能唯一名称。
-            event_id: 演化提议唯一标识符。
-
-        Returns:
-            dict | None: 若已完成更新则返回历史事件字典，否则返回 None。
-        """
+    def _completed(self, name: str, event_id: str) -> dict | None:
         return next(
             (
                 dict(event)
@@ -393,198 +325,22 @@ class EvolutionStore:
             None,
         )
 
-    def _reject(self, name, event_id, reason, record=True, knowledge=False):
-        """记录演化提议被拒绝事件，并可选沉淀拒绝原因至外部解耦知识库。
-
-        【架构定位】
-        当补丁因权限不足、校验冲突、门禁未达标或语法非法时触发。可将失败模式沉淀为
-        `rejected_update` 知识条目，供模型在后续演化生成中作为负反馈提示词参考。
-
-        Args:
-            name: 技能唯一名称。
-            event_id: 演化提议唯一标识符。
-            reason: 拒绝或失败的具体原因描述。
-            record: 是否向 `provenance.jsonl` 持久化该拒绝审计记录。
-            knowledge: 是否将本次失败原因沉淀至 `knowledge.json` 中。
-
-        Returns:
-            dict: 拒绝状态字典。
-        """
+    def _reject(self, name: str, event_id: str, reason: str, record: bool = True) -> dict:
         result = {
             "status": "rejected",
             "event_id": event_id,
             "reason": reason,
             "failure_kind": "failure_to_apply",
-            "task_quality": None,
         }
         try:
             if record:
                 self._record(name, result)
-            if knowledge:
-                try:
-                    version = self.skills.load(name).version
-                except (KeyError, ValueError):
-                    version = "unknown"
-                self._save_note(
-                    name,
-                    {"kind": "rejected_update", "text": "failure_to_apply: " + reason[:270]},
-                    event_id,
-                    version,
-                )
         except Exception as error:
             result["auxiliary_errors"] = [str(error)]
         return result
 
-    def _note(self, note, event_id, version):
-        """规整化并严格校验单条经验知识条目（遵循 WikiSkill 解耦机制）。
-
-        【核心不变性与安全约束】
-        1. 类别白名单：kind 必须为 `KNOWLEDGE_KINDS` 之一；
-        2. 字符长度硬约束：文本有效内容必须非空且严格不超过 300 字符，杜绝无限制日志膨胀。
-
-        Args:
-            note: 字符串或字典形式的知识内容。
-            event_id: 产生该知识条目的演化事件 ID。
-            version: 关联的技能版本号。
-
-        Returns:
-            dict: 规整化后的标准知识记录字典。
-
-        Raises:
-            ValueError: 当知识类别无效或字符超长时抛出。
-        """
-        if isinstance(note, str):
-            note = {"kind": "observation", "text": note}
-        if not isinstance(note, dict) or note.get("kind") not in KNOWLEDGE_KINDS:
-            raise ValueError("Invalid knowledge kind")
-        text = note.get("text")
-        if not isinstance(text, str) or not text.strip() or len(text) > 300:
-            raise ValueError("Knowledge text must contain 1 to 300 characters")
-        return {
-            "event_id": event_id,
-            "kind": note["kind"],
-            "text": text,
-            "time": datetime.now(timezone.utc).isoformat(),
-            "skill_version": version,
-        }
-
-    @staticmethod
-    def _trim_knowledge(records):
-        """按 WikiSkill (arXiv:2608.27454, 2026) 持久化知识层按类别配额裁剪，防止瞬态记录挤掉边界经验。"""
-        remaining = dict(KNOWLEDGE_QUOTAS)
-        kept = []
-        for item in reversed(records):
-            kind = item.get("kind")
-            quota = remaining.get(kind, 0)
-            if quota > 0:
-                kept.append(item)
-                remaining[kind] = quota - 1
-        kept.reverse()
-        return kept
-
-    def knowledge(self, name):
-        """查询指定技能关联的分类解耦知识经验列表（按类别配额保留）。
-
-        Args:
-            name: 技能唯一名称。
-
-        Returns:
-            list[dict]: 结构化知识条目列表。
-        """
-        return self._knowledge_at(self._dir(name))
-
-    def _knowledge_at(self, folder):
-        """从指定目录下的 `knowledge.json` 安全反序列化读取并按类别配额去重知识列表。
-
-        Args:
-            folder: 目标技能演化目录。
-
-        Returns:
-            list[dict]: 归一化并按类别配额保留的知识列表。
-        """
-        path = folder / "knowledge.json"
-        try:
-            data = json.loads(path.read_text()) if path.exists() else []
-        except (OSError, ValueError):
-            return []
-        if not isinstance(data, list):
-            return []
-        records = []
-        seen = set()
-        for item in data:
-            try:
-                if isinstance(item, str):
-                    record = self._note(item, "legacy:" + sha(item), "unknown")
-                    record["time"] = "unknown"
-                else:
-                    record = self._note(
-                        item, item.get("event_id", "unknown"), item.get("skill_version", "unknown")
-                    )
-                    record["time"] = item.get("time", "unknown")
-                key = (record["event_id"], record["kind"], record["text"])
-                if key not in seen:
-                    records.append(record)
-                    seen.add(key)
-            except (ValueError, AttributeError, TypeError):
-                continue
-        return self._trim_knowledge(records)
-
-    def _save_note(self, name, note, event_id, version):
-        """向指定名称技能的知识库安全持久化单条新知识经验。
-
-        Args:
-            name: 技能唯一名称。
-            note: 字符串或字典形式的知识内容。
-            event_id: 关联的演化事件 ID。
-            version: 关联的技能版本号。
-        """
-        return self._save_note_at(self._dir(name), note, event_id, version)
-
-    def _save_note_at(self, folder, note, event_id, version):
-        """向目标目录的 `knowledge.json` 原子合并并持久化最新分类知识记录。
-
-        【核心不变性与安全约束】
-        以 (event_id, kind, text) 为唯一键去重，按类别配额保留后经由 `atomic()` 原子落盘。
-
-        Args:
-            folder: 目标技能演化目录。
-            note: 待保存的知识内容。
-            event_id: 关联演化事件 ID。
-            version: 关联技能版本号。
-        """
-        record = self._note(note, event_id, version)
-        records = self._knowledge_at(folder)
-        key = (record["event_id"], record["kind"], record["text"])
-        records = [
-            item for item in records if (item["event_id"], item["kind"], item["text"]) != key
-        ]
-        records.append(record)
-        atomic(folder / "knowledge.json", json.dumps(self._trim_knowledge(records), ensure_ascii=False))
-
-    def knowledge_prompt(self, name):
-        """将指定技能的外部解耦知识按高优先级类别排序格式化为提示词切片。
-
-        【字符预算】
-        格式化后的知识提示词片段严格硬性截断于 2,000 字符以内，防止上下文膨胀。
-
-        Args:
-            name: 技能唯一名称。
-
-        Returns:
-            str: 格式化后的知识经验提示词文本（<= 2,000 字符）。
-        """
-        priority = {kind: idx for idx, kind in enumerate(KNOWLEDGE_KINDS)}
-        items = sorted(
-            self.knowledge(name),
-            key=lambda item: priority.get(item.get("kind"), len(KNOWLEDGE_KINDS)),
-        )
-        return "\n".join(
-            f"[{item['kind']}; version {item['skill_version']}] {item['text']}"
-            for item in items
-        )[:2000]
-
-    def rejected_edits(self, name, limit=5):
-        """读取 SkillOpt (NeurIPS 2026 Spotlight, arXiv:2605.23904) Rejected-Edit Buffer 中的近期被拒编辑。"""
+    def rejected_edits(self, name: str, limit: int = 5) -> list[dict]:
+        """读取 SkillOpt 被拒编辑缓冲 (`rejected_edits.jsonl`) 中的近期记录。"""
         folder = self._dir(name)
         path = folder / "rejected_edits.jsonl"
         if not path.exists():
@@ -602,8 +358,8 @@ class EvolutionStore:
                 self.auxiliary_errors.append("Incomplete rejected edit record: " + str(path))
         return records[-limit:] if limit > 0 else []
 
-    def _save_rejected_edit(self, name, entry):
-        """将验证失败或被拒绝的候选编辑写入 SkillOpt (arXiv:2605.23904) 被拒编辑缓冲 (`rejected_edits.jsonl`)。"""
+    def _save_rejected_edit(self, name: str, entry: dict) -> None:
+        """将未通过门禁或违反 SkillDiff 保护的候选补丁写入 `rejected_edits.jsonl`。"""
         folder = self._dir(name)
         path = folder / "rejected_edits.jsonl"
         reject_symlinks(path)
@@ -611,9 +367,11 @@ class EvolutionStore:
         sanitized = {
             "event_id": str(entry.get("event_id", ""))[:64],
             "reason": str(entry.get("reason", ""))[:240],
-            "edits_summary": str(entry.get("edits_summary", ""))[:600],
+            "gate_action": str(entry.get("gate_action", "reject"))[:32],
+            "current_score": entry.get("current_score"),
+            "candidate_score": entry.get("candidate_score"),
+            "edits_summary": str(entry.get("edits_summary", ""))[:800],
             "failed_cases": list(entry.get("failed_cases", ()))[:8],
-            "evidence": str(entry.get("evidence", ""))[:500],
             "skill_version": str(entry.get("skill_version", "unknown"))[:32],
             "time": datetime.now(timezone.utc).isoformat(),
         }
@@ -622,47 +380,59 @@ class EvolutionStore:
         payload = "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in trimmed)
         atomic(path, payload)
 
-    def rejected_edits_prompt(self, name, limit=5):
-        """格式化 SkillOpt (arXiv:2605.23904) Rejected-Edit Buffer 提示切片 (<= 1,500 字符) 供优化器避坑。"""
+    def rejected_edits_prompt(self, name: str, limit: int = 5) -> str:
+        """格式化近期被拒编辑摘要，供 SkillOpt 优化器在后续迭代中避开已知失败方向。"""
         items = self.rejected_edits(name, limit=limit)
         if not items:
             return ""
         lines = []
         for item in items:
             cases = ",".join(str(c) for c in item.get("failed_cases", ())) or "n/a"
+            score_info = ""
+            if item.get("current_score") is not None and item.get("candidate_score") is not None:
+                score_info = f"; score={item['current_score']}->{item['candidate_score']}"
             lines.append(
-                f"[rejected v{item.get('skill_version', '?')}; reason={item.get('reason', '')}; "
+                f"[rejected v{item.get('skill_version', '?')}; reason={item.get('reason', '')}{score_info}; "
                 f"cases={cases}] edits={item.get('edits_summary', '')}"
-                + (f" | evidence={item['evidence']}" if item.get("evidence") else "")
             )
-        return "\n".join(lines)[:1500]
+        return "\n".join(lines)
+
+    def current_edit_budget(self, name: str) -> int:
+        """根据 SkillOpt `LRScheduler` 计算指定技能当前步的文本学习率（允许最大编辑条数）。"""
+        step = self._step_counts.get(name, 0) + 1
+        return self.scheduler.get_lr(step)
+
+    @staticmethod
+    def _violated_focus_items(snap, candidate_body: str) -> list[str]:
+        """校验 SkillDiff 标注的 `**[FOCUS]**` 专家条目是否在候选正文中被删除或损坏。"""
+        if not getattr(snap, "focus_items", ()):
+            return []
+        normalized_body = re.sub(r"\s+", " ", candidate_body.replace(MARK, ""))
+        return [item for item in snap.focus_items if item not in normalized_body]
 
     def apply(
         self,
-        name,
+        name: str,
         edits,
         event_id=None,
         base_hash=None,
         description=None,
         when_to_use=None,
-        reason="",
-        permission_mode="default",
-        authorized=False,
-        knowledge_note=None,
-        allow_anchor_override=False,
-        _prepare_only=False,
-        _validation="unvalidated",
+        reason: str = "",
+        permission_mode: str = "default",
+        authorized: bool = False,
+        max_edits: int | None = None,
+        _prepare_only: bool = False,
+        _validation: str = "unvalidated",
         _expected_resources=None,
     ):
-        """应用受限的结构化补丁，更新指定技能并完成持久化与版本单调升级 (Apply Bounded Text Patch)。
+        """应用 SkillOpt 有界编辑补丁（`append`/`insert_after`/`replace`/`delete`）更新技能。
 
-        【SkillOpt / WikiSkill 契约检查】
-        1. 权限闸门：仅允许在 acceptEdits 或 bypassPermissions 权限模式下生效，或持有显式授权；
-        2. 补丁规模限制：强制 1 到 2 处编辑，单次 replace/append 不得超出 1,000 字符；
-        3. 唯一锚点匹配：replace 操作匹配的旧文本片段在原技能正文中必须严格唯一出现一次；
-        4. SkillDiff 专家锚点保护：未显式授权覆写时，禁止删除或破坏 `snap.anchors` 受保护条款；
-        5. 语义版本自增：成功应用后语义版本末尾 patch 位自增 1，原文件备份为 `<version>.md`；
-        6. 知识解耦落盘：若附带 knowledge_note，将其解耦写入 `knowledge.json` 而非主提示词正文。
+        安全不变量:
+            1. 权限门槛：`acceptEdits` / `bypassPermissions` 或显式 `authorized=True`；
+            2. 编辑预算：由 `SkillOpt` `LRScheduler`（或 `max_edits`）限制单步编辑操作数；
+            3. `base_hash` OCC 冲突检测与资源防漂移校验；
+            4. SkillDiff 护栏：未经外部验证通过（`_validation != "validated"`）时，禁止删改 `**[FOCUS]**` 专家条目。
         """
         event_id = event_id or uuid.uuid4().hex
         with self._lock:
@@ -677,111 +447,141 @@ class EvolutionStore:
                     raise ValueError("Resource drift during validation")
                 if base_hash != snap.content_hash:
                     raise ValueError("Base hash conflict")
-                if not 1 <= len(edits) <= 2:
-                    raise ValueError("One or two edits required")
-                spans = []
-                appends = []
-                for edit in edits:
-                    kind = edit.get("type", edit.get("op"))
-                    if kind == "replace":
-                        old = edit.get("old", "")
-                        new = edit.get("new", "")
-                        if (
-                            not old
-                            or len(old) > 1000
-                            or len(new) > 1000
-                            or snap.body.count(old) != 1
-                        ):
-                            raise ValueError("Replace requires a unique bounded old range")
-                        start = snap.body.index(old)
-                        spans.append((start, start + len(old), new))
-                    elif kind == "append":
-                        text = edit.get("text", edit.get("new", ""))
-                        if not text or len(text) > 1000 or text in snap.body or text in appends:
-                            raise ValueError("Duplicate or invalid append")
-                        appends.append(text)
-                    else:
-                        raise ValueError("Unsupported edit")
-                spans.sort()
-                if any(a[1] > b[0] for a, b in zip(spans, spans[1:])):
-                    raise ValueError("Overlapping edits")
-                body = snap.body
-                for start, end, new in reversed(spans):
-                    body = body[:start] + new + body[end:]
-                if appends:
-                    body += "\n" + "\n".join(appends)
-                if not allow_anchor_override and snap.anchors:
-                    violated = [
-                        anchor
-                        for anchor in snap.anchors
-                        if anchor in snap.body and anchor not in body
-                    ]
+                if not isinstance(edits, (list, tuple)) or not edits:
+                    raise ValueError("At least one edit is required")
+                budget = max_edits if max_edits is not None else self.current_edit_budget(name)
+                if len(edits) > budget:
+                    raise ValueError(f"Edit count {len(edits)} exceeds SkillOpt lr budget {budget}")
+                normalized_edits = [_normalize_edit(e) for e in edits]
+                body, reports = apply_patch_with_report(
+                    snap.body, Patch(edits=normalized_edits, reasoning=reason)
+                )
+                if not any(r.get("status", "").startswith("applied_") for r in reports):
+                    raise ValueError("No edit matched target or produced a change")
+                if _validation != "validated":
+                    violated = self._violated_focus_items(snap, body)
                     if violated:
-                        reason_msg = f"Protected anchor removed or altered: {violated[0][:80]}"
-                        rejection = self._reject(name, event_id, reason_msg, knowledge=True)
-                        rejection["failure_kind"] = "anchor_violation"
-                        rejection["violated_anchors"] = violated
+                        reason_msg = f"Unvalidated edit alters SkillDiff [FOCUS] item: {violated[0][:80]}"
+                        rejection = self._reject(name, event_id, reason_msg)
+                        rejection["failure_kind"] = "focus_item_violation"
+                        rejection["violated_focus_items"] = violated
                         self._save_rejected_edit(
                             name,
                             {
                                 "event_id": event_id,
-                                "reason": "anchor_violation",
-                                "edits_summary": json.dumps(edits, ensure_ascii=False)[:600],
+                                "reason": "focus_item_violation",
+                                "edits_summary": json.dumps([e.to_dict() for e in normalized_edits], ensure_ascii=False)[:800],
                                 "failed_cases": [],
-                                "evidence": reason_msg,
                                 "skill_version": snap.version,
                             },
                         )
                         return rejection
-                return self._publish(
-                    snap, body, event_id, description, when_to_use, reason, knowledge_note,
-                    _prepare_only, _validation
+                res = self._publish(
+                    snap,
+                    body,
+                    event_id,
+                    description,
+                    when_to_use,
+                    reason,
+                    _prepare_only,
+                    _validation,
                 )
-            except (ValueError, KeyError, TypeError, OSError, RuntimeError) as e:
-                return self._reject(name, event_id, str(e), knowledge=True)
+                if not _prepare_only and isinstance(res, dict) and res.get("status") == "updated":
+                    self._step_counts[name] = self._step_counts.get(name, 0) + 1
+                    res["edit_reports"] = reports
+                return res
+            except (ValueError, KeyError, TypeError, OSError, RuntimeError) as error:
+                return self._reject(name, event_id, str(error))
+
+    def apply_learned_edits(
+        self,
+        name: str,
+        edit_records: Sequence[EditRecord | dict],
+        *,
+        event_id=None,
+        base_hash=None,
+        reason: str = "",
+        permission_mode: str = "default",
+        authorized: bool = False,
+        _validation: str = "unvalidated",
+    ):
+        """使用 `SkillOpt-Sleep` (`skillopt_vendor/memory.py`) 维护受保护的 `LEARNED` 区块而不触碰手写正文。"""
+        event_id = event_id or uuid.uuid4().hex
+        with self._lock:
+            if permission_mode not in ("acceptEdits", "bypassPermissions") and not authorized:
+                return self._reject(name, event_id, "Permission required", record=False)
+            try:
+                snap = self.skills.load(name)
+                if base_hash is not None and base_hash != snap.content_hash:
+                    raise ValueError("Base hash conflict")
+                records = [
+                    r if isinstance(r, EditRecord) else EditRecord(**r)
+                    for r in edit_records
+                ]
+                new_body, applied, unmatched = apply_edits_detailed(snap.body, records)
+                if not applied:
+                    raise ValueError("No learned edit applied")
+                res = self._publish(
+                    snap,
+                    new_body,
+                    event_id,
+                    None,
+                    None,
+                    reason or "skillopt_sleep_learned_update",
+                    False,
+                    _validation,
+                )
+                if isinstance(res, dict):
+                    res["applied_learned"] = len(applied)
+                    res["unmatched_learned"] = len(unmatched)
+                return res
+            except (ValueError, KeyError, TypeError, OSError) as error:
+                return self._reject(name, event_id, str(error))
+
+    def annotate_skilldiff(
+        self,
+        name: str,
+        coverage: dict[str, int],
+        *,
+        event_id=None,
+        permission_mode: str = "default",
+        authorized: bool = False,
+    ):
+        """使用 `SkillDiff` (`skilldiff_vendor/skilldiff.py`) 对先验零覆盖条款就地标注 `**[FOCUS]**`。"""
+        event_id = event_id or uuid.uuid4().hex
+        with self._lock:
+            if permission_mode not in ("acceptEdits", "bypassPermissions") and not authorized:
+                return self._reject(name, event_id, "Permission required", record=False)
+            try:
+                snap = self.skills.load(name)
+                raw = snap.path.read_text(encoding="utf-8")
+                items = split_items(raw)
+                marked_raw = mark(raw, items, coverage)
+                _, marked_body = parse_markdown(marked_raw)
+                return self._publish(
+                    snap,
+                    marked_body,
+                    event_id,
+                    None,
+                    None,
+                    "skilldiff_focus_annotation",
+                    False,
+                    "skilldiff",
+                )
+            except (ValueError, KeyError, TypeError, OSError) as error:
+                return self._reject(name, event_id, str(error))
 
     def _publish(
         self,
         snap,
-        body,
-        event_id,
+        body: str,
+        event_id: str,
         description=None,
         when_to_use=None,
-        reason="",
-        knowledge_note=None,
-        prepare_only=False,
-        validation="unvalidated",
+        reason: str = "",
+        prepare_only: bool = False,
+        validation: str = "unvalidated",
     ):
-        """执行单调语义版本号自增、快照备份、审计记录与文件原子落盘发布全流程。
-
-        【架构定位】
-        技能持久化发布事务核心：完成 文本补丁后的正文校验、语义版本递增、快照归档与原子双写。
-
-        【核心不变性与安全约束】
-        1. 正文完整性：正文必须包含实质内容，严禁正文行中出现独立的 `---` 分界符以防破坏 Frontmatter 解析；
-        2. 元数据预算：`description` 与 `when_to_use` 字符数上限硬性约束为 500 字符以内；
-        3. 单调版本自增：语义化版本（X.Y.Z）末尾 patch 字段严格单调加 1（例如 1.0.0 -> 1.0.1）；
-        4. 并发与幂等性：落盘前后通过 SHA-256 哈希双重比对原技能文件，杜绝并发竞争覆盖；
-        5. 事务原子落盘：先保存旧版本快照 `<version>.md`，发布 `prepared` 审计事件，使用 `atomic()` 原子
-           覆写目标技能文件，随后保存新版本快照并投递 `updated` 终态事件。
-
-        Args:
-            snap: 当前技能的只读快照对象 SkillSnapshot。
-            body: 更新后的新技能正文文本。
-            event_id: 本次发布的唯一演化事件标识符。
-            description: 可选的新功能描述；若为 None 则沿用快照值。
-            when_to_use: 可选的新触发时机描述；若为 None 则沿用快照值。
-            reason: 触发本次演化发布的理由说明。
-            knowledge_note: 可选的附带外部解耦知识条目。
-            prepare_only: 若为 True 则仅在内存中组装新快照对象并返回，不执行物理落盘。
-            validation: 门禁验证状态标记（如 "validated" 或 "unvalidated"）。
-
-        Returns:
-            dict | SkillSnapshot: 物理落盘时返回更新后的终态审计事件字典；若为 prepare_only 则返回替换后的快照对象。
-
-        Raises:
-            ValueError: 当正文损坏、元数据超长、语义版本非法或检测到外部并发修改时抛出。
-        """
         if not body.strip() or any(line.strip() == "---" for line in body.splitlines()):
             raise ValueError("Invalid body/frontmatter delimiter")
         description = snap.description if description is None else description
@@ -792,10 +592,8 @@ class EvolutionStore:
             and when_to_use == snap.when_to_use
         ):
             raise ValueError("No effective change")
-        if len(description) > 500 or len(when_to_use) > 500:
-            raise ValueError("Metadata exceeds 500 characters")
-        if knowledge_note is not None:
-            self._note(knowledge_note, event_id, snap.version)
+        if len(description) > 1024 or len(when_to_use) > 500:
+            raise ValueError("Metadata exceeds character limit")
         parts = snap.version.split(".")
         if len(parts) != 3 or not all(x.isdigit() for x in parts):
             raise ValueError("Invalid semantic version")
@@ -818,8 +616,18 @@ class EvolutionStore:
         for relative_path in snap.resources:
             self.skills.read_resource(snap, relative_path)
         if prepare_only:
-            return replace(snap, body=body, version=version, description=description,
-                           when_to_use=when_to_use, metadata=MappingProxyType(metadata), content_hash=sha(raw))
+            from .skills import extract_focus_items
+
+            return replace(
+                snap,
+                body=body,
+                version=version,
+                description=description,
+                when_to_use=when_to_use,
+                metadata=MappingProxyType(metadata),
+                content_hash=sha(raw),
+                focus_items=extract_focus_items(raw),
+            )
         folder = self._dir(snap.name)
         old = snap.path.read_text(encoding="utf-8")
         if sha(old) != snap.content_hash:
@@ -836,7 +644,6 @@ class EvolutionStore:
             "snapshot_path": str((folder / (version + ".md")).resolve()),
             "snapshot_hash": sha(raw),
             "skill_path": str(snap.path.resolve()),
-            "knowledge_note": knowledge_note,
             "content_hash": sha(raw),
             "reason": reason,
         }
@@ -847,35 +654,13 @@ class EvolutionStore:
         result = {**event, "status": "updated", "auxiliary_errors": []}
         try:
             atomic(folder / (version + ".md"), raw)
-            if knowledge_note:
-                self._save_note(snap.name, knowledge_note, event_id, version)
             self._record(snap.name, result)
-        except Exception as e:
-            result["auxiliary_errors"].append(str(e))
+        except Exception as error:
+            result["auxiliary_errors"].append(str(error))
         return result
 
-    def rollback(self, name, version, event_id=None, permission_mode="default", authorized=False):
-        """基于历史快照实现指定技能的可追溯版本回滚。
-
-        【架构定位】
-        在线演化安全防护网：当新版技能在生产环境中发生劣化或被用户撤销时，直接读取历史
-        归档的 `<version>.md` 纯文本快照，解析 Frontmatter 后生成递增的发布版本并落盘。
-
-        【核心不变性与安全约束】
-        1. 权限拦截：必须具备 acceptEdits/bypassPermissions 或显式授权；
-        2. 幂等性守卫：若该 event_id 已经处于 `updated` 完成态，则直接返回；
-        3. 版本有效性校验：回滚目标版本必须由合法的数字与点组成，且对应历史快照必须客观存在。
-
-        Args:
-            name: 待回滚的技能唯一名称。
-            version: 目标回滚版本的版本号字符串（如 "1.0.0"）。
-            event_id: 可选的演化事件唯一 ID。
-            permission_mode: 权限模式字符串。
-            authorized: 是否持有显式授权布尔标记。
-
-        Returns:
-            dict: 回滚发布终态事件记录字典。
-        """
+    def rollback(self, name: str, version: str, event_id=None, permission_mode: str = "default", authorized: bool = False):
+        """基于历史归档快照将技能安全回滚至指定版本并递增 SemVer 补丁号。"""
         event_id = event_id or uuid.uuid4().hex
         with self._lock:
             if permission_mode not in ("acceptEdits", "bypassPermissions") and not authorized:
@@ -886,9 +671,7 @@ class EvolutionStore:
             try:
                 if not version or any(c not in "0123456789." for c in version):
                     raise ValueError("Invalid version")
-                from .knowledge import parse_markdown
-
-                metadata, body = parse_markdown((self._dir(name) / (version + ".md")).read_text())
+                metadata, body = parse_markdown((self._dir(name) / (version + ".md")).read_text(encoding="utf-8"))
                 return self._publish(
                     self.skills.load(name),
                     body,
@@ -897,20 +680,11 @@ class EvolutionStore:
                     metadata.get("when_to_use", ""),
                     "rollback " + version,
                 )
-            except (ValueError, KeyError, OSError, RuntimeError) as e:
-                return self._reject(name, event_id, str(e), knowledge=True)
+            except (ValueError, KeyError, OSError, RuntimeError) as error:
+                return self._reject(name, event_id, str(error))
 
-    def discard(self, name, event_id=None, reason=""):
-        """显式丢弃或中止无价值的技能演化提议，并写入持久化审计轨迹。
-
-        Args:
-            name: 技能唯一名称。
-            event_id: 可选的演化事件唯一 ID。
-            reason: 丢弃或废弃的具体原因。
-
-        Returns:
-            dict: 包含 status="discarded" 的审计事件字典。
-        """
+    def discard(self, name: str, event_id=None, reason: str = "") -> dict:
+        """显式丢弃无依据或放弃的演化提议并写入审计轨迹。"""
         result = {"status": "discarded", "event_id": event_id or uuid.uuid4().hex, "reason": reason}
         try:
             self._record(name, result)
@@ -920,38 +694,16 @@ class EvolutionStore:
 
     def create(
         self,
-        name,
-        body,
-        description="",
-        when_to_use="",
-        permission_mode="default",
-        authorized=False,
+        name: str,
+        body: str,
+        description: str = "",
+        when_to_use: str = "",
+        permission_mode: str = "default",
+        authorized: bool = False,
         event_id=None,
-        _validation="unvalidated",
+        _validation: str = "unvalidated",
     ):
-        r"""全新自研技能的安全受控创建与初始版本 (1.0.0) 审计落盘。
-
-        【架构定位】
-        支持智能体从零构建并持久化全新自研工具技能（Novel Skill Creation）。
-
-        【核心不变性与安全约束】
-        1. 命名安全与沙箱隔离：技能名严禁包含路径跳转字符（`.`, `..`, `/`, `\`）；
-        2. 防篡改冲突检查：目标技能文件必须不存在，且严禁与已加载的全局技能目录发生同名命名碰撞；
-        3. 单调初始版本：初始版本强绑定为 "1.0.0"，生成初始快照 `1.0.0.md`，并在演化审计中落盘
-           `prepared` 与 `updated` 完整生命周期事件。
-
-        Args:
-            name: 新建技能的英文标识名称。
-            body: 新建技能的主提示词指令正文。
-            description: 技能的功能摘要说明（<= 500 字符）。
-            when_to_use: 技能调用的启发式时机描述（<= 500 字符）。
-            permission_mode: 当前运行环境权限模式。
-            authorized: 是否持有显式授权。
-            event_id: 可选的事件唯一 ID。
-
-        Returns:
-            dict: 创建完成的终态审计事件字典。
-        """
+        """安全创建全新技能并写入 `1.0.0` 初始版本与不可变快照。"""
         event_id = event_id or uuid.uuid4().hex
         with self._lock:
             if permission_mode not in ("acceptEdits", "bypassPermissions") and not authorized:
@@ -966,7 +718,7 @@ class EvolutionStore:
                 or "\\" in name
                 or not body.strip()
                 or any(x.strip() == "---" for x in body.splitlines())
-                or len(description) > 500
+                or len(description) > 1024
                 or len(when_to_use) > 500
             ):
                 return self._reject(name, event_id, "Invalid new skill")
@@ -1009,35 +761,24 @@ class EvolutionStore:
             result = {**event, "status": "updated", "auxiliary_errors": []}
             try:
                 self._record(name, result)
-            except Exception as e:
-                result["auxiliary_errors"].append(str(e))
+            except Exception as error:
+                result["auxiliary_errors"].append(str(error))
             return result
 
     async def maintain(
         self,
         window,
         model_call,
-        permission_mode="default",
-        authorized=False,
+        permission_mode: str = "default",
+        authorized: bool = False,
         event_id=None,
         evidence=None,
         target_snapshot=None,
         validation_gate=None,
         resolution=None,
-        validation_context=None,
         run_context=None,
     ):
-        """记录执行证据并调度大模型生成补丁，经沙箱验证门禁后原子更新技能 (Closed-Loop Skill Maintenance)。
-
-        【SkillOpt 闭环演化全流程】
-        1. 证据固化：将用户交互窗口与执行证据追加写入 `evidence.jsonl`，确保审计追溯；
-        2. 补丁提议生成：调用 `model_call` 获取提议并持久化至 `proposals/<hash>.json`；
-        3. 目标基线锁定：严格以调用前程序锁定的快照为基准（杜绝并发篡改或模型捏造基线哈希）；
-        4. 隔离验证门禁 (`validation_gate`)：
-           对基线技能与候选技能执行双盲隔离执行测试。验证门禁必须返回严格改善的客观分数：
-           `candidate.successes > old.successes` 且 `candidate.hard_failures <= old.hard_failures`；
-        5. 原子发布：只有通过门禁检验的补丁才允许升级生效，否则触发拒绝合入。
-        """
+        """SkillOpt 闭环维护：固化证据 -> 生成有界编辑提议 -> `SkillValidationGate` 评测 -> 门控合入或拒绝记录。"""
         event_id = event_id or uuid.uuid4().hex
         if permission_mode not in ("acceptEdits", "bypassPermissions") and not authorized:
             return {
@@ -1045,9 +786,7 @@ class EvolutionStore:
                 "event_id": event_id,
                 "reason": "Permission required",
                 "failure_kind": "failure_to_apply",
-                "task_quality": None,
             }
-        # 在等待模型返回前捕获所有可用基线快照。提案可指定目录条目，但不得自行伪造用于发布的对比哈希
         catalog = self.skills.capture_catalog() if target_snapshot is None else None
         frozen_window = json.loads(json.dumps(window, ensure_ascii=False))
         frozen_evidence = json.loads(
@@ -1066,19 +805,12 @@ class EvolutionStore:
                 "content_hash": target_snapshot.content_hash,
             },
         }
-        if validation_context is not None:
-            source_record["validation_window"] = {
-                "version": validation_context.version,
-                "samples": [{"id": c["id"], "split": c["split"]}
-                            for c in validation_context.cases],
-            }
         evidence_path = self.root / "evidence.jsonl"
         try:
             reject_symlinks(evidence_path)
             with self._lock, evidence_path.open("a", encoding="utf-8") as output:
                 output.write(json.dumps(source_record, ensure_ascii=False) + "\n")
                 output.flush()
-
                 os.fsync(output.fileno())
         except (OSError, ValueError) as error:
             return {
@@ -1086,14 +818,8 @@ class EvolutionStore:
                 "event_id": event_id,
                 "reason": str(error),
                 "failure_kind": "failure_to_apply",
-                "task_quality": None,
             }
-        if (validation_context is not None and target_snapshot is not None
-                and not validation_context.reason
-                and validation_gate.saturated(target_snapshot, validation_context)):
-            result = self.discard(target_snapshot.name, event_id=event_id, reason="validation_saturated")
-            result["window_version"] = validation_context.version
-            return result
+
         proposal = await model_call(frozen_window)
         if not proposal:
             proposal = {"action": "discard"}
@@ -1102,9 +828,7 @@ class EvolutionStore:
             ensure_ascii=False,
             sort_keys=True,
         )
-        proposal_path = (
-            self.root / "proposals" / (sha(str(event_id)) + "-" + sha(proposal_text) + ".json")
-        )
+        proposal_path = self.root / "proposals" / (sha(str(event_id)) + "-" + sha(proposal_text) + ".json")
         atomic(proposal_path, proposal_text)
         if self.session is not None:
             self.session.append(
@@ -1121,22 +845,15 @@ class EvolutionStore:
         proposal = dict(proposal)
         action = proposal.pop("action", "apply")
         name = proposal.pop("name", None)
-        for field in ("event_id", "authorized", "permission_mode", "base_hash", "content_hash",
-                      "_prepare_only", "_validation", "_expected_resources"):
-            proposal.pop(field, None)
+        for reserved in ("event_id", "authorized", "permission_mode", "base_hash", "content_hash", "_prepare_only", "_validation", "_expected_resources"):
+            proposal.pop(reserved, None)
+        reason = proposal.pop("reasoning", proposal.pop("reason", ""))
         if action == "discard":
-            return self.discard(
-                name or "_maintenance", event_id=event_id, reason=proposal.get("reason", "")
-            )
+            return self.discard(name or "_maintenance", event_id=event_id, reason=reason)
         if not isinstance(name, str) or not name:
             return self._reject("_maintenance", event_id, "A skill name is required")
-        if resolution is not None and action in ('apply', 'create'):
-            if resolution.get('reason') == 'ambiguous' or (
-                resolution.get('source') in ('explicit_id', 'used_ids') and resolution.get('reason') != 'resolved'
-            ):
-                return self._reject(name, event_id, 'Unresolved skill target; abstaining')
-            if action == 'create' and resolution.get('candidates'):
-                return self._reject(name, event_id, 'Related skill exists; creation requires a new method')
+        if resolution is not None and resolution.get("reason") == "ambiguous":
+            return self._reject(name, event_id, "Ambiguous skill target; abstaining")
         if action == "apply":
             if target_snapshot is not None and name != target_snapshot.name:
                 return self._reject(name, event_id, "Proposal target differs from pinned skill")
@@ -1144,214 +861,149 @@ class EvolutionStore:
             if target is None:
                 return self._reject(name, event_id, "No program-pinned target")
             proposal["base_hash"] = target.content_hash
+            proposal["reason"] = reason
             name = target.name
         elif action == "create":
             if name in self.skills.capture_catalog():
                 return self._reject(name, event_id, "Create requires a new skill")
-            proposal.pop("reason", None)
-            proposal.pop("knowledge_note", None)
         else:
             return self._reject(name, event_id, "Unknown maintenance action")
-        proposal.update(
-            name=name, event_id=event_id, permission_mode=permission_mode, authorized=authorized
-        )
+        proposal.update(name=name, event_id=event_id, permission_mode=permission_mode, authorized=authorized)
+
         async with self._async_locks.setdefault(name, asyncio.Lock()):
             try:
                 if action == "create":
-                    if validation_gate is not None:
-                        if not getattr(validation_gate, "supports_null_baseline", False):
-                            return self._reject(
-                                name, event_id, "Creation requires a baseline-capable validation gate"
-                            )
-                        description_val = proposal.get("description", "")
-                        when_val = proposal.get("when_to_use", "")
-                        body_val = proposal.get("body", "")
-                        if (
-                            not name
-                            or name in (".", "..")
-                            or "/" in name
-                            or "\\" in name
-                            or not isinstance(body_val, str)
-                            or not body_val.strip()
-                            or any(x.strip() == "---" for x in body_val.splitlines())
-                            or not isinstance(description_val, str)
-                            or len(description_val) > 500
-                            or not isinstance(when_val, str)
-                            or len(when_val) > 500
-                        ):
-                            return self._reject(name, event_id, "Invalid new skill")
-                        if validation_context is not None and validation_context.reason:
-                            result = {
-                                "status": "incubating",
-                                "event_id": event_id,
-                                "reason": validation_context.reason,
-                                "proposal_ref": str(proposal_path),
-                                "window_version": validation_context.version,
-                                "validation": "unvalidated",
-                                "task_quality": None,
-                            }
-                            self._record(name, result)
-                            return result
-                        from .skills import SkillSnapshot, _parse_anchors
+                    if validation_gate is None:
+                        return self.create(**proposal)
+                    if not getattr(validation_gate, "supports_null_baseline", False):
+                        return self._reject(name, event_id, "Creation requires a baseline-capable validation gate")
+                    description_val = proposal.get("description", "")
+                    when_val = proposal.get("when_to_use", "")
+                    body_val = proposal.get("body", "")
+                    if (
+                        not name
+                        or name in (".", "..")
+                        or "/" in name
+                        or "\\" in name
+                        or not isinstance(body_val, str)
+                        or not body_val.strip()
+                        or any(x.strip() == "---" for x in body_val.splitlines())
+                        or not isinstance(description_val, str)
+                        or len(description_val) > 1024
+                        or not isinstance(when_val, str)
+                        or len(when_val) > 500
+                    ):
+                        return self._reject(name, event_id, "Invalid new skill")
+                    from .skills import SkillSnapshot, extract_focus_items
 
-                        skill_path = (self.skills.root / ".weyra" / "skills" / name / "SKILL.md").resolve()
-                        raw_new = (
-                            "---\n"
-                            + "\n".join(
-                                k + ": " + json.dumps(v, ensure_ascii=False)
-                                for k, v in dict(
-                                    name=name,
-                                    version="1.0.0",
-                                    description=description_val,
-                                    when_to_use=when_val,
-                                ).items()
-                            )
-                            + "\n---\n"
-                            + body_val
+                    skill_path = (self.skills.root / ".weyra" / "skills" / name / "SKILL.md").resolve()
+                    raw_new = (
+                        "---\n"
+                        + "\n".join(
+                            k + ": " + json.dumps(v, ensure_ascii=False)
+                            for k, v in dict(
+                                name=name,
+                                version="1.0.0",
+                                description=description_val,
+                                when_to_use=when_val,
+                            ).items()
                         )
-                        null_baseline = SkillSnapshot(
-                            name=name,
-                            path=skill_path,
-                            version="0.0.0",
-                            description="",
-                            when_to_use="",
-                            body="",
-                            content_hash=sha(""),
-                            resources=MappingProxyType({}),
-                            metadata=MappingProxyType({"__null_baseline__": True}),
-                        )
-                        candidate = SkillSnapshot(
-                            name=name,
-                            path=skill_path,
-                            version="1.0.0",
-                            description=description_val,
-                            when_to_use=when_val,
-                            body=body_val,
-                            content_hash=sha(raw_new),
-                            resources=MappingProxyType({}),
-                            anchors=_parse_anchors({}, body_val),
-                        )
-                        try:
-                            if validation_context is not None:
-                                scores = await validation_gate.evaluate(
-                                    null_baseline, candidate, validation_context, context=run_context
-                                )
-                            else:
-                                scores = await validation_gate(null_baseline, candidate)
-                            report_path = self.root / "validation" / (sha(str(event_id)) + ".json")
-                            atomic(report_path, json.dumps(scores, ensure_ascii=False))
-                            if self.session is not None:
-                                self.session.append(
-                                    "skill_validation",
-                                    {"event_id": event_id, "report_ref": str(report_path)},
-                                    checkpoint=True,
-                                )
-                            old_score, new_score = scores["old"], scores["candidate"]
-                            if getattr(validation_gate, "requires_model_review", False) and scores.get("model_approved") is not True:
-                                reason = scores.get("reason", "Independent model review did not approve candidate")
-                                result = self._reject(name, event_id, reason)
-                                result.update(validation_report=scores, validation_report_ref=str(report_path))
-                                return result
-                            for score in (old_score, new_score):
-                                if any(type(score[k]) is not int or score[k] < 0 for k in ("successes", "hard_failures")):
-                                    raise ValueError("Invalid validation metrics")
-                            if not (
-                                new_score["successes"] > old_score["successes"]
-                                and new_score["hard_failures"] <= old_score["hard_failures"]
-                            ):
-                                return self._reject(
-                                    name,
-                                    event_id,
-                                    "Validation requires strict improvement without additional hard failures",
-                                )
-                        except BudgetExceeded:
-                            raise
-                        except Exception as error:
-                            return self._reject(name, event_id, "Validation failed: " + type(error).__name__)
-                        result = self.create(**proposal, _validation="validated")
-                        result.update(validation_report=scores, validation_report_ref=str(report_path))
-                        return result
-                    return self.create(**proposal)
-                if validation_gate is not None:
-                    candidate = self.apply(**proposal, _prepare_only=True, _expected_resources=target.resources)
-                    if isinstance(candidate, dict):
-                        return candidate
-                    if validation_context is not None and proposal.get("knowledge_note"):
-                        self._save_note(name, proposal["knowledge_note"], event_id, target.version)
-                    if validation_context is not None and validation_context.reason:
-                        result = {"status": "incubating", "event_id": event_id,
-                                  "reason": validation_context.reason,
-                                  "proposal_ref": str(proposal_path),
-                                  "window_version": validation_context.version,
-                                  "validation": "unvalidated", "task_quality": None}
-                        self._record(name, result)
-                        return result
-                    try:
-                        if validation_context is not None:
-                            scores = await validation_gate.evaluate(
-                                target, candidate, validation_context, context=run_context)
-                        else:
-                            scores = await validation_gate(target, candidate)
-                        report_path = self.root / "validation" / (sha(str(event_id)) + ".json")
-                        atomic(report_path, json.dumps(scores, ensure_ascii=False))
-                        if self.session is not None:
-                            self.session.append("skill_validation", {"event_id": event_id,
-                                "report_ref": str(report_path)}, checkpoint=True)
-                        old_score, new_score = scores['old'], scores['candidate']
-                        if getattr(validation_gate, 'requires_model_review', False) and scores.get('model_approved') is not True:
-                            reason = (scores.get("reason", "Independent model review did not approve candidate")
-                                      if validation_context is not None else
-                                      'Independent model review did not approve candidate')
-                            failed_cases = [
-                                row.get("id")
-                                for row in scores.get("per_case", ())
-                                if isinstance(row, dict)
-                                and (
-                                    not row.get("candidate", {}).get("passed", True)
-                                    or row.get("judge", {}).get("preferred") in {"old", "inconsistent"}
-                                )
-                            ]
-                            self._save_rejected_edit(
-                                name,
-                                {
-                                    "event_id": event_id,
-                                    "reason": reason,
-                                    "edits_summary": json.dumps(proposal.get("edits", []), ensure_ascii=False)[:600],
-                                    "failed_cases": failed_cases,
-                                    "evidence": scores.get("reason", ""),
-                                    "skill_version": target.version,
-                                },
-                            )
-                            result = self._reject(name, event_id, reason)
-                            result.update(validation_report=scores, validation_report_ref=str(report_path))
-                            return result
-                        for score in (old_score, new_score):
-                            if any(type(score[k]) is not int or score[k] < 0 for k in ('successes', 'hard_failures')):
-                                raise ValueError('Invalid validation metrics')
-                        if not (new_score['successes'] > old_score['successes'] and
-                                new_score['hard_failures'] <= old_score['hard_failures']):
-                            reason = 'Validation requires strict improvement without additional hard failures'
-                            self._save_rejected_edit(
-                                name,
-                                {
-                                    "event_id": event_id,
-                                    "reason": reason,
-                                    "edits_summary": json.dumps(proposal.get("edits", []), ensure_ascii=False)[:600],
-                                    "failed_cases": [],
-                                    "evidence": json.dumps({"old": old_score, "candidate": new_score}, ensure_ascii=False),
-                                    "skill_version": target.version,
-                                },
-                            )
-                            return self._reject(name, event_id, reason)
-                    except BudgetExceeded:
-                        raise
-                    except Exception as error:
-                        return self._reject(name, event_id, 'Validation failed: ' + type(error).__name__)
-                    if self.skills.load(name).resources != target.resources:
-                        return self._reject(name, event_id, 'Resource drift during validation')
-                    result = self.apply(**proposal, _validation='validated', _expected_resources=target.resources)
-                    result.update(validation_report=scores, validation_report_ref=str(report_path))
-                    return result
-                return self.apply(**proposal)
+                        + "\n---\n"
+                        + body_val
+                    )
+                    null_baseline = SkillSnapshot(
+                        name=name,
+                        path=skill_path,
+                        version="0.0.0",
+                        description="",
+                        when_to_use="",
+                        body="",
+                        content_hash=sha(""),
+                        resources=MappingProxyType({}),
+                        metadata=MappingProxyType({"__null_baseline__": True}),
+                    )
+                    candidate = SkillSnapshot(
+                        name=name,
+                        path=skill_path,
+                        version="1.0.0",
+                        description=description_val,
+                        when_to_use=when_val,
+                        body=body_val,
+                        content_hash=sha(raw_new),
+                        resources=MappingProxyType({}),
+                        focus_items=extract_focus_items(raw_new),
+                    )
+                    scores, report_path = await self._run_gate(
+                        validation_gate, null_baseline, candidate, event_id, run_context
+                    )
+                    if not scores.get("approved"):
+                        reason_rej = scores.get("reason", "Validation gate rejected new skill")
+                        res = self._reject(name, event_id, reason_rej)
+                        res.update(validation_report=scores, validation_report_ref=str(report_path))
+                        return res
+                    res = self.create(**proposal, _validation="validated")
+                    res.update(validation_report=scores, validation_report_ref=str(report_path))
+                    return res
+
+                # action == "apply"
+                if validation_gate is None:
+                    return self.apply(**proposal)
+                candidate = self.apply(**proposal, _prepare_only=True, _expected_resources=target.resources)
+                if isinstance(candidate, dict):
+                    return candidate
+                try:
+                    scores, report_path = await self._run_gate(
+                        validation_gate, target, candidate, event_id, run_context
+                    )
+                except BudgetExceeded:
+                    raise
+                except Exception as error:
+                    return self._reject(name, event_id, "Validation failed: " + type(error).__name__)
+                if not scores.get("approved"):
+                    reason_rej = scores.get("reason", "Validation gate rejected candidate")
+                    failed_cases = [
+                        row.get("id")
+                        for row in scores.get("per_case", ())
+                        if isinstance(row, dict)
+                        and not row.get("candidate", {}).get("passed", True)
+                    ]
+                    self._save_rejected_edit(
+                        name,
+                        {
+                            "event_id": event_id,
+                            "reason": reason_rej,
+                            "gate_action": scores.get("gate_action", "reject"),
+                            "current_score": scores.get("old", {}).get("score"),
+                            "candidate_score": scores.get("candidate", {}).get("score"),
+                            "edits_summary": json.dumps(proposal.get("edits", []), ensure_ascii=False)[:800],
+                            "failed_cases": failed_cases,
+                            "skill_version": target.version,
+                        },
+                    )
+                    res = self._reject(name, event_id, reason_rej)
+                    res.update(validation_report=scores, validation_report_ref=str(report_path))
+                    return res
+                if self.skills.load(name).resources != target.resources:
+                    return self._reject(name, event_id, "Resource drift during validation")
+                res = self.apply(**proposal, _validation="validated", _expected_resources=target.resources)
+                res.update(validation_report=scores, validation_report_ref=str(report_path))
+                return res
+            except BudgetExceeded:
+                raise
             except (TypeError, ValueError) as error:
                 return self._reject(name, event_id, str(error))
+
+    async def _run_gate(self, gate, baseline, candidate, event_id: str, run_context):
+        if hasattr(gate, "evaluate"):
+            scores = await gate.evaluate(baseline, candidate, context=run_context)
+        else:
+            scores = await gate(baseline, candidate)
+        report_path = self.root / "validation" / (sha(str(event_id)) + ".json")
+        atomic(report_path, json.dumps(scores, ensure_ascii=False))
+        if self.session is not None:
+            self.session.append(
+                "skill_validation",
+                {"event_id": event_id, "report_ref": str(report_path)},
+                checkpoint=True,
+            )
+        return scores, report_path

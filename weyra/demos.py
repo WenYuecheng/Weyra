@@ -13,9 +13,9 @@
          模型推演与工具调用（ToolCall）序列，实现离线、零成本、亚秒级的全链路逻辑回归。
        - 验证 Subagent 派生委托：在 analysis 场景中完整验证主 Agent 发起 fork 子代理委托任务、
          子代理读取文件提取证据并将结论回传主代理的完整闭环。
-    2. SkillOpt (arXiv:2605.23904, 2026) & WikiSkill (arXiv:2608.27454, 2026):
+    2. SkillOpt (`microsoft/SkillOpt`, NeurIPS 2026 Spotlight, arXiv:2605.23904):
        - 验证持续技能自进化闭环：在 writing 场景中完整重现“用户初始指导 -> 规则创建 -> 用户提出叙事例外纠错 ->
-         触发 SkillOpt 边界补丁演化（replace: OLD_RULE -> NEW_RULE）”的完整交互生命周期。
+         触发 SkillOpt 有界补丁演化（replace: OLD_RULE -> NEW_RULE）与 SkillValidationGate 门禁裁决”的完整生命周期。
 """
 
 from __future__ import annotations
@@ -94,10 +94,9 @@ def _offline_runtime(scenario):
     patch = {
         "action": "apply",
         "name": "report-writing",
-        "reason": "用户指出叙事例外",
-        "edits": [{"op": "replace", "old": OLD_RULE, "new": NEW_RULE}],
+        "reasoning": "用户指出叙事例外",
+        "edits": [{"op": "replace", "target": OLD_RULE, "content": NEW_RULE}],
         "when_to_use": "正式汇报；不适用于故事创作",
-        "knowledge_note": {"kind": "boundary", "text": "用户明确纠正：故事不套用汇报结构。"},
     }
     return scripted_runtime(
         [
@@ -121,29 +120,23 @@ class _DemoJudge(ScriptedProvider):
     """
 
     async def stream(self, request, context):
-        """流式解析评测请求并返回确定性成对判分结果 (Stream Scripted Judgments)。
-
-        Args:
-            request: 模型请求信封。
-            context: 运行上下文。
-
-        Yields:
-            StreamEvent: 预设的流式裁判事件。
-        """
-        cases = json.loads(request.messages[0].content)
-        judgments = {}
-        for case_id, case in cases.items():
-            scores = {alias: {key: True for key in
-                      ("correctness", "constraint_adherence", "preservation", "clarity")}
-                      for alias in ("A", "B")}
-            for alias in scores:
-                scores[alias]["constraint_adherence"] = not case[alias]["final"].startswith("结论：")
-            totals = {alias: sum(row.values()) for alias, row in scores.items()}
-            winner = "tie" if totals["A"] == totals["B"] else "A" if totals["A"] > totals["B"] else "B"
-            judgments[case_id] = {"scores": scores, "winner": winner,
-                "evidence": {alias: "Observed scripted output: " + case[alias]["final"]
-                             for alias in ("A", "B")}}
-        self.responses.append(_response(json.dumps({"cases": judgments}, ensure_ascii=False)))
+        """流式解析次序对调成对盲评请求并返回确定性裁决 (Stream Scripted Judgments)。"""
+        payload = json.loads(request.messages[0].content)
+        a_bad = str(payload["A"].get("final", "")).startswith("结论：")
+        b_bad = str(payload["B"].get("final", "")).startswith("结论：")
+        if a_bad and not b_bad:
+            winner = "B"
+        elif b_bad and not a_bad:
+            winner = "A"
+        else:
+            winner = "tie"
+        judgment = {
+            "winner": winner,
+            "rationale": (
+                f"A={payload['A'].get('final', '')!r}, B={payload['B'].get('final', '')!r}"
+            ),
+        }
+        self.responses.append(_response(json.dumps(judgment, ensure_ascii=False)))
         async for event in super().stream(request, context):
             yield event
 
@@ -168,7 +161,7 @@ async def run_demo(
     1. 真实引擎驱动：执行代码 100% 走生产级 Agent 核心主循环、上下文管理器、SQLite 会话存储与权限拦截；
     2. 场景覆盖：
        - analysis 场景：覆盖主 Agent 读取文件、fork 派生子智能体、子智能体执行并回流成果的全链路；
-       - writing 场景：覆盖初始规则写入、用户提出例外纠错、SkillOpt 补丁生成与 ConfiguredSkillGate 沙箱门禁裁决；
+       - writing 场景：覆盖初始规则写入、用户提出例外纠错、SkillOpt 补丁生成与 SkillValidationGate 沙箱门禁裁决；
     3. 隔离沙箱：在项目 `.weyra/demos/` 目录下生成独立临时工程，执行完毕后输出 `demo-report.json`。
 
     Args:
@@ -224,8 +217,8 @@ async def run_demo(
                 ])
         runtime.registry.register("demo_judge", _DemoJudge())
         runtime.routes["skill_judge"] = ModelInfo("demo_judge", "gpt-5.6-luna", 200000, 1024)
-        from .skill_judge import ConfiguredSkillGate
-        demo_gate = ConfiguredSkillGate(runtime, None, {"cases": [{
+        from .skill_judge import SkillValidationGate
+        demo_gate = SkillValidationGate(runtime, None, {"cases": [{
             "id": "independent-story-opening",
             "prompt": "写一个陌生旅人在雨夜抵达渡口的故事开头，直接进入场景。",
             "files": {}, "output_mode": "text",
@@ -285,7 +278,6 @@ async def run_demo(
                 await asyncio.gather(*list(agent._background))
             catalog = agent.skills.capture_catalog()
             updated = agent.skills.load(skill_name) if skill_name in catalog else None
-            experiences = agent.evolution.knowledge(skill_name) if updated else []
             restored = (
                 await agent.rollback_skill(skill_name, original.version)
                 if updated and original
@@ -295,7 +287,6 @@ async def run_demo(
                 "skill_name": skill_name if updated else None,
                 "updated_version": updated.version if updated else None,
                 "updated_body": updated.body if updated else None,
-                "boundary_experience": experiences,
                 "rollback_version": restored.get("version"),
                 "evolution_events": [
                     r["data"] for r in agent.session.records if r["kind"] == "evolution_result"

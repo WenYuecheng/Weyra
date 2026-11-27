@@ -59,7 +59,7 @@ Weyra 将模型推理、工具执行、会话状态和技能演进组织成可�
 - **长上下文管理**：结构化检查点压缩、Usage Anchor 动态校准、工具大结果中间剪枝和全文产物外置。
 - **会话与任务恢复**：SQLite WAL、追加式事件日志、会话树与独立领域投影，支持恢复、分支和派生。
 - **预算管理**：模型请求前预留 Token、调用次数及费用，按返回 Usage 结算，父子任务共享预算约束。
-- **技能演进与过程审计**：激活条件优先的技能检索、`[ANCHOR]` 受保护规则护栏、分类知识配额隔离、有界补丁与被拒编辑缓冲、无基线对照新建门禁、确定性断言短路验证，以及 SQLite 只读过程质量与技能漏斗审计。自动演进默认关闭，开启需显式配置验证集与路由；架构详见 [docs/skill-evolution.md](docs/skill-evolution.md)。
+- **技能演进与过程审计**：对齐 DeepSeek Harness / Pi / Hermes 的多目录发现、`<available_skills>` 摘要暴露、`skill(file_path)` 渐进式披露与 `/<skill-name>` 显式触发；基于 `microsoft/SkillOpt`（有界 `Edit` 原语、步长衰减、验证门控与被拒编辑缓冲）与 `SkillDiff`（Markdown 结构化条款切分与 `**[FOCUS]**` 专家细节护栏）实现防退化在线更新，配合零裁判确定性校验与 SQLite 只读轨迹统计。自动演进默认关闭，开启需显式配置验证集与路由；架构详见 [docs/skill-evolution.md](docs/skill-evolution.md)。
 - **模型接入**：OpenAI-compatible 与 Anthropic-compatible 协议，按主任务、压缩、记忆和演进等用途配置路由。
 - **应用接口**：`WeyraAppService` 提供提交、取消、状态快照、历史查询和事件订阅，可嵌入自己的 Python 应用。
 
@@ -148,8 +148,8 @@ weyra "阅读项目并总结核心执行链路" --project .
 
 ### 技能演进护栏与系统可靠性验证
 
-- **离线零 API 可靠性与长程抗退化**：6 类故障注入回归全部通过；30 轮连续演进压测下，受保护 `[ANCHOR]` 规则与核心 `boundary` 知识留存率均由无护栏基线的 **0% 提升至 100%**，确定性验证短路实现零裁判模型调用；只读轨迹审计可准确区分高合规 `ideal` 与 `lucky_pass` 轨迹。
-- **多域技能盲选路由与在线演进**：在三类企业运维/交付合规域、无技能名提示且并存干扰技能的条件下，目标技能精准激活率 **100%（18/18）**、干扰误触发 **0%**、任务全部以 `ideal` 轨迹通过，并验证受保护规则拦截、有界补丁晋升与无基线对照新建门禁。
+- **离线零 API 可靠性与长程抗退化**：6 类故障注入回归全部通过；30 轮连续演进压测下，经 `SkillDiff`（`**[FOCUS]**`）与 `SkillOpt`（`evaluate_gate`）共同护航的专家条款留存率保持 **100%**，确定性验证路径实现零裁判模型调用；只读轨迹统计可识别错误重试循环、未校验声称完成与技能采纳漏斗。
+- **多域技能盲选路由与在线演进**：在三类企业运维与交付合规域中，通过 `<available_skills>` 摘要目录验证无技能名提示下的盲选路由与零干扰误触发，以及 `SkillDiff` 专家条款保护、`SkillOpt` 有界补丁晋升与空基线对照新建门禁。
 
 评测说明与复现命令见 [benchmarks/README.md](benchmarks/README.md)，设计原理见 [docs/skill-evolution.md](docs/skill-evolution.md)。
 
@@ -163,13 +163,13 @@ weyra/
 ├── service.py                应用服务、状态快照与事件订阅
 ├── session.py                SQLite 会话树与持久化
 ├── goals.py                  持续任务目标与恢复
-├── skills.py                 技能发现、激活条件优先检索与 [ANCHOR] 解析
-├── skill_evolution.py        分类知识配额、被拒编辑缓冲与新建门禁
-├── online_skill_evolution.py 异步反馈窗口、保护锚点与演进调度
-├── skill_judge.py            独立双盲仲裁与隔离沙箱门禁
-├── skill_replay.py           有界重放视窗与证据冻结
-├── skill_replay_gate.py      确定性断言短路门禁与 SHA-256 不可变缓存
-├── trace_audit.py            SQLite (?mode=ro) 过程分档与四级技能漏斗审计
+├── skills.py                 技能多目录发现、<available_skills> 暴露与 /<skill-name> 解析
+├── skillopt_vendor/          Microsoft SkillOpt 官方 MIT 实现移植 (types/skill/scheduler/gate/memory)
+├── skilldiff_vendor/         LitaoGuo SkillDiff 官方 MIT 实现移植 (Markdown 结构化条款切分与 **[FOCUS]** 标注)
+├── skill_evolution.py        基于 SkillOpt + SkillDiff 的演进存储、OCC 并发控制与崩溃恢复
+├── online_skill_evolution.py 异步反馈窗口、edit_budget 注入与演进调度
+├── skill_judge.py            SkillOpt 验证门禁适配器、确定性校验短路与换位双盲裁判
+├── trace_audit.py            SQLite (?mode=ro) 客观执行统计与技能采纳漏斗审计
 ├── tui/                      Textual 界面、组件、弹窗和主题
 ├── ui.py                     流式 CLI 展示
 └── main.py                   应用启动入口
@@ -205,4 +205,4 @@ CI 检查源码、CLI、离线演示、TUI 与应用服务，并构建和安装�
 
 仓库包含应用界面、后端运行时、安装配置、使用示例、核心文档、公开零 API 测试及可复现评测脚本。安装包提供应用运行所需的源码与资源。
 
-Weyra 参考 Pi、DeepSeek Harness、Hermes 的运行时设计，并结合技能知识组织与验证驱动更新机制。适配接口和保留的 DeepSeek Harness 检查点提示词，其版权与许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。项目采用 [MIT License](LICENSE)。
+Weyra 参考 Pi、DeepSeek Harness、Hermes 的运行时设计，并在技能演进模块移植了 Microsoft SkillOpt 与 SkillDiff 的 MIT 实现。所有第三方代码、适配接口及保留提示词的版权与许可见 [第三方声明](THIRD_PARTY_NOTICES.md)。项目采用 [MIT License](LICENSE)。

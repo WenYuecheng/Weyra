@@ -17,8 +17,9 @@
     - Hermes Agent:
       * 行为配置与机密凭据严格物理分离（weyra.toml 与 .env 解耦）；
       * 透明 Markdown 文件记忆引擎（memory.py）与技能目录发现标准（SKILL.md Frontmatter）。
-    - WikiSkill (arXiv:2608.27454, 2026) & SkillOpt (arXiv:2605.23904, 2026):
-      * 指令与外部领域知识解耦结构，有界自然语言补丁自演化与次序对换双盲裁判门禁。
+    - SkillOpt (microsoft/SkillOpt, NeurIPS 2026 Spotlight, arXiv:2605.23904, MIT)
+      & SkillDiff (arXiv:2611.25534, MIT):
+      * 标准有界 Edit 原语、文本学习率调度、**[FOCUS]** 专家条款护栏与隔离验证门禁。
 """
 
 __version__ = "0.1.4"

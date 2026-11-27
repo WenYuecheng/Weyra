@@ -321,13 +321,6 @@ async def apply_patch(runtime, args: dict, ctx) -> ToolResult:
                         raise PermissionError("Patch path changed before commit")
                     if _read(item.path) != expected[item.path]:
                         raise ValueError("Patch target changed before commit")
-                    capture = ctx.services.get("replay_capture")
-                    if capture is not None:
-                        capture.file(
-                            item.path.relative_to(runtime.project).as_posix(),
-                            item.before,
-                            write=True,
-                        )
                     step = {
                         "path": item.name,
                         "action": "delete" if item.after is None else "write",

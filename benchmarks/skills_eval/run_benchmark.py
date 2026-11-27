@@ -1,20 +1,18 @@
-"""DeepSeek 官方实网多域技能基准与在线有界演进评测 (18 题 × 3 组配对消融 + 3 项实时演进实验)。
+"""DeepSeek 官方实网多域技能基准与在线有界演进评测 (18 题 × 3 组配对消融 + 实时演进实验)。
 
-【评测设计与论文依据】
-1. SkillsBench (NeurIPS 2026, arXiv:2602.12670) & SOPBench (EMNLP 2026 Main, 2026.emnlp-main.936):
+【评测设计与论文/框架依据】
+1. SkillsBench (arXiv:2602.12670) & SOPBench (EMNLP 2026):
    - 构建 3 个企业后端运维与交付合规域（Audit Ledger / Incident Triage / Release Manifest）共 18 项确定性任务；
-   - 对比 `No-Skill (1x)` 与 `Weyra Skill (1x)`，采用零 LLM Judge 调用的可执行结构/语义断言判分。
-2. Skill-Pro (ICML 2026, PMLR v306) & SkillAlign (EMNLP 2026 Main, 2026.emnlp-main.2565):
-   - 在 `Weyra Skill (1x)` 中同时预装 3 项业务技能 + 1 项干扰写作技能 `prose-style-guide`，且 User Prompt **绝不提及任何技能名称**，
-     真实考验激活条件优先 BM25 检索与 `when_to_use` 路由准确率及干扰拒绝能力。
-3. Rethinking Self-Evolving Agent Skills (arXiv:2608.02636) & Rethinking Harness Evolution (arXiv:2607.12227):
-   - 设置 `Matched-Budget Retry (2x)` 基线：首轮失败后将确定性校验诊断回馈给模型进行次轮修复，验证技能相对 2x 测试时重试的净收益。
-4. SkillOpt (NeurIPS 2026 Spotlight, arXiv:2605.23904) + SkillDiff (arXiv:2611.25534) + SkillGen (arXiv:2605.10999):
-   - 实测 3 项实时演进协议：(a) SkillDiff `[ANCHOR]` 篡改拦截与 Rejected-Edit Buffer 持久化；
-     (b) 2 个独立验证样本驱动的真实有界补丁演进晋升（`1.0.0 -> 1.0.1`，确定性短路 `0` Judge 调用）；
-     (c) SkillGen `__null_baseline__` 新建技能增益门禁（`ConfiguredSkillGate.supports_null_baseline=True`）。
-5. AgentLens (NeurIPS 2026, arXiv:2605.12925) & Trial by Trace (arXiv:2610.32285):
-   - 对全部 54 次任务运行产出的 SQLite `state.db` 调用只读 `?mode=ro` `audit_session_db`，统计过程分档、技能激活率与干扰误触发率。
+   - 对比 `No-Skill (1x)`、`Matched-Budget Retry (2x)` 与 `Weyra Skill (1x)`，采用零 LLM Judge 调用的确定性校验判分。
+2. DeepSeek Harness + Pi (`agentskills.io`) + Hermes Agent 技能标准接口:
+   - 在 `Weyra Skill (1x)` 中通过 `<available_skills>` 摘要索引并发暴露 3 项业务技能 + 1 项干扰技能 `prose-style-guide`，且 User Prompt 不提及技能名；
+   - 测试模型基于渐进式披露自动选择 `skill` 工具与盲选准确率（零干扰误触发）。
+3. Microsoft SkillOpt (NeurIPS 2026 Spotlight, arXiv:2605.23904) + SkillDiff (arXiv:2611.25534):
+   - 实测 3 项实时演进协议：(a) SkillDiff `**[FOCUS]**` 专家条款保护校验与 `rejected_edits.jsonl` 持久化；
+     (b) 2 个独立验证样本驱动的 `SkillOpt` 有界补丁晋升（`1.0.0 -> 1.0.1`，确定性门禁 `0` Judge 调用）；
+     (c) `SkillOpt` `__null_baseline__` 新建技能增益门禁（`SkillValidationGate.supports_null_baseline=True`）。
+4. 客观轨迹与技能采纳统计 (`weyra/trace_audit.py`):
+   - 对全部 54 次任务产出的 SQLite `state.db` 调用只读 `?mode=ro` `audit_session_db`，统计洁净完成率、错误循环与技能采纳漏斗。
 
 运行方式:
     .venv/bin/python benchmarks/skills_eval/run_benchmark.py
@@ -42,7 +40,7 @@ from weyra.core.state import Budget, BudgetExceeded, RunContext  # noqa: E402
 from weyra.online_skill_evolution import MAINTENANCE_INSTRUCTION, asdict_snapshot  # noqa: E402
 from weyra.session import SessionStore  # noqa: E402
 from weyra.skill_evolution import EvolutionStore  # noqa: E402
-from weyra.skill_judge import ConfiguredSkillGate  # noqa: E402
+from weyra.skill_judge import SkillValidationGate  # noqa: E402
 from weyra.skills import SkillStore  # noqa: E402
 from weyra.trace_audit import audit_session_db  # noqa: E402
 
@@ -52,35 +50,34 @@ SKILLS_SPEC = {
     "audit-ledger-sop": {
         "description": "Audit ledger JSON extraction protocol from workspace records",
         "when_to_use": "When inspecting records/ files to produce audit_report.json",
-        "anchors": [
+        "focus": [
             "Preserve all input files in records/ untouched; write only audit_report.json.",
             "Include top-level keys schema_version, status, summary, and items.",
         ],
         "body": """## Protected Rules
-- [ANCHOR] Preserve all input files in records/ untouched; write only audit_report.json.
-- [ANCHOR] Include top-level keys schema_version, status, summary, and items.
+- **[FOCUS]** Preserve all input files in records/ untouched; write only audit_report.json.
+- **[FOCUS]** Include top-level keys schema_version, status, summary, and items.
 
-## Procedure (pi)
+## Procedure
 1. Read every file inside `records/` using `read_file`.
 2. Exclude records where `status=ARCHIVED` or `status=IGNORED`.
 3. Keep only `status=ACTIVE` or `status=CRITICAL`, sorted ascending by record ID (`source`).
 4. Set `schema_version` to `"sop-v2"`, `status` to `"ok"`, `summary` to `"kept=<N>"`, and each element of `items` to `{"source": "<exact ID>", "severity": "<lowercase severity>"}`.
 5. Write `audit_report.json` with `write_file` and re-read it to verify exact JSON formatting.
 """,
-        "rules": ["read_file", "write_file", "audit_report.json"],
     },
     "incident-triage-sop": {
         "description": "Incident alert triage and team escalation routing SOP",
         "when_to_use": "When triaging alerts/ logs into triage_plan.json escalation queues",
-        "anchors": [
+        "focus": [
             "Preserve all input files in alerts/ untouched; write only triage_plan.json.",
             "Never include RESOLVED status or P3/INFO alerts in escalations.",
         ],
         "body": """## Protected Rules
-- [ANCHOR] Preserve all input files in alerts/ untouched; write only triage_plan.json.
-- [ANCHOR] Never include RESOLVED status or P3/INFO alerts in escalations.
+- **[FOCUS]** Preserve all input files in alerts/ untouched; write only triage_plan.json.
+- **[FOCUS]** Never include RESOLVED status or P3/INFO alerts in escalations.
 
-## Procedure (pi)
+## Procedure
 1. Read every file inside `alerts/` using `read_file`.
 2. Filter out any alert where `status=RESOLVED` or `priority` is `P3` or `INFO`.
 3. Keep only `P0`, `P1`, or `P2` non-resolved alerts. Map `action`: `P0` or `P1` -> `"immediate"`, `P2` -> `"queued"`.
@@ -89,20 +86,19 @@ SKILLS_SPEC = {
 6. Set `protocol` to `"triage-v3"`, `escalated_count` to the integer count of kept escalations, and each item to `{"incident_id": "<ID>", "priority": "<P0|P1|P2>", "action": "<immediate|queued>", "owner_team": "<security|billing|platform>"}`.
 7. Write `triage_plan.json` with `write_file` and re-read it to verify.
 """,
-        "rules": ["read_file", "write_file", "triage_plan.json"],
     },
     "release-manifest-sop": {
         "description": "Component release readiness verification and manifest builder",
         "when_to_use": "When validating components/ checks to generate release_manifest.json",
-        "anchors": [
+        "focus": [
             "Preserve all input files in components/ untouched; write only release_manifest.json.",
             "Set release_ready to true only when blocked is empty and approved is non-empty.",
         ],
         "body": """## Protected Rules
-- [ANCHOR] Preserve all input files in components/ untouched; write only release_manifest.json.
-- [ANCHOR] Set release_ready to true only when blocked is empty and approved is non-empty.
+- **[FOCUS]** Preserve all input files in components/ untouched; write only release_manifest.json.
+- **[FOCUS]** Set release_ready to true only when blocked is empty and approved is non-empty.
 
-## Procedure (pi)
+## Procedure
 1. Read every file inside `components/` using `read_file`.
 2. For each component entry `<package> | version=<ver> | risk=<RISK> | gate=<GATE>`:
    - If `gate=PASS`, append `{"package": "<package>", "version": "<ver>", "risk": "<lowercase risk>"}` to `approved`.
@@ -111,14 +107,12 @@ SKILLS_SPEC = {
 4. Set `manifest_version` to `"rel-v1"`, `release_ready` to `true` iff `len(blocked) == 0 and len(approved) > 0` (else `false`).
 5. Write `release_manifest.json` with `write_file` and re-read it to verify.
 """,
-        "rules": ["read_file", "write_file", "release_manifest.json"],
     },
     "prose-style-guide": {
         "description": "Editorial prose style and release newsletter writing helper",
         "when_to_use": "When drafting release blog announcements, customer emails, or Markdown essays",
-        "anchors": ["Keep customer-facing prose concise and free of internal trace IDs."],
-        "body": "## Writing Guidelines\nUse active voice and clear headings for customer announcements.\n",
-        "rules": [],
+        "focus": ["Keep customer-facing prose concise and free of internal trace IDs."],
+        "body": "## Writing Guidelines\n- **[FOCUS]** Keep customer-facing prose concise and free of internal trace IDs.\nUse active voice and clear headings for customer announcements.\n",
     },
 }
 
@@ -445,7 +439,6 @@ def _write_task_files(root: Path, task: dict, *, with_skills: bool) -> None:
                 'version: "1.0.0"\n'
                 f"description: {json.dumps(spec['description'])}\n"
                 f"when_to_use: {json.dumps(spec['when_to_use'])}\n"
-                f"anchors: {json.dumps(spec['anchors'])}\n"
                 "---\n"
                 + spec["body"],
                 encoding="utf-8",
@@ -538,13 +531,13 @@ async def _run_arm(runtime, budget: Budget, arm_name: str, *, with_skills: bool,
                     Decimal(0),
                 )
                 await agent.close(close_runtime=False)
-                rules = (
-                    {task["target_skill"]: SKILLS_SPEC[task["target_skill"]]["rules"]}
-                    if with_skills
-                    else None
-                )
-                audit = audit_session_db(root, sid, skill_rules=rules, task_passed=passed)
+                audit = audit_session_db(root, sid, task_passed=passed)
                 activated = list(audit.skill_funnel.activated)
+                clean_run = (
+                    audit.process.completed
+                    and audit.process.error_loops == 0
+                    and audit.process.verify_after_edit
+                )
                 return {
                     "task_id": task["id"],
                     "domain": task["domain"],
@@ -556,7 +549,7 @@ async def _run_arm(runtime, budget: Budget, arm_name: str, *, with_skills: bool,
                     "tokens": task_tokens,
                     "calls": task_calls,
                     "cost_cny": str(task_cost),
-                    "process_tier": audit.process.tier,
+                    "clean_run": clean_run,
                     "skill_activated": activated,
                     "target_skill_activated": task["target_skill"] in activated,
                     "distractor_activated": "prose-style-guide" in activated,
@@ -571,7 +564,7 @@ async def _run_arm(runtime, budget: Budget, arm_name: str, *, with_skills: bool,
         domains[dom] = {
             "passed": sum(1 for r in sub if r["passed"]),
             "total": len(sub),
-            "ideal": sum(1 for r in sub if r["process_tier"] == "ideal"),
+            "clean": sum(1 for r in sub if r["clean_run"]),
         }
     return {
         "arm": arm_name,
@@ -581,7 +574,7 @@ async def _run_arm(runtime, budget: Budget, arm_name: str, *, with_skills: bool,
         "tokens": budget.total_tokens - arm_tokens_before,
         "calls": budget.calls - arm_calls_before,
         "cost_cny": str(budget.total_cost_cny - arm_cost_before),
-        "tiers": {t: sum(1 for r in records if r["process_tier"] == t) for t in ("ideal", "solid", "lucky_pass", "failed")},
+        "clean_runs": sum(1 for r in records if r["clean_run"]),
         "domains": domains,
         "routing": {
             "target_activated": sum(1 for r in records if r["target_skill_activated"]),
@@ -611,7 +604,7 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
                 return json.loads(text[start : end + 1])
             raise
 
-    # 1. SkillDiff 锚点守卫 + SkillOpt 被拒编辑缓冲 + 真实 1.0.0 -> 1.0.1 有界补丁晋升 (2 独立验证样本, 0 Judge calls)
+    # 1. SkillDiff **[FOCUS]** 专家条款护栏 + SkillOpt 被拒编辑缓冲 + 真实 1.0.0 -> 1.0.1 有界补丁晋升 (2 独立验证样本, 0 Judge calls)
     with tempfile.TemporaryDirectory(prefix="weyra-eval-evo-patch-") as tmp1:
         root = Path(tmp1)
         skills = SkillStore(root)
@@ -620,9 +613,9 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
         spec = SKILLS_SPEC["audit-ledger-sop"]
         seed_body = (
             "## Protected Rules\n"
-            f"- [ANCHOR] {spec['anchors'][0]}\n"
-            f"- [ANCHOR] {spec['anchors'][1]}\n"
-            "## Procedure (pi)\n"
+            f"- **[FOCUS]** {spec['focus'][0]}\n"
+            f"- **[FOCUS]** {spec['focus'][1]}\n"
+            "## Procedure\n"
             "1. Read every file in `records/` and write `audit_report.json` with `schema_version=\"sop-v2\"`, `status=\"ok\"`, `summary=\"kept=0\"`, and `items=[]`.\n"
         )
         evo.create(
@@ -633,9 +626,9 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
             permission_mode="acceptEdits",
         )
         snap = skills.load("audit-ledger-sop")
-        anchor_guard_res = evo.apply(
+        focus_guard_res = evo.apply(
             "audit-ledger-sop",
-            [{"op": "replace", "old": f"- [ANCHOR] {spec['anchors'][0]}", "new": ""}],
+            [{"op": "delete", "target": f"- **[FOCUS]** {spec['focus'][0]}"}],
             base_hash=snap.content_hash,
             permission_mode="acceptEdits",
         )
@@ -684,36 +677,26 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
                 },
             ]
         }
-        gate = ConfiguredSkillGate(runtime, budget, patch_manifest, session=session)
+        gate = SkillValidationGate(runtime, budget, patch_manifest, session=session)
         patch_evidence = {
             "user": "Read `records/dev.txt` and write `audit_report.json`.",
             "assistant": "Wrote audit_report.json with empty items=[].",
             "feedback": (
                 "Correction for audit-ledger-sop: update step 1 so `items` keeps only ACTIVE or CRITICAL records sorted ascending by ID "
-                'as `{"source":"<ID>","severity":"<lowercase>"}` and sets `summary` to `"kept=<N>"`, while keeping all [ANCHOR] lines untouched.'
+                'as `{"source":"<ID>","severity":"<lowercase>"}` and sets `summary` to `"kept=<N>"`, while keeping all **[FOCUS]** lines untouched.'
             ),
             "trace_summary": {"tool_calls": ["skill", "read_file", "write_file"], "error_tools": [], "retry_count": 0, "turn_state": "completed"},
-            "replay": {
-                "turn_id": "live-patch-dev",
-                "complete": True,
-                "reason": "",
-                "files": {"records/dev.txt": "ID-700 | status=ACTIVE | severity=MEDIUM\n"},
-                "written_paths": ["audit_report.json"],
-                "context": [],
-                "system_instructions": "",
-            },
         }
-        vctx = gate.freeze(patch_evidence)
 
         async def propose_patch(_):
             ctx = RunContext(root, session, budget, "acceptEdits")
             cur = skills.load("audit-ledger-sop")
             payload = {
-                "evidence": {k: v for k, v in patch_evidence.items() if k != "replay"},
-                "related": [{"name": cur.name, "description": cur.description}],
+                "evidence": patch_evidence,
+                "available_skills": [{"name": cur.name, "description": cur.description}],
                 "target": asdict_snapshot(cur),
-                "protected_anchors": list(cur.anchors),
-                "knowledge": evo.knowledge_prompt(cur.name),
+                "focus_items": list(cur.focus_items),
+                "edit_budget": evo.current_edit_budget(cur.name),
                 "rejected_edits": evo.rejected_edits_prompt(cur.name),
             }
             req = PreparedRequest(
@@ -733,16 +716,15 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
                 permission_mode="acceptEdits",
                 target_snapshot=skills.load("audit-ledger-sop"),
                 validation_gate=gate,
-                validation_context=vctx,
             )
         except Exception as exc:
             patch_res = {"status": "error", "error": f"{type(exc).__name__}: {exc}"}
         after_patch_snap = skills.load("audit-ledger-sop")
-        patch_anchors_ok = all(a in after_patch_snap.body for a in spec["anchors"])
+        patch_focus_ok = all(a in after_patch_snap.body for a in spec["focus"])
         rejected_count = len(evo.rejected_edits("audit-ledger-sop", limit=10))
         session.close()
 
-    # 2. SkillGen 零空基线门槛 (__null_baseline__ 对照门禁创建全新技能)
+    # 2. SkillOpt 零空基线门槛 (__null_baseline__ 对照门禁创建全新技能)
     with tempfile.TemporaryDirectory(prefix="weyra-eval-evo-create-") as tmp2:
         root2 = Path(tmp2)
         skills2 = SkillStore(root2)
@@ -790,7 +772,7 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
                 },
             ]
         }
-        gate2 = ConfiguredSkillGate(runtime, budget, create_manifest, session=session2)
+        gate2 = SkillValidationGate(runtime, budget, create_manifest, session=session2)
         create_evidence = {
             "user": "Check `components/dev.txt` and produce `release_manifest.json`.",
             "assistant": "Wrote release_manifest.json in generic schema.",
@@ -801,26 +783,16 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
                 'set `manifest_version="rel-v1"`, and set `release_ready` boolean true iff `blocked` is empty and `approved` is non-empty.'
             ),
             "trace_summary": {"tool_calls": ["read_file", "write_file"], "error_tools": [], "retry_count": 0, "turn_state": "completed"},
-            "replay": {
-                "turn_id": "live-create-dev",
-                "complete": True,
-                "reason": "",
-                "files": {"components/dev.txt": "core | version=1.0.0 | risk=LOW | gate=PASS\n"},
-                "written_paths": ["release_manifest.json"],
-                "context": [],
-                "system_instructions": "",
-            },
         }
-        vctx2 = gate2.freeze(create_evidence)
 
         async def propose_create(_):
             ctx2 = RunContext(root2, session2, budget, "acceptEdits")
             payload2 = {
-                "evidence": {k: v for k, v in create_evidence.items() if k != "replay"},
-                "related": [],
+                "evidence": create_evidence,
+                "available_skills": [],
                 "target": None,
-                "protected_anchors": [],
-                "knowledge": "",
+                "focus_items": [],
+                "edit_budget": 1,
                 "rejected_edits": "",
             }
             req2 = PreparedRequest(
@@ -839,7 +811,6 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
                 propose_create,
                 permission_mode="acceptEdits",
                 validation_gate=gate2,
-                validation_context=vctx2,
             )
         except Exception as exc:
             create_res = {"status": "error", "error": f"{type(exc).__name__}: {exc}"}
@@ -847,7 +818,7 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
         session2.close()
 
     return {
-        "anchor_guard_blocked": anchor_guard_res.get("failure_kind") == "anchor_violation",
+        "focus_guard_blocked": focus_guard_res.get("failure_kind") == "focus_item_violation",
         "rejected_edit_buffer_count": rejected_count,
         "patch_evolution": {
             "status": patch_res.get("status"),
@@ -858,7 +829,7 @@ async def _run_live_evolution_suite(runtime, budget: Budget) -> dict:
             "candidate_successes": ((patch_res.get("validation_report") or {}).get("candidate") or {}).get("successes"),
             "version_before": "1.0.0",
             "version_after": after_patch_snap.version,
-            "anchors_preserved": patch_anchors_ok,
+            "focus_items_preserved": patch_focus_ok,
         },
         "skillgen_create": {
             "status": create_res.get("status"),
@@ -926,16 +897,11 @@ async def main_async() -> dict:
         "total_calls": budget.calls,
         "total_cost_cny": str(budget.total_cost_cny),
         "paper_references": {
-            "skillsbench": "arXiv:2602.12670 (NeurIPS 2026)",
-            "sopbench": "2026.emnlp-main.936 (EMNLP 2026 Main)",
-            "skill_pro": "ICML 2026 (PMLR v306)",
-            "skill_align": "2026.emnlp-main.2565 (EMNLP 2026 Main)",
-            "rethinking_tts": "arXiv:2608.02636 & arXiv:2607.12227 (2026)",
-            "skillopt": "arXiv:2605.23904 (NeurIPS 2026 Spotlight)",
-            "skilldiff": "arXiv:2611.25534 (Nov 2026)",
-            "skillgen": "arXiv:2605.10999 (2026)",
-            "agentlens": "arXiv:2605.12925 (NeurIPS 2026)",
-            "trial_by_trace": "arXiv:2610.32285 (Oct 2026)",
+            "skillopt": "arXiv:2605.23904 (NeurIPS 2026 Spotlight, microsoft/SkillOpt MIT)",
+            "skilldiff": "arXiv:2611.25534 (Nov 2026, LitaoGuo/How-Self-Evolution-Reshapes-Skills MIT)",
+            "skillsbench": "arXiv:2602.12670",
+            "sopbench": "EMNLP 2026",
+            "agentskills_and_harnesses": "DeepSeek Harness / Pi / Hermes Agent",
         },
         "arms": {"no_skill_1x": arm_a, "matched_budget_retry_2x": arm_b, "weyra_skill_1x": arm_c},
         "paired_statistics": stats,
@@ -950,26 +916,26 @@ async def main_async() -> dict:
         f"# DeepSeek (`{model.model_id}`) 多域技能路由、TTS 对比与在线演进评测报告",
         "",
         f"- **评测端点与模型**：`https://api.deepseek.com` / `{model.model_id}`（严禁 fallback）",
-        "- **评测规模**：3 个业务域 × 6 题 = **18 项任务 × 3 组配对（共 54 次完整任务运行）** + 3 项在线演进协议实测",
+        "- **评测规模**：3 个业务域 × 6 题 = **18 项任务 × 3 组配对（共 54 次完整任务运行）** + 在线演进协议实测",
         f"- **总调用统计**：{budget.calls} 次模型请求 ｜ {budget.total_tokens:,} tokens ｜ Weyra 高峰期 ceiling 记账 **¥{budget.total_cost_cny:.4f}**",
-        "- **独立裁判 API 消耗**：0 次（全确定性可执行断言判分，对齐 SkillsBench / SOPBench）",
+        "- **独立裁判 API 消耗**：0 次（全确定性可执行断言判分）",
         "",
-        "## 一、18 题三域配对任务消融结果（不提示技能名的盲选路由）",
+        "## 一、18 题三域配对任务消融结果（`<available_skills>` 盲选披露）",
         "",
-        "| 实验组 | 对标论文 | 通过率 | Ideal 过程分档 | 目标技能激活 / 干扰误触发 | 总 Calls | 总 Tokens | 账本费用 (CNY) |",
+        "| 实验组 | 对标论文/框架 | 通过率 | 洁净轨迹数 | 目标技能激活 / 干扰误触发 | 总 Calls | 总 Tokens | 账本费用 (CNY) |",
         "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
-        f"| Arm A: No-Skill (1x) | SkillsBench (`arXiv:2602.12670`) | {arm_a['passed']}/{arm_a['total']} ({arm_a['pass_rate']:.1%}) | {arm_a['tiers']['ideal']}/{arm_a['total']} | — | {arm_a['calls']} | {arm_a['tokens']:,} | ¥{Decimal(arm_a['cost_cny']):.4f} |",
-        f"| Arm B: Matched-Budget Retry (2x) | Rethinking (`arXiv:2608.02636` / `2607.12227`) | {arm_b['passed']}/{arm_b['total']} ({arm_b['pass_rate']:.1%}) | {arm_b['tiers']['ideal']}/{arm_b['total']} | — | {arm_b['calls']} | {arm_b['tokens']:,} | ¥{Decimal(arm_b['cost_cny']):.4f} |",
-        f"| Arm C: Weyra Skill (1x) | SOPBench + Skill-Pro + SkillAlign + AgentLens | **{arm_c['passed']}/{arm_c['total']} ({arm_c['pass_rate']:.1%})** | **{arm_c['tiers']['ideal']}/{arm_c['total']}** | **{arm_c['routing']['target_activated']}/{arm_c['total']}** / {arm_c['routing']['distractor_activated']} | {arm_c['calls']} | {arm_c['tokens']:,} | **¥{Decimal(arm_c['cost_cny']):.4f}** |",
+        f"| Arm A: No-Skill (1x) | SkillsBench (`arXiv:2602.12670`) | {arm_a['passed']}/{arm_a['total']} ({arm_a['pass_rate']:.1%}) | {arm_a['clean_runs']}/{arm_a['total']} | — | {arm_a['calls']} | {arm_a['tokens']:,} | ¥{Decimal(arm_a['cost_cny']):.4f} |",
+        f"| Arm B: Matched-Budget Retry (2x) | Test-Time Retry | {arm_b['passed']}/{arm_b['total']} ({arm_b['pass_rate']:.1%}) | {arm_b['clean_runs']}/{arm_b['total']} | — | {arm_b['calls']} | {arm_b['tokens']:,} | ¥{Decimal(arm_b['cost_cny']):.4f} |",
+        f"| Arm C: Weyra Skill (1x) | DSH + Pi + Hermes `<available_skills>` | **{arm_c['passed']}/{arm_c['total']} ({arm_c['pass_rate']:.1%})** | **{arm_c['clean_runs']}/{arm_c['total']}** | **{arm_c['routing']['target_activated']}/{arm_c['total']}** / {arm_c['routing']['distractor_activated']} | {arm_c['calls']} | {arm_c['tokens']:,} | **¥{Decimal(arm_c['cost_cny']):.4f}** |",
         "",
         "### 分域表现（Audit Ledger / Incident Triage / Release Manifest）",
         "",
-        "| 业务域 | No-Skill (1x) | Retry (2x) | Weyra Skill (1x) | Weyra Ideal 轨迹 |",
+        "| 业务域 | No-Skill (1x) | Retry (2x) | Weyra Skill (1x) | Weyra 洁净轨迹 |",
         "| --- | ---: | ---: | ---: | ---: |",
     ]
     for dom, label in (("audit-ledger", "Audit Ledger SOP (6 题)"), ("incident-triage", "Incident Triage SOP (6 题)"), ("release-manifest", "Release Manifest SOP (6 题)")):
         da, db, dc = arm_a["domains"][dom], arm_b["domains"][dom], arm_c["domains"][dom]
-        md_lines.append(f"| {label} | {da['passed']}/{da['total']} | {db['passed']}/{db['total']} | **{dc['passed']}/{dc['total']}** | {dc['ideal']}/{dc['total']} |")
+        md_lines.append(f"| {label} | {da['passed']}/{da['total']} | {db['passed']}/{db['total']} | **{dc['passed']}/{dc['total']}** | {dc['clean']}/{dc['total']} |")
     s_ca, s_cb = stats["skill_1x_vs_no_skill_1x"], stats["skill_1x_vs_retry_2x"]
     md_lines.extend([
         "",
@@ -980,9 +946,9 @@ async def main_async() -> dict:
         "",
         "## 二、在线有界技能演进与护栏实测（2 独立验证样本，0 Judge 调用）",
         "",
-        f"- **SkillDiff 锚点篡改拦截**：`{evo_suite['anchor_guard_blocked']}`（Rejected-Edit Buffer 记录数：{evo_suite['rejected_edit_buffer_count']}）",
-        f"- **真实有界补丁演进（SkillOpt + SkillDiff + SOPBench Short-Circuit）**：状态 `{pe['status']}`（`{pe['reason']}`），版本 `{pe['version_before']} -> {pe['version_after']}`，验证集通过数 `{pe['old_successes']} -> {pe['candidate_successes']}`，门禁模式 `{pe['judge_mode']}`，专家锚点保留 `{pe['anchors_preserved']}`",
-        f"- **零空基线新建门禁（SkillGen `__null_baseline__`）**：状态 `{ge['status']}`（`{ge['reason']}`），无技能基线 vs 新建技能 `{ge['null_baseline_successes']} -> {ge['candidate_successes']}`，门禁模式 `{ge['judge_mode']}`，目录入库 `{ge['created_in_catalog']}`",
+        f"- **SkillDiff `**[FOCUS]**` 篡改拦截**：`{evo_suite['focus_guard_blocked']}`（`rejected_edits.jsonl` 记录数：{evo_suite['rejected_edit_buffer_count']}）",
+        f"- **SkillOpt 有界补丁演进**：状态 `{pe['status']}`（`{pe['reason']}`），版本 `{pe['version_before']} -> {pe['version_after']}`，验证集通过数 `{pe['old_successes']} -> {pe['candidate_successes']}`，门禁模式 `{pe['judge_mode']}`，`[FOCUS]` 保留 `{pe['focus_items_preserved']}`",
+        f"- **SkillOpt 零空基线新建门禁（`__null_baseline__`）**：状态 `{ge['status']}`（`{ge['reason']}`），无技能基线 vs 新建技能 `{ge['null_baseline_successes']} -> {ge['candidate_successes']}`，门禁模式 `{ge['judge_mode']}`，目录入库 `{ge['created_in_catalog']}`",
         f"- 演进阶段共消耗 `{evo_suite['calls']}` 次调用 / `{evo_suite['tokens']:,}` tokens / 账本费用 `¥{Decimal(evo_suite['cost_cny']):.4f}`，详情见 [results.json](results.json)。",
     ])
     (OUT_DIR / "report.md").write_text("\n".join(md_lines) + "\n", encoding="utf-8")
@@ -993,6 +959,6 @@ if __name__ == "__main__":
     res = asyncio.run(main_async())
     print(f"DONE: total_calls={res['total_calls']}, total_tokens={res['total_tokens']}, total_cost_cny=¥{res['total_cost_cny']}")
     for k, arm in res["arms"].items():
-        print(f"  {k}: {arm['passed']}/{arm['total']} ({arm['pass_rate']:.1%}), ideal={arm['tiers']['ideal']}, routing={arm['routing']}, cost=¥{arm['cost_cny']}")
+        print(f"  {k}: {arm['passed']}/{arm['total']} ({arm['pass_rate']:.1%}), clean={arm['clean_runs']}, routing={arm['routing']}, cost=¥{arm['cost_cny']}")
     print("  stats:", res["paired_statistics"])
     print("  live_evo:", res["live_evolution_suite"])

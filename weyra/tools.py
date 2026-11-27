@@ -17,9 +17,9 @@
          （POSIX start_new_session=True），支持同步等待超时保护与异步后台分离（Background Mode）。
        - 借鉴其作业所有权流转协议（Ownership Handover）：实现轮次（Turn Context）向持久化会话（Session）的
          所有权转移（transfer_job），并在轮次异常中断时实施幂等的进程组级联取消（cancel_job / cleanup_owner）。
-    3. WikiSkill (arXiv:2608.27454, 2026) & SkillOpt (arXiv:2605.23904, 2026):
-       - 在写操作中集成统一差异生成器（generate_unified_diff），为后续的技能自进化（Skill Evolution）与
-         人类确认审核（Human-in-the-Loop Approval）提供零歧义的代码变更凭据。
+    3. SkillOpt (microsoft/SkillOpt, arXiv:2605.23904, MIT) & DeepSeek-Harness 工具审计:
+       - 在写操作中集成统一差异生成器（generate_unified_diff），为后续人类确认审核（Human-in-the-Loop Approval）
+         与演化轨迹诊断提供零歧义的代码变更凭据。
 """
 
 from __future__ import annotations
@@ -98,9 +98,6 @@ def install_builtin_tools(runtime, jobs):
         path = runtime.resolve_path(args["path"])
         async with runtime.file_lock:
             raw = path.read_bytes()
-            capture = ctx.services.get("replay_capture")
-            if capture is not None:
-                capture.file(path.relative_to(runtime.project).as_posix(), raw)
             ctx.read_versions[str(path)] = hashlib.sha256(raw).hexdigest()
         lines = raw.decode("utf-8").split("\n")
         start = args.get("offset", 1)
@@ -143,10 +140,6 @@ def install_builtin_tools(runtime, jobs):
             raise PermissionError("Harness state is managed through dedicated operations")
         old_text = ""
         async with runtime.file_lock:
-            capture = ctx.services.get("replay_capture")
-            if capture is not None:
-                capture.file(path.relative_to(runtime.project).as_posix(),
-                             path.read_bytes() if path.exists() else None, write=True)
             if path.exists():
                 raw = path.read_bytes()
                 current = hashlib.sha256(raw).hexdigest()

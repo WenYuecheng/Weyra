@@ -346,20 +346,37 @@ def load_config(project, overrides=None):
         resolve_context_policy(policy)
     pricing = _pricing(data.get("pricing", {}))
     evolution = dict(data.get("skill_evolution", {}))
-    if set(evolution) - {"enabled", "judge_route", "validation_manifest"}:
+    if set(evolution) - {
+        "enabled",
+        "judge_route",
+        "validation_manifest",
+        "lr_scheduler",
+        "max_lr",
+        "min_lr",
+        "gate_metric",
+    }:
         raise ValueError("Unknown skill_evolution field")
     evolution.setdefault("enabled", False)
     evolution.setdefault("judge_route", "skill_judge")
+    evolution.setdefault("lr_scheduler", "constant")
+    evolution.setdefault("max_lr", 4)
+    evolution.setdefault("min_lr", 2)
+    evolution.setdefault("gate_metric", "hard")
     if type(evolution["enabled"]) is not bool:
         raise ValueError("skill_evolution.enabled must be a boolean")
     if evolution["judge_route"] != "skill_judge":
         raise ValueError("skill_evolution requires the explicit skill_judge route")
+    if evolution["lr_scheduler"] not in {"constant", "linear", "cosine", "autonomous"}:
+        raise ValueError("skill_evolution.lr_scheduler must be constant, linear, cosine, or autonomous")
+    if type(evolution["max_lr"]) is not int or evolution["max_lr"] < 1:
+        raise ValueError("skill_evolution.max_lr must be a positive integer")
+    if type(evolution["min_lr"]) is not int or not 1 <= evolution["min_lr"] <= evolution["max_lr"]:
+        raise ValueError("skill_evolution.min_lr must be between 1 and max_lr")
+    if evolution["gate_metric"] not in {"hard", "soft", "mixed"}:
+        raise ValueError("skill_evolution.gate_metric must be hard, soft, or mixed")
+    if fallbacks.get("skill_judge"):
+        raise ValueError("skill_judge cannot silently fall back to another model")
     if evolution["enabled"]:
-        judge = models.get("skill_judge")
-        if judge is None:
-            raise ValueError("Enabled skill evolution requires explicit skill_judge route")
-        if fallbacks.get("skill_judge"):
-            raise ValueError("skill_judge cannot silently fall back to another model")
         manifest = evolution.get("validation_manifest")
         if not isinstance(manifest, str) or not manifest:
             raise ValueError("Enabled skill evolution requires validation_manifest")
@@ -369,6 +386,16 @@ def load_config(project, overrides=None):
         if not manifest_path.resolve().is_relative_to(project) or not manifest_path.is_file():
             raise ValueError("validation_manifest must be a regular file inside the project")
         evolution["validation_manifest"] = str(manifest_path.resolve())
+        import json as _json
+        from .skill_judge import _is_deterministic_case, _manifest_cases
+        parsed_manifest = _json.loads(manifest_path.read_text(encoding="utf-8"))
+        default_rubric = str(parsed_manifest.get("rubric", "")).strip()
+        needs_judge = any(
+            not _is_deterministic_case({**({"rubric": default_rubric} if default_rubric else {}), **c})
+            for c in _manifest_cases(parsed_manifest)
+        )
+        if needs_judge and models.get("skill_judge") is None:
+            raise ValueError("Rubric-based validation_manifest requires explicit skill_judge route")
     parameters = {purpose: dict(route.get("parameters", {})) for purpose, route in routes.items()}
     fallback_parameters = {
         (purpose, parsed.provider_id, parsed.model_id): dict(route.get("parameters", {}))

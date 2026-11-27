@@ -262,7 +262,7 @@ class WeyraAppService:
             max_steps: 单轮自主推理的最大交互步数上限，默认 40 步。
             task_token_limit: 单任务作用域的 Token 消耗上限防护阈值。
             enable_memory: 是否激活长期持久化记忆子系统。
-            enable_evolution: 是否激活技能演化引擎（WikiSkill/SkillOpt）。
+            enable_evolution: 是否激活技能演化引擎（SkillOpt/SkillDiff）。
             budget_limit_tokens: 会话级别全局 Token 预算硬性上限，默认 200,000。
             budget_limit_calls: 会话级别大模型 API 调用次数上限，默认 50 次。
             budget_limit_cost_cny: 会话级别人民币计价财务熔断限额。

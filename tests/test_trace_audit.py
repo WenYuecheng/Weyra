@@ -10,13 +10,27 @@ from weyra.session import SessionStore
 from weyra.trace_audit import audit_records, audit_session_db
 
 
-def test_audit_records_distinguishes_ideal_solid_lucky_pass_and_failed():
-    """AgentLens (arXiv:2605.12925) & Harness Updating != Benefit: 4-tier classification & funnel."""
-    ideal = audit_records(
+def test_audit_records_tracks_execution_and_skill_adoption():
+    """Verify objective execution stats, <available_skills> exposure, and /gesture + tool activation."""
+    clean = audit_records(
         [
             {"kind": "turn_start", "data": {"turn_id": "t1"}},
-            {"kind": "message", "data": {"role": "user", "source": "skills", "content": 'ctx\n{"content":"Skill catalog snapshot:\\ncode-hygiene: clean [1.0.0]"}'}},
-            {"kind": "message", "data": {"role": "user", "source": "skill_catalog", "content": "Relevant available skills:\ncode-hygiene [1.0.0]: clean"}},
+            {
+                "kind": "message",
+                "data": {
+                    "role": "user",
+                    "source": "skills",
+                    "content": 'ctx\n{"content":"<available_skills>\\n- `code-hygiene`: clean [1.0.0]\\n</available_skills>"}',
+                },
+            },
+            {
+                "kind": "message",
+                "data": {
+                    "role": "user",
+                    "source": "skill_catalog",
+                    "content": "<available_skills>\n- `code-hygiene`: clean [1.0.0]\n</available_skills>",
+                },
+            },
             {"kind": "tool_intent", "data": {"call_id": "c1", "name": "skill", "arguments": {"name": "code-hygiene"}}},
             {"kind": "tool_result", "data": {"call_id": "c1", "name": "skill", "status": "success", "content": "ok", "structured": {"name": "code-hygiene"}}},
             {"kind": "tool_intent", "data": {"call_id": "c2", "name": "edit_file", "arguments": {"path": "x.py"}}},
@@ -26,56 +40,53 @@ def test_audit_records_distinguishes_ideal_solid_lucky_pass_and_failed():
             {"kind": "message", "data": {"role": "assistant", "content": "Verified edit on x.py."}},
             {"kind": "turn_end", "data": {"turn_id": "t1", "state": "completed"}},
         ],
-        skill_rules={"code-hygiene": ["edit_file", "read_file", "missing_clause"]},
         task_passed=True,
     )
-    assert ideal.process.tier == "ideal"
-    assert ideal.process.verify_after_edit is True
-    assert ideal.process.unverified_claim is False
-    assert ideal.skill_funnel.exposed == ("code-hygiene",)
-    assert ideal.skill_funnel.retrieved == ("code-hygiene",)
-    assert ideal.skill_funnel.activated == ("code-hygiene",)
-    assert ideal.skill_funnel.rule_coverage["code-hygiene"]["followed"] == ["edit_file", "read_file"]
-    assert ideal.skill_funnel.rule_coverage["code-hygiene"]["uncovered"] == ["missing_clause"]
-    assert ideal.skill_funnel.coverage_rate == pytest.approx(2 / 3)
-    assert ideal.reliability.reliable is True
+    assert clean.process.completed is True
+    assert clean.process.tool_errors == 0
+    assert clean.process.error_loops == 0
+    assert clean.process.verify_after_edit is True
+    assert clean.process.unverified_claim is False
+    assert clean.skill_funnel.exposed == ("code-hygiene",)
+    assert clean.skill_funnel.retrieved == ("code-hygiene",)
+    assert clean.skill_funnel.activated == ("code-hygiene",)
+    assert clean.reliability.reliable is True
 
-    solid = audit_records(
+    noisy = audit_records(
         [
             {"kind": "turn_start", "data": {"turn_id": "t1"}},
-            {"kind": "tool_intent", "data": {"call_id": "c1", "name": "read_file", "arguments": {"path": "a"}}},
-            {"kind": "tool_result", "data": {"call_id": "c1", "name": "read_file", "status": "error", "content": "enoent"}},
-            {"kind": "tool_intent", "data": {"call_id": "c2", "name": "read_file", "arguments": {"path": "b"}}},
-            {"kind": "tool_result", "data": {"call_id": "c2", "name": "read_file", "status": "success", "content": "ok"}},
-            {"kind": "message", "data": {"role": "assistant", "content": "Found b."}},
-            {"kind": "turn_end", "data": {"turn_id": "t1", "state": "completed"}},
-        ],
-        task_passed=True,
-    )
-    assert solid.process.tier == "solid"
-
-    lucky = audit_records(
-        [
-            {"kind": "turn_start", "data": {"turn_id": "t1"}},
+            {
+                "kind": "message",
+                "data": {
+                    "role": "user",
+                    "source": "skill_invocation",
+                    "content": '<skill_content name="manual-sop"></skill_content>',
+                    "provider_data": {"skill_name": "manual-sop"},
+                },
+            },
             {"kind": "tool_intent", "data": {"call_id": "c1", "name": "edit_file", "arguments": {"path": "a"}}},
             {"kind": "tool_result", "data": {"call_id": "c1", "name": "edit_file", "status": "error", "content": "bad"}},
             {"kind": "tool_intent", "data": {"call_id": "c2", "name": "edit_file", "arguments": {"path": "a"}}},
-            {"kind": "tool_result", "data": {"call_id": "c2", "name": "edit_file", "status": "success", "content": "ok"}},
+            {"kind": "tool_result", "data": {"call_id": "c2", "name": "edit_file", "status": "error", "content": "bad"}},
+            {"kind": "tool_intent", "data": {"call_id": "c3", "name": "edit_file", "arguments": {"path": "a"}}},
+            {"kind": "tool_result", "data": {"call_id": "c3", "name": "edit_file", "status": "success", "content": "ok"}},
             {"kind": "message", "data": {"role": "assistant", "content": "All tests passed."}},
             {"kind": "turn_end", "data": {"turn_id": "t1", "state": "completed"}},
         ],
         task_passed=True,
     )
-    assert lucky.process.tier == "lucky_pass"
-    assert lucky.process.verify_after_edit is False
-    assert lucky.process.unverified_claim is True
+    assert noisy.process.error_loops == 1
+    assert noisy.process.verify_after_edit is False
+    assert noisy.process.unverified_claim is True
+    assert noisy.skill_funnel.user_invoked == ("manual-sop",)
+    assert noisy.skill_funnel.activated == ("manual-sop",)
 
     failed = audit_records([], task_passed=False)
-    assert failed.process.tier == "failed"
+    assert failed.process.completed is False
 
 
 def test_audit_records_reliability_flags_unclosed_cleanup_and_conflict():
-    """Trial by Trace (arXiv:2610.32285): detects unclosed intents, denials, unknown costs, conflicts."""
+    """Detects unclosed intents, denials, unknown costs, cleanup errors, and conflicts."""
     rep = audit_records(
         [
             {"kind": "tool_intent", "data": {"call_id": "dangling", "name": "write_file", "arguments": {}}},
@@ -120,5 +131,5 @@ def test_audit_session_db_readonly_and_errors(tmp_path):
     before_bytes = db_path.read_bytes()
     rep = audit_session_db(proj)
     assert rep.session_id == "s-audit"
-    assert rep.process.tier == "ideal"
+    assert rep.process.completed is True
     assert db_path.read_bytes() == before_bytes

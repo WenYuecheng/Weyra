@@ -281,7 +281,12 @@ async def run_session_command(agent, line, output):
         else:
             lines = [f"History for {skill_name}:"]
             for h in history:
-                lines.append(f"  v{h['version']} [{h['timestamp']}] parent={h['parent_version']} hash={h['code_hash'][:8]}")
+                ver = h.get("version", "-")
+                status = h.get("status", "unknown")
+                hhash = str(h.get("content_hash", ""))[:8] or "-"
+                reason = h.get("reason", "")
+                suffix = f" ({reason})" if reason else ""
+                lines.append(f"  v{ver} [{status}] hash={hhash}{suffix}")
             output("\n".join(lines))
     elif name == "/mcp":
         if getattr(agent, "mcp", None):

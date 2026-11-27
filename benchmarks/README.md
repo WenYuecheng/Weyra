@@ -29,11 +29,11 @@ python benchmarks/polyglot/report.py
 
 ## 2. 离线零 API 可靠性与长程演进防退化套件（`reliability/`）
 
-使用确定性 `ScriptedProvider` 与真实运行时组件（`SessionStore`、`ToolRuntime`、`Budget`、`EvolutionStore`、`ConfiguredSkillGate`、`trace_audit`），零外部 API 调用：
+使用确定性 `ScriptedProvider` 与真实运行时组件（`SessionStore`、`ToolRuntime`、`Budget`、`EvolutionStore`、`SkillValidationGate`、`trace_audit`），零外部 API 调用：
 
 - **故障注入回归**：6 类故障注入全部通过，覆盖演进中断恢复、工具未闭合恢复、外部写入与 `base_hash` 冲突拦截、技能附属文件 SHA-256 漂移检测、审批后权限吊销二次重检与预算防绕过。
-- **30 轮连续演进防退化**：对比无护栏自由改写基线，受保护 `[ANCHOR]` 规则与核心 `boundary` 知识留存率由 **0% 提升至 100%**；确定性验证短路实现零裁判模型调用并命中冻结回放缓存。
-- **只读轨迹审计**：基于 SQLite 只读模式区分高合规 `ideal` 轨迹与伴随工具错误/未校验声称完成的 `lucky_pass` 轨迹。
+- **30 轮连续演进防退化**：结合 `SkillDiff` `**[FOCUS]**` 非先验专家条款标记与 `SkillOpt` `evaluate_gate` 有界补丁门禁，关键专家条款留存率在长程演进压测中保持 **100%**；确定性验证短路实现零裁判模型调用并命中 SHA-256 验证缓存。
+- **只读轨迹审计**：基于 SQLite 只读模式区分高洁净无错误轨迹与伴随错误重试循环/未校验声称完成的轨迹，并准确统计 `<available_skills>` 与 `skill_invocation` 采纳漏斗。
 
 运行方式：
 
@@ -44,10 +44,10 @@ python -m pytest -q
 
 ## 3. 多域技能盲选路由与在线演进套件（`skills_eval/`）
 
-面向三类企业运维与交付合规域（Audit Ledger / Incident Triage / Release Manifest），在不提示技能名称、并存干扰技能的条件下验证技能路由与在线演进闭环：
+面向三类企业运维与交付合规域（Audit Ledger / Incident Triage / Release Manifest），通过 `<available_skills>` 目录并发暴露业务技能与干扰技能，在不提示技能名称的条件下验证真实模型选择与在线演进闭环：
 
-- **盲选路由与合规执行**：全部 18 项任务精准激活目标技能、零干扰误触发，均以 `ideal` 过程轨迹通过确定性结构校验。
-- **在线演进与门禁闭环**：实测通过受保护 `[ANCHOR]` 篡改拦截、有界补丁安全晋升（`1.0.0 -> 1.0.1`）以及无基线对照新建技能门禁（`__null_baseline__`），全程确定性校验短路、零裁判模型调用。
+- **盲选披露与合规执行**：验证技能摘要暴露下的盲选激活准确率、零干扰误触发与无错误洁净执行能力。
+- **在线演进与门禁闭环**：验证 `SkillDiff` `**[FOCUS]**` 篡改拦截、`SkillOpt` 有界补丁门禁晋升以及无技能空基线对照新建门禁（`__null_baseline__`），全程确定性校验、零裁判模型调用。
 
 本地复现（需配置 `weyra.toml` 与 `.env` 中的有效模型密钥）：
 
@@ -55,4 +55,4 @@ python -m pytest -q
 python benchmarks/skills_eval/run_benchmark.py
 ```
 
-技能自进化与过程审计的设计原理见 [docs/skill-evolution.md](../docs/skill-evolution.md)。
+技能调用协议与演进架构说明见 [docs/skill-evolution.md](../docs/skill-evolution.md)。

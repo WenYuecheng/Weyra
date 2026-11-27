@@ -5,9 +5,9 @@
     构建了连接结构化指令、半结构化长期记忆（Memory）与可执行技能（Skills）的统一知识层抽象。
 
 开源框架借鉴与学术溯源:
-    1. WikiSkill (arXiv:2608.27454, 2026):
+    1. Agent Skills Standard (`agentskills.io`) & DeepSeek Harness (`packages/skill/skill-filesystem`):
        - 整合 frontmatter 模块的元数据解析器（parse_markdown）、安全路径校验（reject_symlinks）
-         与原子写入保障（atomic），构成具备自洽性（Self-containment）的单文件技能载体。
+         与原子写入保障（atomic），构成具备自洽性的单文件技能载体。
        - 导出 BM25 词法检索核心（tokens, rank），支持低延迟离线语义匹配。
     2. Hermes Agent (agent/memory/ & skills/):
        - 导出基于 Markdown 平面文件系统的长期记忆存储器（MemoryStore）与基于类 Git 语义版本控制的
